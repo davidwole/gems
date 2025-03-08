@@ -18,7 +18,7 @@ import IESForm from "./pages/forms/IESForm";
 import UploadID from "./pages/UploadID";
 import EmployeeHandbookSign from "./pages/EmployeeHandbookSign";
 import UploadDocuments from "./pages/UploadDocuments";
-import ParentHandbookSign from "./pages/parentHandbookSign";
+import ParentHandbookSign from "./pages/ParentHandbookSign";
 import IESFormSigning from "./pages/forms/IESFormSigning";
 import ApplicationViewForm from "./pages/forms/ApplicationViewForm";
 
