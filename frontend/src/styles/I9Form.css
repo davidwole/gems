@@ -1,0 +1,148 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+.job_container .flex {
+  display: flex;
+}
+
+.job_container .align_center {
+  align-items: center;
+}
+
+.space_btw {
+  justify-content: space-between;
+}
+
+.job_container table {
+  border-collapse: collapse;
+}
+
+.job_container table,
+.job_container th,
+.job_container td {
+  border: 1px solid black;
+}
+
+.job_container {
+  color-scheme: normal;
+  padding-inline: 2rem;
+  padding-block: 1rem 0;
+  color: black;
+  font: "Inter";
+  background: white;
+}
+
+.job_form {
+  width: 80%;
+  margin: auto;
+}
+
+.job_form input {
+  margin-bottom: 1rem;
+}
+
+.job_form input[type="text"] {
+  border: 0;
+  border-bottom: 1px solid black;
+  width: 100%;
+}
+
+.job_form label {
+  margin-inline: 1rem;
+  color: black;
+}
+
+.job_form textarea {
+  margin-inline: 1rem;
+  resize: none;
+  width: 451px;
+  height: 228px;
+}
+
+.header_container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.job_form_header {
+  width: 90%;
+  margin: auto;
+  text-align: center;
+  width: 28.125rem;
+  font-size: 1.5rem;
+  color: rgb(79, 79, 79);
+  font-family: Arial;
+}
+
+.job_form div.flex {
+  margin-block: 0.5rem;
+}
+
+.section_header {
+  background-color: rgb(79, 79, 79);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-block: 1rem;
+}
+
+.full_name_label {
+  position: relative;
+  top: -10px;
+}
+
+.job_form table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.job_form table,
+.job_form th,
+.job_form td {
+  border: 1px solid black;
+}
+
+.questionnaire input {
+  border: 0 !important;
+}
+
+.edited_forms th,
+td {
+  padding: 0.5rem 2rem;
+  margin: auto;
+}
+
+.edited_forms input {
+  width: 5rem;
+  padding-inline: 1rem;
+}
+
+.edited_forms tr:nth-child(even) {
+  background-color: #d9d9d9;
+}
+
+.job_form td input {
+  padding: 0.25rem;
+}
+
+.job_form input:focus {
+  outline: 0;
+}
+
+.job_form td input:focus {
+  border: none;
+  outline: 0;
+}
+
+.job_form button {
+  background-color: black;
+  color: white;
+  padding: 1rem;
+}
+
+#i9_button {
+  padding: 1rem 4rem;
+  font-weight: 500;
+  border: none;
+}

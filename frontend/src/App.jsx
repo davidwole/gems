@@ -1,0 +1,180 @@
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
+import { AuthProvider } from "./context/AuthContext";
+import { AuthContext } from "./context/AuthContext";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import BranchPage from "./pages/BranchPage";
+import ApplicantRegistration from "./pages/forms/ApplicantRegistration"; // Import the new component
+import "./styles/main.css";
+import I9Form from "./pages/forms/I9Form";
+import ParentRegistration from "./pages/forms/ParentRegistration";
+import IESForm from "./pages/forms/IESForm";
+import UploadID from "./pages/UploadID";
+import EmployeeHandbookSign from "./pages/EmployeeHandbookSign";
+import UploadDocuments from "./pages/UploadDocuments";
+import ParentHandbookSign from "./pages/parentHandbookSign";
+import IESFormSigning from "./pages/forms/IESFormSigning";
+import ApplicationViewForm from "./pages/forms/ApplicationViewForm";
+
+// Suspension Modal Component
+const SuspensionModal = ({ onClose }) => {
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <h2>Account Suspended</h2>
+        <p>
+          Your account has been suspended. Please contact an administrator for
+          assistance.
+        </p>
+        <div className="form-actions">
+          <button onClick={onClose} className="submit-button">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Protected route component with suspension check
+const ProtectedRoute = ({ children }) => {
+  const { user, token, logout } = useContext(AuthContext);
+  const [showSuspensionModal, setShowSuspensionModal] = useState(false);
+
+  // Check for token
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
+  // Check if user is suspended based on JWT payload
+  useEffect(() => {
+    if (user?.isSuspended) {
+      setShowSuspensionModal(true);
+    }
+  }, [user]);
+
+  // Handle closing the suspension modal
+  const handleCloseSuspensionModal = () => {
+    setShowSuspensionModal(false);
+    logout();
+  };
+
+  if (user?.isSuspended) {
+    return (
+      <>
+        {showSuspensionModal && (
+          <SuspensionModal onClose={handleCloseSuspensionModal} />
+        )}
+        <div style={{ filter: "blur(5px)" }}>{children}</div>
+      </>
+    );
+  }
+
+  return children;
+};
+
+// Redirect to dashboard if logged in
+const RedirectIfLoggedIn = ({ children }) => {
+  const { token } = useContext(AuthContext);
+
+  if (token) {
+    return <Navigate to="/dashboard" />;
+  }
+
+  return children;
+};
+
+// App routes that use context
+const AppContent = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/dashboard" />} />
+      <Route
+        path="/login"
+        element={
+          <RedirectIfLoggedIn>
+            <Login />
+          </RedirectIfLoggedIn>
+        }
+      />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/branch/:id"
+        element={
+          <ProtectedRoute>
+            <BranchPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/application/:id"
+        element={
+          <ProtectedRoute>
+            <ApplicationViewForm />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/signing/:id"
+        element={
+          <ProtectedRoute>
+            <IESFormSigning />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/handbook/:branchId/:employee"
+        element={
+          <ProtectedRoute>
+            <EmployeeHandbookSign />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/parenthandbook/:branchId"
+        element={
+          <ProtectedRoute>
+            <ParentHandbookSign />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Add the new route for applicant registration */}
+      <Route path="/apply/:branchId" element={<ApplicantRegistration />} />
+      <Route path="/enroll/:branchId" element={<ParentRegistration />} />
+      <Route path="/applicant-registration/:branchId" element={<I9Form />} />
+      <Route path="/parent-registration/:branchId" element={<IESForm />} />
+      <Route path="/uploadid" element={<UploadID />} />
+      <Route path="/uploaddocuments" element={<UploadDocuments />} />
+    </Routes>
+  );
+};
+
+// Main App component
+const App = () => {
+  return (
+    <AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
+  );
+};
+
+export default App;

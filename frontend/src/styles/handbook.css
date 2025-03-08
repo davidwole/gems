@@ -1,0 +1,114 @@
+/* Handbook Styles */
+.handbook-manager {
+  background-color: white;
+  border-radius: 0;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.upload-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+}
+
+.selected-file {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f0f8ff;
+  border: 1px solid #bbd6f8;
+}
+
+.selected-file p {
+  margin: 0 0 10px 0;
+  font-weight: 500;
+}
+
+.upload-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.upload-confirm-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.upload-confirm-btn:hover {
+  background-color: #2980b9;
+}
+
+.upload-confirm-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.upload-cancel-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+}
+
+.upload-cancel-btn:hover {
+  background-color: #c0392b;
+}
+
+.upload-cancel-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.error-message {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #ffebee;
+  border: 1px solid #ffcdd2;
+  color: #c62828;
+}
+
+.success-message {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  color: #2e7d32;
+}
+
+.handbook-display {
+  margin-top: 20px;
+}
+
+.handbook-info {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-left: 3px solid #3498db;
+}
+
+.handbook-info p {
+  margin: 5px 0;
+}
+
+.pdf-container {
+  border: 1px solid #e0e0e0;
+  height: 600px;
+  overflow: hidden;
+}
+
+.loading-message {
+  text-align: center;
+  padding: 20px;
+  color: #7f8c8d;
+}
+
+@media (max-width: 768px) {
+  .pdf-container {
+    height: 400px;
+  }
+}

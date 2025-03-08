@@ -1,0 +1,184 @@
+.auth-container {
+  background-color: white;
+  border-radius: 0; /* Sharp edges */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  padding: 30px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.auth-container h2 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.branch-info {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.auth-form,
+.i9-form,
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 0; /* Sharp edges */
+  font-size: 0.95rem;
+  transition: border-color 0.3s;
+  background-color: #fff; /* White input fields */
+  color: black;
+}
+
+.form-group input:focus {
+  border-color: #000;
+  outline: none;
+}
+
+.submit-button {
+  background-color: #000; /* Black primary button */
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 0; /* Sharp edges */
+  /* margin-top: 10px; */
+  font-weight: 500;
+  width: 100%;
+  cursor: pointer;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #3498db; /* Blue hover state */
+}
+
+.submit-button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 0;
+  text-align: center;
+}
+
+.warning-message {
+  background-color: #fff8e1;
+  color: #f57f17;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 0;
+  text-align: center;
+}
+
+/* Styles for the onboarding tasks section */
+.onboarding-container {
+  width: 100%;
+}
+
+.task-list {
+  margin-top: 20px;
+}
+
+.task-item {
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.task-item h3 {
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.task-item.completed {
+  border-left: 4px solid #27ae60;
+}
+
+.task-completed {
+  color: #27ae60;
+  font-weight: 500;
+}
+
+.handbook-container {
+  background-color: #f9f9f9;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.handbook-preview h4 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.handbook-preview ul {
+  padding-left: 20px;
+}
+
+.form-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+}
+
+.form-section h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.all-tasks-completed {
+  background-color: #e8f5e9;
+  padding: 20px;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.all-tasks-completed h3 {
+  color: #2e7d32;
+  margin-top: 0;
+}
+
+@media (max-width: 500px) {
+  .auth-container {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .auth-container h2 {
+    font-size: 1.5rem;
+  }
+}

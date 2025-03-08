@@ -1,0 +1,175 @@
+.ies {
+  width: 90%;
+  margin: auto;
+  background: white;
+}
+
+.ies .heading {
+  text-align: center;
+  margin-block: 1rem 0;
+}
+
+.ies table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.form_underline {
+  border: none;
+  border-bottom: 1px solid black;
+  outline: none;
+}
+
+.ies table,
+.ies td {
+  border: 1px solid black;
+}
+
+.ssn_field input {
+  margin-inline: 0.5rem;
+}
+
+.parts-header {
+  background: black;
+  color: white;
+  padding: 0.25rem 0.5rem;
+}
+
+.part-1-inputs td {
+  padding: 0.5rem 0;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.part-1-inputs input[type="text"] {
+  padding-inline: 0.5rem;
+  width: 100%;
+  border: none;
+  outline: none;
+}
+
+.col-45 {
+  width: 45%;
+}
+
+.col-40 {
+  width: 30%;
+}
+
+.col-15 {
+  width: 17.5%;
+}
+
+.col-25 {
+  width: 25%;
+}
+
+.col-30 {
+  width: 30%;
+}
+
+.name-label {
+  vertical-align: bottom;
+}
+
+.red-text {
+  color: red;
+}
+
+.child-income-field {
+  display: flex;
+}
+
+.child-income-field input {
+  border: none;
+  border-bottom: 1px solid black;
+  outline: none;
+  width: 6rem;
+}
+
+.household_members_list input {
+  border: none;
+  border-bottom: 1px solid black;
+  outline: none;
+  width: 100%;
+}
+
+.ies ul {
+  list-style-type: none;
+}
+
+.ies .flex {
+  display: flex;
+}
+
+.ies_custom_form input {
+  border: none;
+  border-bottom: 1px solid black;
+  outline: none;
+  width: 100%;
+}
+
+.enrollment_hours {
+  padding: 0 0.75rem;
+}
+
+.enrollment_hours input[type="checkbox"] {
+  margin-inline: 0.2rem;
+}
+
+.enrollment_hours .header {
+  color: white;
+  background: black;
+}
+
+.second_header_type {
+  color: white;
+  background: black;
+}
+
+.enrollment_info {
+  padding: 0 0.75rem;
+}
+
+.small_warning {
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.ethnicity input[type="checkbox"] {
+  margin-inline: 0.35rem;
+}
+
+.checkbox_spacer input[type="checkbox"] {
+  margin-inline: 0.35rem;
+}
+
+.official_sign input[type="checkbox"] {
+  margin-inline: 0.25rem;
+}
+
+.official_sign label {
+  margin-inline: 0.25rem;
+}
+
+.official_sign input[type="text"] {
+  border: none;
+  border-bottom: 1px solid black;
+  outline: none;
+}
+
+.eligibity_margin {
+  margin-right: 7rem;
+}
+
+.official_sign:not(:last-child) {
+  margin-block: 0.25rem;
+}
+
+.margin_block {
+  margin-block: 2rem;
+}
+
+.margin_right_15 {
+  margin-right: 15rem;
+}

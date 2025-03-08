@@ -1,0 +1,191 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+/* 1. Use a more-intuitive box-sizing model */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 2. Remove default margin */
+* {
+  margin: 0;
+}
+
+body {
+  /* 3. Add accessible line-height */
+  line-height: 1.5;
+  /* 4. Improve text rendering */
+  -webkit-font-smoothing: antialiased;
+  font-family: "Inter";
+}
+
+/* 5. Improve media defaults */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* 6. Inherit fonts for form controls */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* 7. Avoid text overflows */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* 8. Improve line wrapping */
+p {
+  text-wrap: pretty;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+/*
+  9. Create a root stacking context
+*/
+#root,
+#__next {
+  isolation: isolate;
+}
+
+input:focus,
+textarea:focus {
+  border: 2px solid #7c9276;
+  outline: #7c9276;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:visited {
+  color: black;
+}
+
+table {
+  width: 100%;
+}
+
+td input[type="text"] {
+  border: 0 !important;
+}
+
+button {
+  background: black;
+  color: white;
+  padding: 0.7rem 5rem;
+  border: 1px solid black;
+  width: 17rem;
+  transition: all 300ms ease-in;
+}
+
+button:hover {
+  background: rgb(52, 52, 52);
+  cursor: pointer;
+}
+
+button {
+  display: block;
+  margin-block: 0.5rem;
+}
+
+.form_fields input {
+  padding: 0.5rem 1rem;
+}
+
+.container {
+  /* max-width: 1300px; */
+  padding-inline: 2rem;
+  padding-block: 1rem 0;
+}
+
+.error {
+  background: red;
+  color: white;
+  padding: 1rem 1rem;
+}
+
+.header {
+  background: black;
+  color: white;
+  border: 1px solid black;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+}
+
+.header h2 {
+  color: white;
+}
+
+.header a {
+  cursor: pointer;
+}
+
+.flex {
+  display: flex;
+}
+
+.align_center {
+  align-items: center;
+}
+
+.space_btw {
+  justify-content: space-between;
+}
+
+.logout {
+  cursor: pointer;
+}
+
+.logout:hover {
+  color: gray;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table,
+th,
+td {
+  border: 1px solid black;
+}
+
+.questionnaire input {
+  border: 0;
+}
+
+.text_align_center {
+  text-align: center;
+}
+
+@media print {
+  .no_print {
+    display: none !important;
+  }
+}

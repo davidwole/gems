@@ -1,0 +1,222 @@
+/* application-detail.css - Matching dashboard styling */
+
+.application-detail-container {
+  width: 100%;
+  background-color: #f5f7fa;
+  padding: 25px;
+  min-height: 100vh;
+}
+
+.application-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 20px;
+  border-radius: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 25px;
+}
+
+.application-detail-header h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.back-button {
+  background-color: transparent;
+  color: #3498db;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 5px 0;
+}
+
+.status-badge {
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 0;
+}
+
+.status-badge[data-status="pending"] {
+  background-color: #fdf2c9;
+  color: #c8a400;
+}
+
+.status-badge[data-status="reviewing"] {
+  background-color: #e8f4fd;
+  color: #3498db;
+}
+
+.status-badge[data-status="interviewed"] {
+  background-color: #d7f9e9;
+  color: #2ecc71;
+}
+
+.status-badge[data-status="rejected"] {
+  background-color: #ffe5e5;
+  color: #e74c3c;
+}
+
+.status-badge[data-status="accepted"] {
+  background-color: #d7f9e9;
+  color: #27ae60;
+}
+
+.application-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.personal-info-section,
+.job-details-section,
+.application-actions {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.personal-info-section h3,
+.job-details-section h3,
+.application-actions h3,
+.status-actions h3,
+.interview-section h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.info-item {
+  margin-bottom: 15px;
+}
+
+.info-item label {
+  display: block;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  margin-bottom: 5px;
+}
+
+.info-item p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #2c3e50;
+}
+
+.application-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.status-actions,
+.interview-section {
+  flex: 1;
+  min-width: 300px;
+}
+
+.status-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.status-button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 0;
+  font-size: 0.85rem;
+  cursor: pointer;
+  background-color: #f8f9fa;
+  color: #7f8c8d;
+}
+
+.status-button:hover {
+  background-color: #eaeaea;
+}
+
+.status-button.active {
+  background-color: #000;
+  color: white;
+}
+
+.schedule-button,
+.reschedule-button {
+  background-color: #000;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 0;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.schedule-button:hover,
+.reschedule-button:hover {
+  background-color: #3498db;
+}
+
+.interview-info {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 0;
+  margin-bottom: 15px;
+}
+
+.interview-info p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  padding: 30px;
+  border-radius: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  min-height: 200px;
+  width: 100%;
+  color: #7f8c8d;
+  font-size: 1rem;
+}
+
+.error-container {
+  color: #e74c3c;
+}
+
+@media (max-width: 768px) {
+  .application-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .back-button {
+    margin-bottom: 10px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .application-actions {
+    flex-direction: column;
+  }
+}

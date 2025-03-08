@@ -1,0 +1,259 @@
+/* enrollment-list.css */
+
+.enrollment-list-container {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+.enrollment-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.enrollment-filters {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.enrollment-filters label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #2c3e50;
+}
+
+.status-filter,
+.sort-by {
+  padding: 6px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  background-color: #f8f9fa;
+  font-size: 0.9rem;
+}
+
+.sort-order-button {
+  background-color: #000;
+  color: white;
+  border: none;
+  border-radius: 0;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.sort-order-button:hover {
+  background-color: #3498db;
+}
+
+.enrollment-count {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.enrollment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.enrollment-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.enrollment-card.expanded {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.enrollment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.enrollment-summary h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.enrollment-meta {
+  display: flex;
+  gap: 15px;
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  margin-top: 5px;
+}
+
+.enrollment-status-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.status-badge {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 0;
+  text-transform: capitalize;
+}
+
+.status-badge.pending {
+  background-color: #fff8e1;
+  color: #f39c12;
+}
+
+.status-badge.approved {
+  background-color: #e8f5e9;
+  color: #27ae60;
+}
+
+.status-badge.rejected {
+  background-color: #ffebee;
+  color: #e74c3c;
+}
+
+.expand-button {
+  background: none;
+  border: none;
+  color: #7f8c8d;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.enrollment-details {
+  padding: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.enrollment-detail-section {
+  margin-bottom: 20px;
+}
+
+.enrollment-detail-section:last-child {
+  margin-bottom: 0;
+}
+
+.enrollment-detail-section h4 {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+  color: #2c3e50;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.detail-row {
+  display: flex;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: #4a4a4a;
+}
+
+.detail-row span {
+  font-weight: 500;
+  width: 120px;
+  color: #2c3e50;
+}
+
+.child-entry {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 0;
+}
+
+.child-entry:last-child {
+  margin-bottom: 0;
+}
+
+.enrollment-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eaeaea;
+}
+
+.approve-button,
+.reject-button,
+.pending-button {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 0;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.approve-button {
+  background-color: #000;
+  color: white;
+}
+
+.reject-button {
+  background-color: #000;
+  color: white;
+}
+
+.pending-button {
+  background-color: #000;
+  color: white;
+}
+
+.approve-button:hover,
+.reject-button:hover,
+.pending-button:hover {
+  background-color: #3498db;
+}
+
+.loading,
+.error-message,
+.no-data {
+  padding: 30px;
+  text-align: center;
+  color: #7f8c8d;
+}
+
+.error-message {
+  color: #e74c3c;
+}
+
+@media (max-width: 768px) {
+  .enrollment-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .enrollment-filters {
+    flex-wrap: wrap;
+  }
+
+  .enrollment-status-section {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .detail-row {
+    flex-direction: column;
+  }
+
+  .detail-row span {
+    width: 100%;
+    margin-bottom: 2px;
+  }
+}

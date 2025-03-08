@@ -1,0 +1,180 @@
+/* Branch Page Styles */
+.branch-page {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.branch-header {
+  background-color: #fff;
+  padding: 20px 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.back-button {
+  background-color: transparent;
+  border: none;
+  color: #3498db;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 5px 10px;
+  margin-right: 20px;
+}
+
+.back-button:hover {
+  color: #2980b9;
+}
+
+.branch-title {
+  flex-grow: 1;
+}
+
+.branch-title h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #2c3e50;
+}
+
+.branch-location {
+  color: #7f8c8d;
+  margin: 5px 0 0 0;
+}
+
+.tab-navigation {
+  display: flex;
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tab-button {
+  padding: 15px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+  color: black;
+}
+
+.tab-button:hover {
+  background-color: #f8f9fa;
+}
+
+.tab-button.active {
+  border-bottom: 3px solid #3498db;
+  font-weight: 500;
+}
+
+.tab-content {
+  padding: 30px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.4rem;
+}
+
+.action-button {
+  background-color: #000;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 0;
+  font-size: 0.9rem;
+}
+
+.action-button:hover {
+  background-color: #3498db;
+}
+
+.content-placeholder {
+  background-color: white;
+  padding: 30px;
+  border-radius: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  color: #7f8c8d;
+}
+
+.filter-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-select {
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  background-color: white;
+}
+
+.reviews-section,
+.handbook-section,
+.applicants-section {
+  background-color: white;
+  border-radius: 0;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loading-message,
+.error-message {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .branch-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .back-button {
+    margin-bottom: 10px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-header h2 {
+    margin-bottom: 10px;
+  }
+
+  .filter-controls {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .tab-button {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+}

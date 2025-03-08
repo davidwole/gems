@@ -1,0 +1,101 @@
+/* tables.css - Styles for table components */
+
+.manage-users-container {
+  width: 100%;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.table-header h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #eaeaea;
+  background-color: white;
+}
+
+.data-table th {
+  background-color: #f8f9fa;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 500;
+  color: #2c3e50;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.data-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.data-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.data-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.suspended-row {
+  background-color: #fff5f5 !important;
+  color: #e74c3c;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.suspend-button,
+.activate-button,
+.delete-button,
+.confirm-delete-button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 0;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.suspend-button {
+  background-color: #f39c12;
+  color: white;
+}
+
+.activate-button {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.confirm-delete-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.suspend-button:hover,
+.activate-button:hover,
+.delete-button:hover,
+.confirm-delete-button:hover {
+  opacity: 0.9;
+}

@@ -1,0 +1,104 @@
+.handbook-preview-container {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.handbook-preview-header {
+  background-color: #fff;
+  padding: 15px 30px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.handbook-preview-header h2 {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.close-button {
+  background-color: #000;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 0;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  background-color: #3498db;
+}
+
+.pdf-viewer {
+  background-color: white;
+  margin: 30px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+/* .loading-spinner,
+.error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  background-color: #f5f7fa;
+} */
+
+.loading-spinner {
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.error-message {
+  text-align: center;
+}
+
+.error-message p {
+  color: #e74c3c;
+  margin-bottom: 20px;
+}
+
+.error-message button {
+  background-color: #000;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 0;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.error-message button:hover {
+  background-color: #3498db;
+}
+
+.no-handbook-message {
+  background-color: white;
+  padding: 20px;
+  margin: 30px;
+  text-align: center;
+  color: #7f8c8d;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+  .handbook-preview-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .pdf-viewer {
+    margin: 15px;
+    padding: 10px;
+  }
+}

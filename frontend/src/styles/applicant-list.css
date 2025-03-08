@@ -1,0 +1,180 @@
+/* applicant-list.css - Matching dashboard styling */
+
+.applicant-list-container {
+  width: 100%;
+  background-color: #f5f7fa;
+  padding: 25px;
+  min-height: 100vh;
+}
+
+.applicant-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.applicant-list-header h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.filter-options {
+  display: flex;
+  gap: 15px;
+}
+
+.status-filter {
+  padding: 6px 12px;
+  border: 1px solid #eaeaea;
+  border-radius: 0;
+  background-color: white;
+  font-size: 0.9rem;
+}
+
+.applicant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.applicant-card {
+  background-color: white;
+  border-radius: 0;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border: 1px solid #eaeaea;
+}
+
+.applicant-info h3 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.applicant-position,
+.applicant-email,
+.applicant-phone,
+.application-date,
+.interview-date {
+  margin: 5px 0;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.applicant-position span {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.applicant-status-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.applicant-status {
+  display: inline-block;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 0;
+  margin-bottom: 5px;
+}
+
+.status-pending {
+  background-color: #fdf2c9;
+  color: #c8a400;
+}
+
+.status-reviewing {
+  background-color: #e8f4fd;
+  color: #3498db;
+}
+
+.status-interviewed {
+  background-color: #d7f9e9;
+  color: #2ecc71;
+}
+
+.status-rejected {
+  background-color: #ffe5e5;
+  color: #e74c3c;
+}
+
+.status-accepted {
+  background-color: #d7f9e9;
+  color: #27ae60;
+}
+
+.applicant-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.view-button,
+.status-update-button {
+  flex: 1;
+  background-color: #000;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 0;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.view-button:hover,
+.status-update-button:hover {
+  background-color: #3498db;
+}
+
+.loading-container,
+.error-container,
+.content-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  padding: 30px;
+  border-radius: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  min-height: 200px;
+  width: 100%;
+  color: #7f8c8d;
+  font-size: 1rem;
+}
+
+.error-container {
+  color: #e74c3c;
+}
+
+@media (max-width: 768px) {
+  .applicant-list-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .filter-options {
+    width: 100%;
+  }
+
+  .status-filter {
+    width: 100%;
+  }
+
+  .applicant-grid {
+    grid-template-columns: 1fr;
+  }
+}
