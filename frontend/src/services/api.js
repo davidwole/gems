@@ -1,6 +1,6 @@
 // API base URL
-export const API_URL = "http://localhost:5000/api"; // Or your API URL
 // export const API_URL = "http://localhost:5000/api"; // Or your API URL
+export const API_URL = "https://gems-0q55.onrender.com"; // Or your API URL
 
 // Login user
 export const loginUser = async (email, password) => {
