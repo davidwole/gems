@@ -251,8 +251,7 @@ const renderRoleSpecificContent = (role, actions) => {
         <div className="data-admin-section">
           <h3>Data Administration</h3>
           <div className="action-buttons">
-            <button className="action-button">Manage Reviews</button>
-            <button className="action-button">Edit Handbooks</button>
+            <p>Click Manage on any branch to see more...</p>
           </div>
         </div>
       );

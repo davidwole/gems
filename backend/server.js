@@ -17,6 +17,7 @@ app.use("/api/handbooks", require("./routes/handbookRoutes"));
 app.use("/api/parents", require("./routes/parentRoutes"));
 app.use("/api/enrollment-forms", require("./routes/enrollmentFormRoutes"));
 app.use("/api/job-applications", require("./routes/jobApplicationRoutes"));
+app.use("/api/reviews", require("./routes/reviewRoutes"));
 
 app.get("/api/connect", (req, res) => {
   res.json({

@@ -430,3 +430,22 @@ export const getApplication = async (applicationId, token) => {
     return { success: false, error: error.message };
   }
 };
+
+export const getReviews = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/reviews`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch reviews");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    return { success: false, error: error.message };
+  }
+};

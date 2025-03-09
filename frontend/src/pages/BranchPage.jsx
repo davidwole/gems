@@ -7,6 +7,7 @@ import HandbookManager from "../components/HandbookManager"; // Import the new c
 import "../styles/branchPage.css";
 import ApplicantList from "../components/ApplicantList";
 import EnrollmentList from "../components/EnrollmentList";
+import Reviews from "../components/Reviews";
 
 const BranchPage = () => {
   const { id } = useParams();
@@ -155,9 +156,7 @@ const BranchPage = () => {
               <button className="action-button">Post New Review</button>
             </div>
             <div className="content-placeholder">
-              <p>
-                No reviews available. Create the first review for this branch.
-              </p>
+              <Reviews />
             </div>
           </div>
         )}
