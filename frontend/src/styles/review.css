@@ -154,4 +154,12 @@ textarea.form-control {
   border-radius: 0; /* Sharp edges */
   padding: 15px;
   border: 1px solid #eaeaea;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#remove-center {
+  display: block;
+  text-align: left;
 }

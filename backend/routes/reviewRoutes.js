@@ -10,7 +10,12 @@ const {
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 
-router.get("/", authMiddleware, roleMiddleware(["L1", "L2"]), getReviews);
+router.get(
+  "/:branch",
+  authMiddleware,
+  roleMiddleware(["L1", "L2"]),
+  getReviews
+);
 router.get("/:id", authMiddleware, roleMiddleware(["L1", "L2"]), getReview);
 router.post("/", authMiddleware, roleMiddleware(["L1", "L2"]), createReview);
 router.patch("/:id", authMiddleware, roleMiddleware(["L1", "L2"]), editReview);

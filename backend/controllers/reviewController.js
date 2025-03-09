@@ -2,7 +2,7 @@ const Review = require("../models/Review");
 
 const getReviews = async (req, res) => {
   try {
-    const reviews = await Review.find();
+    const reviews = await Review.find({ branch: req.params.branch });
 
     res.status(200).json(reviews);
   } catch (error) {

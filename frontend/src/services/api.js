@@ -431,9 +431,9 @@ export const getApplication = async (applicationId, token) => {
   }
 };
 
-export const getReviews = async (token) => {
+export const getReviews = async (token, branch) => {
   try {
-    const response = await fetch(`${API_URL}/reviews`, {
+    const response = await fetch(`${API_URL}/reviews/${branch}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -478,5 +478,21 @@ export const createReview = async (reviewData, token) => {
   } catch (error) {
     console.error("Error submitting enrollment form:", error);
     throw error; // Rethrow to allow calling code to handle the error
+  }
+};
+
+export const deleteReview = async (id, token) => {
+  try {
+    const response = await fetch(`${API_URL}/reviews/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return { error: "Failed to connect to server" };
   }
 };
