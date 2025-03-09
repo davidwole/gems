@@ -18,5 +18,11 @@ app.use("/api/parents", require("./routes/parentRoutes"));
 app.use("/api/enrollment-forms", require("./routes/enrollmentFormRoutes"));
 app.use("/api/job-applications", require("./routes/jobApplicationRoutes"));
 
+app.get("/api/connect", () => {
+  res.json({
+    message: "Connected",
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
