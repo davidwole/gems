@@ -91,12 +91,11 @@ const RedirectIfLoggedIn = ({ children }) => {
   return children;
 };
 
-useEffect(() => {
-  connect();
-}, []);
-
 // App routes that use context
 const AppContent = () => {
+  useEffect(() => {
+    connect();
+  }, []);
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/dashboard" />} />
