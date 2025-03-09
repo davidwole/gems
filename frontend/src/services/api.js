@@ -449,3 +449,34 @@ export const getReviews = async (token) => {
     return { success: false, error: error.message };
   }
 };
+
+export const createReview = async (reviewData, token) => {
+  try {
+    // Configure request options
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(reviewData),
+    };
+
+    // Make the API call
+    const response = await fetch(`${API_URL}/reviews/`, options);
+
+    // Parse JSON response
+    const data = await response.json();
+
+    // Check if request was successful
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to submit enrollment form");
+    }
+
+    // Return the data
+    return data;
+  } catch (error) {
+    console.error("Error submitting enrollment form:", error);
+    throw error; // Rethrow to allow calling code to handle the error
+  }
+};

@@ -1,14 +1,33 @@
 import { useContext, useEffect, useState } from "react";
 import { getReviews } from "../services/api";
 import { AuthContext } from "../context/AuthContext";
+import CreateReview from "./CreateReview";
 
-export default function Reviews() {
-  const [reviews, setReviews] = useState(false);
+export default function Reviews({ id }) {
+  const [reviews, setReviews] = useState([]);
+  const [showCreateReview, setShowCreateReview] = useState(false);
+
   const { token } = useContext(AuthContext);
 
   const fetchReviews = async () => {
-    const response = await getReviews(token);
-    console.log(response);
+    try {
+      const response = await getReviews(token);
+      setReviews(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleReviewCreated = (newReviewText) => {
+    // Create a temporary review object until the page refreshes
+    // In a real app, the API would return the complete review object
+    const tempReview = {
+      _id: `temp-${Date.now()}`,
+      review: newReviewText,
+      // Add any other properties that your review objects have
+    };
+
+    setReviews([...reviews, tempReview]);
   };
 
   useEffect(() => {
@@ -16,20 +35,46 @@ export default function Reviews() {
   }, []);
 
   return (
-    <div>
-      {reviews ? (
-        <div>
-          {reviews.map((reviewItem) => {
-            return (
-              <div key={reviewItem._id}>
-                <p>{reviewItem.review}</p>
-              </div>
-            );
-          })}
+    <>
+      <div className="reviews-section">
+        <div className="section-header">
+          <h2>Branch Reviews</h2>
+          <button
+            className="action-button"
+            onClick={() => setShowCreateReview(true)}
+          >
+            Post New Review
+          </button>
         </div>
-      ) : (
-        <p>No reviews available. Create the first review for this branch.</p>
+        <div className="content-placeholder">
+          {reviews && reviews.length > 0 ? (
+            <div className="reviews-list">
+              {reviews.map((reviewItem) => (
+                <div key={reviewItem._id} className="review-item">
+                  <p>{reviewItem.review}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>
+              No reviews available. Create the first review for this branch.
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Modal popup for creating review */}
+      {showCreateReview && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <CreateReview
+              branchId={id}
+              onClose={() => setShowCreateReview(false)}
+              onSuccess={handleReviewCreated}
+            />
+          </div>
+        </div>
       )}
-    </div>
+    </>
   );
 }

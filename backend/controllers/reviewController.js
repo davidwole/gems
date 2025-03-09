@@ -24,6 +24,18 @@ const getReview = async (req, res) => {
   }
 };
 
+const createReview = async (req, res) => {
+  try {
+    const newReview = await Review.create(req.body);
+
+    res.status(200).json(newReview);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+
 const editReview = async (req, res) => {
   try {
     const review = await Review.findByIdAndUpdate(req.params.id, req.body);
@@ -49,6 +61,7 @@ const deleteReivew = async (req, res) => {
 module.exports = {
   getReviews,
   getReview,
+  createReview,
   editReview,
   deleteReivew,
 };

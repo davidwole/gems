@@ -149,17 +149,7 @@ const BranchPage = () => {
           <HandbookManager branchId={id} type="parent" />
         )}
 
-        {activeTab === "reviews" && (
-          <div className="reviews-section">
-            <div className="section-header">
-              <h2>Branch Reviews</h2>
-              <button className="action-button">Post New Review</button>
-            </div>
-            <div className="content-placeholder">
-              <Reviews />
-            </div>
-          </div>
-        )}
+        {activeTab === "reviews" && <Reviews id={id} />}
       </div>
     </div>
   );
