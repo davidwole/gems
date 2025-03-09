@@ -1,18 +1,39 @@
 import { useContext, useEffect, useState } from "react";
-import { deleteReview, getReviews } from "../services/api";
+import { deleteReview, getReviews, editReview } from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 import CreateReview from "./CreateReview";
 
 export default function Reviews({ id }) {
   const [reviews, setReviews] = useState([]);
   const [showCreateReview, setShowCreateReview] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
 
   const { token } = useContext(AuthContext);
 
   const removeReview = async (id) => {
     const response = await deleteReview(id, token);
-
     setReviews(reviews.filter((review) => review._id != id));
+  };
+
+  const handleEdit = (reviewItem) => {
+    setEditingReview(reviewItem);
+  };
+
+  const handleEditSubmit = async (reviewId, editedText) => {
+    try {
+      await editReview(reviewId, { review: editedText }, token);
+
+      // Update the local state with the edited review
+      setReviews(
+        reviews.map((review) =>
+          review._id === reviewId ? { ...review, review: editedText } : review
+        )
+      );
+
+      setEditingReview(null);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchReviews = async () => {
@@ -59,7 +80,12 @@ export default function Reviews({ id }) {
                 <div key={reviewItem._id} className="review-item">
                   <p>{reviewItem.review}</p>
                   <div>
-                    <button className="action-button">Edit</button>
+                    <button
+                      className="action-button"
+                      onClick={() => handleEdit(reviewItem)}
+                    >
+                      Edit
+                    </button>
                     <button
                       className="action-button"
                       onClick={() => removeReview(reviewItem._id)}
@@ -86,6 +112,23 @@ export default function Reviews({ id }) {
               branchId={id}
               onClose={() => setShowCreateReview(false)}
               onSuccess={handleReviewCreated}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Modal popup for editing review */}
+      {editingReview && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <CreateReview
+              branchId={id}
+              onClose={() => setEditingReview(null)}
+              onSuccess={(editedText) =>
+                handleEditSubmit(editingReview._id, editedText)
+              }
+              initialText={editingReview.review}
+              isEditing={true}
             />
           </div>
         </div>

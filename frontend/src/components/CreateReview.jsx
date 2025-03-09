@@ -1,14 +1,27 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { createReview } from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 import "../styles/review.css";
 
-const CreateReview = ({ branchId, onClose, onSuccess }) => {
-  const [reviewText, setReviewText] = useState("");
+const CreateReview = ({
+  branchId,
+  onClose,
+  onSuccess,
+  initialText = "",
+  isEditing = false,
+}) => {
+  const [reviewText, setReviewText] = useState(initialText);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const { token } = useContext(AuthContext);
+
+  // Set initial text when editing
+  useEffect(() => {
+    if (initialText) {
+      setReviewText(initialText);
+    }
+  }, [initialText]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,13 +29,16 @@ const CreateReview = ({ branchId, onClose, onSuccess }) => {
     setError(null);
 
     try {
-      await createReview(
-        {
-          branch: branchId,
-          review: reviewText,
-        },
-        token
-      );
+      if (!isEditing) {
+        // Create new review
+        await createReview(
+          {
+            branch: branchId,
+            review: reviewText,
+          },
+          token
+        );
+      }
 
       setLoading(false);
       // Call success handler to update parent component
@@ -39,7 +55,7 @@ const CreateReview = ({ branchId, onClose, onSuccess }) => {
   return (
     <div className="modal-container">
       <div className="modal-header">
-        <h2>Post a Review</h2>
+        <h2>{isEditing ? "Edit Review" : "Post a Review"}</h2>
         <button className="close-button" onClick={onClose}>
           &times;
         </button>
@@ -75,7 +91,11 @@ const CreateReview = ({ branchId, onClose, onSuccess }) => {
             className="submit-button"
             disabled={loading || !reviewText.trim()}
           >
-            {loading ? "Submitting..." : "Post Review"}
+            {loading
+              ? "Submitting..."
+              : isEditing
+              ? "Update Review"
+              : "Post Review"}
           </button>
         </div>
       </form>

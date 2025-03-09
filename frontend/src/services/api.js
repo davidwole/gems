@@ -496,3 +496,20 @@ export const deleteReview = async (id, token) => {
     return { error: "Failed to connect to server" };
   }
 };
+
+export const editReview = async (id, body, token) => {
+  try {
+    const response = await fetch(`${API_URL}/reviews/${id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error toggling user suspension:", error);
+    return { error: "Failed to connect to server" };
+  }
+};
