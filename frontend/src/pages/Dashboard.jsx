@@ -241,7 +241,7 @@ const renderRoleSpecificContent = (role, actions) => {
               Create Branch
             </button>
             <button className="action-button" onClick={actions.openManageUsers}>
-              Manage Users
+              Manage Admin Users
             </button>
           </div>
         </div>

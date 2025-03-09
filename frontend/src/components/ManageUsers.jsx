@@ -4,7 +4,7 @@ import "../styles/tables.css";
 import { API_URL } from "../services/api";
 
 const ManageUsers = ({ onClose }) => {
-  const { token } = useContext(AuthContext);
+  const { token, user } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -31,7 +31,14 @@ const ManageUsers = ({ onClose }) => {
         throw new Error(data.msg || "Failed to fetch users");
       }
 
-      setUsers(data);
+      const condition = ["L1", "L2"]; // Use an array
+
+      setUsers(
+        data.filter(
+          (item) => item._id !== user.id && condition.includes(item.role)
+        )
+      );
+
       setLoading(false);
     } catch (err) {
       setError(err.message);

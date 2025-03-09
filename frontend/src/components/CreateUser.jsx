@@ -18,6 +18,8 @@ const CreateUser = ({ onClose, onSuccess }) => {
   const [branches, setBranches] = useState([]);
   const [formErrors, setFormErrors] = useState({});
   const [fetchingBranches, setFetchingBranches] = useState(true);
+  const [touchedFields, setTouchedFields] = useState({});
+  const [passwordFocused, setPasswordFocused] = useState(false);
 
   // Role descriptions for better clarity
   const roleDescriptions = {
@@ -76,20 +78,57 @@ const CreateUser = ({ onClose, onSuccess }) => {
     }
   }, [formData.role]);
 
-  // Validate input as user types
+  // Validate email format
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Validate password strength
+  const validatePassword = (password) => {
+    // Check if password is at least 8 characters
+    if (password.length < 8) {
+      return "Password must be at least 8 characters long";
+    }
+
+    // Check if password contains at least one uppercase letter
+    if (!/[A-Z]/.test(password)) {
+      return "Password must contain at least one uppercase letter";
+    }
+
+    // Check if password contains at least one lowercase letter
+    if (!/[a-z]/.test(password)) {
+      return "Password must contain at least one lowercase letter";
+    }
+
+    // Check if password contains at least one number
+    if (!/[0-9]/.test(password)) {
+      return "Password must contain at least one number";
+    }
+
+    // Check if password contains at least one special character
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      return "Password must contain at least one special character";
+    }
+
+    return "";
+  };
+
+  // Validate input as user types - but not email (that's handled on blur)
   const validateField = (name, value) => {
     let error = "";
 
-    // Skip validation for password field
-    if (name !== "password") {
-      // Check for empty or whitespace-only content
-      if (value.trim() === "") {
-        error = "Field cannot be empty or contain only spaces";
-      }
-      // Check if the string starts with a space
-      else if (value.startsWith(" ")) {
-        error = "Field cannot start with a space";
-      }
+    // Check for empty or whitespace-only content
+    if (value.trim() === "") {
+      error = "Field cannot be empty or contain only spaces";
+    }
+    // Check if the string starts with a space
+    else if (value.startsWith(" ")) {
+      error = "Field cannot start with a space";
+    }
+    // Skip email validation during typing (will happen on blur)
+    else if (name === "password") {
+      error = validatePassword(value);
     }
 
     setFormErrors((prev) => ({
@@ -100,6 +139,49 @@ const CreateUser = ({ onClose, onSuccess }) => {
     return error === "";
   };
 
+  // Handle blur event for email validation
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+
+    // Mark field as touched
+    setTouchedFields({
+      ...touchedFields,
+      [name]: true,
+    });
+
+    // Only validate email on blur
+    if (name === "email") {
+      let error = "";
+
+      if (value.trim() === "") {
+        error = "Field cannot be empty or contain only spaces";
+      } else if (value.startsWith(" ")) {
+        error = "Field cannot start with a space";
+      } else if (!validateEmail(value)) {
+        error = "Please enter a valid email address";
+      }
+
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: error,
+      }));
+    }
+
+    // Handle password field focus state
+    if (name === "password") {
+      setPasswordFocused(false);
+    }
+  };
+
+  const handleFocus = (e) => {
+    const { name } = e.target;
+
+    // Set password focus state
+    if (name === "password") {
+      setPasswordFocused(true);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -108,8 +190,17 @@ const CreateUser = ({ onClose, onSuccess }) => {
       [name]: value,
     });
 
-    // Validate the field
-    validateField(name, value);
+    // Skip email validation during typing (will happen on blur)
+    if (name !== "email") {
+      validateField(name, value);
+    } else {
+      // Clear previous email errors during typing
+      // We'll validate properly on blur
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -117,9 +208,17 @@ const CreateUser = ({ onClose, onSuccess }) => {
 
     // Create validation configuration
     const validationConfig = {
-      skipFields: ["password"],
-      requiredFields: ["name", "email", "role"],
+      requiredFields: ["name", "email", "role", "password"],
       customValidators: {
+        email: (value) => {
+          if (!validateEmail(value)) {
+            return "Please enter a valid email address";
+          }
+          return "";
+        },
+        password: (value) => {
+          return validatePassword(value);
+        },
         branch: (value) => {
           if (!globalRoles.includes(formData.role) && !value) {
             return "Branch is required for this role";
@@ -132,6 +231,13 @@ const CreateUser = ({ onClose, onSuccess }) => {
     // Validate all fields using our utility
     const errors = validateForm(formData, validationConfig);
     setFormErrors(errors);
+
+    // Mark all fields as touched when submitting
+    const allTouched = Object.keys(formData).reduce((acc, field) => {
+      acc[field] = true;
+      return acc;
+    }, {});
+    setTouchedFields(allTouched);
 
     if (Object.keys(errors).length > 0) {
       return;
@@ -177,9 +283,17 @@ const CreateUser = ({ onClose, onSuccess }) => {
 
     // Create validation configuration
     const validationConfig = {
-      skipFields: ["password"],
-      requiredFields: ["name", "email", "role"],
+      requiredFields: ["name", "email", "role", "password"],
       customValidators: {
+        email: (value) => {
+          if (!validateEmail(value)) {
+            return "Please enter a valid email address";
+          }
+          return "";
+        },
+        password: (value) => {
+          return validatePassword(value);
+        },
         branch: (value) => {
           if (!globalRoles.includes(formData.role) && !value) {
             return "Branch is required for this role";
@@ -191,11 +305,6 @@ const CreateUser = ({ onClose, onSuccess }) => {
 
     // Check all fields using our utility
     const errors = validateForm(formData, validationConfig);
-
-    // Additionally check that password is not empty
-    if (formData.password === "") {
-      return false;
-    }
 
     return Object.keys(errors).length === 0;
   };
@@ -227,6 +336,7 @@ const CreateUser = ({ onClose, onSuccess }) => {
             name="name"
             value={formData.name || ""}
             onChange={handleChange}
+            onBlur={handleBlur}
             required
             className={formErrors.name ? "input-error" : ""}
           />
@@ -243,10 +353,11 @@ const CreateUser = ({ onClose, onSuccess }) => {
             name="email"
             value={formData.email || ""}
             onChange={handleChange}
+            onBlur={handleBlur}
             required
             className={formErrors.email ? "input-error" : ""}
           />
-          {formErrors.email && (
+          {touchedFields.email && formErrors.email && (
             <div className="error-text">{formErrors.email}</div>
           )}
         </div>
@@ -259,12 +370,50 @@ const CreateUser = ({ onClose, onSuccess }) => {
             name="password"
             value={formData.password || ""}
             onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             required
             className={formErrors.password ? "input-error" : ""}
           />
           {formErrors.password && (
             <div className="error-text">{formErrors.password}</div>
           )}
+          {/* Password requirements hint */}
+          <div
+            className={`password-hint ${
+              passwordFocused || formData.password ? "visible" : ""
+            }`}
+          >
+            <div className="hint-icon">i</div>
+            <div className="hint-text">
+              Password must contain:
+              <ul>
+                <li className={formData.password.length >= 8 ? "valid" : ""}>
+                  At least 8 characters
+                </li>
+                <li className={/[A-Z]/.test(formData.password) ? "valid" : ""}>
+                  One uppercase letter
+                </li>
+                <li className={/[a-z]/.test(formData.password) ? "valid" : ""}>
+                  One lowercase letter
+                </li>
+                <li className={/[0-9]/.test(formData.password) ? "valid" : ""}>
+                  One number
+                </li>
+                <li
+                  className={
+                    /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
+                      formData.password
+                    )
+                      ? "valid"
+                      : ""
+                  }
+                >
+                  One special character
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
 
         <div className="form-group">
@@ -274,6 +423,7 @@ const CreateUser = ({ onClose, onSuccess }) => {
             name="role"
             value={formData.role}
             onChange={handleChange}
+            onBlur={handleBlur}
             required
           >
             {Object.entries(roleDescriptions).map(([role, description]) => (
@@ -300,6 +450,7 @@ const CreateUser = ({ onClose, onSuccess }) => {
                 name="branch"
                 value={formData.branch || ""}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 required
                 className={formErrors.branch ? "input-error" : ""}
               >
@@ -330,6 +481,72 @@ const CreateUser = ({ onClose, onSuccess }) => {
           </button>
         </div>
       </form>
+
+      {/* CSS for the password hint */}
+      <style jsx>{`
+        .password-hint {
+          display: flex;
+          margin-top: 6px;
+          background-color: #f8f9fa;
+          border: 1px solid #e2e8f0;
+          border-radius: 4px;
+          padding: 8px 12px;
+          font-size: 0.85rem;
+          color: #4a5568;
+          opacity: 0;
+          max-height: 0;
+          overflow: hidden;
+          transition: all 0.3s ease;
+        }
+
+        .password-hint.visible {
+          opacity: 1;
+          max-height: 200px;
+          margin-top: 8px;
+        }
+
+        .hint-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 18px;
+          height: 18px;
+          border-radius: 50%;
+          background-color: #3182ce;
+          color: white;
+          font-weight: bold;
+          font-size: 12px;
+          margin-right: 10px;
+          flex-shrink: 0;
+        }
+
+        .hint-text {
+          flex: 1;
+        }
+
+        .hint-text ul {
+          margin: 6px 0 0 0;
+          padding-left: 18px;
+        }
+
+        .hint-text li {
+          margin-bottom: 3px;
+          position: relative;
+          list-style-type: none;
+        }
+
+        .hint-text li:before {
+          content: "○";
+          position: absolute;
+          left: -18px;
+          color: #a0aec0;
+        }
+
+        .hint-text li.valid:before {
+          content: "✓";
+          color: #38a169;
+        }
+      `}</style>
     </div>
   );
 };
