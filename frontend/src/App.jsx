@@ -21,6 +21,7 @@ import UploadDocuments from "./pages/UploadDocuments";
 import ParentHandbookSign from "./pages/ParentHandbookSign";
 import IESFormSigning from "./pages/forms/IESFormSigning";
 import ApplicationViewForm from "./pages/forms/ApplicationViewForm";
+import { connect } from "./services/api";
 
 // Suspension Modal Component
 const SuspensionModal = ({ onClose }) => {
@@ -89,6 +90,10 @@ const RedirectIfLoggedIn = ({ children }) => {
 
   return children;
 };
+
+useEffect(() => {
+  connect();
+}, []);
 
 // App routes that use context
 const AppContent = () => {

@@ -2,6 +2,12 @@
 // export const API_URL = "http://localhost:5000/api"; // Or your API URL
 export const API_URL = "https://gems-0q55.onrender.com/api"; // Or your API URL
 
+export const connect = async () => {
+  const response = await fetch(`${API_URL}/connect`);
+  const data = await response.json();
+  console.log(data.message);
+};
+
 // Login user
 export const loginUser = async (email, password) => {
   try {
