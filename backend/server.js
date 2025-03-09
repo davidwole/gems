@@ -18,7 +18,7 @@ app.use("/api/parents", require("./routes/parentRoutes"));
 app.use("/api/enrollment-forms", require("./routes/enrollmentFormRoutes"));
 app.use("/api/job-applications", require("./routes/jobApplicationRoutes"));
 
-app.get("/api/connect", () => {
+app.get("/api/connect", (req, res) => {
   res.json({
     message: "Connected",
   });
