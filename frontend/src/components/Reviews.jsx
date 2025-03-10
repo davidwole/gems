@@ -23,16 +23,17 @@ export default function Reviews({ id }) {
     try {
       await editReview(reviewId, { review: editedText }, token);
 
-      // Update the local state with the edited review
+      // Update the reviews list with the edited review
       setReviews(
         reviews.map((review) =>
           review._id === reviewId ? { ...review, review: editedText } : review
         )
       );
 
+      // Close the edit modal
       setEditingReview(null);
     } catch (error) {
-      console.log(error);
+      console.error("Error editing review:", error);
     }
   };
 

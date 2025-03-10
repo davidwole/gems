@@ -502,6 +502,7 @@ export const editReview = async (id, body, token) => {
     const response = await fetch(`${API_URL}/reviews/${id}`, {
       method: "PATCH",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
@@ -509,7 +510,7 @@ export const editReview = async (id, body, token) => {
 
     return await response.json();
   } catch (error) {
-    console.error("Error toggling user suspension:", error);
+    console.error("Error editing review:", error);
     return { error: "Failed to connect to server" };
   }
 };

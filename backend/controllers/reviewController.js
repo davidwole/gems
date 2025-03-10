@@ -38,7 +38,17 @@ const createReview = async (req, res) => {
 
 const editReview = async (req, res) => {
   try {
-    const review = await Review.findByIdAndUpdate(req.params.id, req.body);
+    const review = await Review.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+
+    if (!review) {
+      return res.status(404).json({
+        error: "Review not found",
+      });
+    }
+
+    res.status(200).json(review);
   } catch (error) {
     res.status(500).json({
       error: error.message,
