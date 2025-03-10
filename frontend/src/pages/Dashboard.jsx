@@ -28,8 +28,14 @@ const Dashboard = () => {
 
     const fetchData = async () => {
       setLoading(true);
-      if (user?.role === "L1" || user?.role === "L2") {
+      if (
+        user?.role === "L1" ||
+        user?.role === "L2" ||
+        user?.role === "L3" ||
+        user?.role === "L4"
+      ) {
         const branchData = await getBranches(token);
+        console.log(branchData);
         setBranches(branchData || []);
       }
       setLoading(false);
@@ -171,35 +177,44 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {(user.role === "L1" || user.role === "L2") && (
+        {(user.role === "L1" ||
+          user.role === "L2" ||
+          user.role === "L3" ||
+          user.role === "L4") && (
           <div className="branches-section">
             <h3>Branches</h3>
             {loading ? (
               <p>Loading branches...</p>
             ) : branches.length > 0 ? (
               <div className="branches-grid">
-                {branches.map((branch) => (
-                  <div key={branch._id} className="branch-card">
-                    <h4>{branch.name}</h4>
-                    <p className="branch-location">{branch.location}</p>
-                    <div className="branch-actions">
-                      {user.role === "L1" && (
+                {branches
+                  .filter((branch) =>
+                    user.role === "L3" || user.role === "L4"
+                      ? branch._id === user.branch
+                      : true
+                  )
+                  .map((branch) => (
+                    <div key={branch._id} className="branch-card">
+                      <h4>{branch.name}</h4>
+                      <p className="branch-location">{branch.location}</p>
+                      <div className="branch-actions">
+                        {user.role === "L1" && (
+                          <button
+                            className="edit-button"
+                            onClick={() => handleEditBranch(branch)}
+                          >
+                            Edit
+                          </button>
+                        )}
                         <button
-                          className="edit-button"
-                          onClick={() => handleEditBranch(branch)}
+                          className="manage-button"
+                          onClick={() => handleManageBranch(branch._id)}
                         >
-                          Edit
+                          Manage
                         </button>
-                      )}
-                      <button
-                        className="manage-button"
-                        onClick={() => handleManageBranch(branch._id)}
-                      >
-                        Manage
-                      </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             ) : (
               <p>No branches found.</p>
@@ -256,14 +271,29 @@ const renderRoleSpecificContent = (role, actions) => {
         </div>
       );
     case "L3":
+    case "L4":
       return (
-        <div className="director-section">
-          <h3>Branch Director Tools</h3>
+        <div className="data-admin-section">
+          <h3>Branch Administration</h3>
           <div className="action-buttons">
-            <button className="action-button">View Applicants</button>
-            <button className="action-button">Track Hiring</button>
+            <p>Click Manage on your branch to see more...</p>
           </div>
         </div>
+      );
+    case "L30":
+      return (
+        <>
+          <div className="branches-section">
+            <h3>Branches</h3>
+          </div>
+          <div className="director-section">
+            <h3>Branch Director Tools</h3>
+            <div className="action-buttons">
+              <button className="action-button">View Applicants</button>
+              <button className="action-button">Track Hiring</button>
+            </div>
+          </div>
+        </>
       );
     case "L6": // Applicant role
       return (

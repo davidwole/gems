@@ -18,6 +18,7 @@ router.get(
 );
 router.get("/:id", authMiddleware, roleMiddleware(["L1", "L2"]), getReview);
 router.post("/", authMiddleware, roleMiddleware(["L1", "L2"]), createReview);
+router.patch("/:id", authMiddleware, roleMiddleware(["L1", "L2"]), editReview);
 router.delete(
   "/:id",
   authMiddleware,

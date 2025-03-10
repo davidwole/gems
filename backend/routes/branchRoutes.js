@@ -11,7 +11,12 @@ const { getUsersByBranch } = require("../controllers/userController");
 
 const router = express.Router();
 
-router.get("/", authMiddleware, roleMiddleware(["L1", "L2"]), getAllBranches);
+router.get(
+  "/",
+  authMiddleware,
+  roleMiddleware(["L1", "L2", "L3", "L4"]),
+  getAllBranches
+);
 router.get("/:branchId/users", getUsersByBranch);
 router.get("/:id", getBranchById);
 router.post("/", authMiddleware, roleMiddleware(["L1"]), createBranch);

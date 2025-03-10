@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { getBranchById } from "../services/api";
 import BranchUsers from "../components/BranchUsers";
-import HandbookManager from "../components/HandbookManager"; // Import the new component
+import HandbookManager from "../components/HandbookManager";
 import "../styles/branchPage.css";
 import ApplicantList from "../components/ApplicantList";
 import EnrollmentList from "../components/EnrollmentList";
@@ -16,6 +16,39 @@ const BranchPage = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("enrollments");
   const navigate = useNavigate();
+
+  // User level - assuming the user object has a "level" property (L1, L2, L3, L4)
+  const userLevel = user?.role || "L4"; // Default to most restricted level if not available
+
+  // Define tab access based on user level
+  const getAccessibleTabs = () => {
+    switch (userLevel) {
+      case "L1":
+      case "L2":
+        return [
+          "enrollments",
+          "applicants",
+          "reviews",
+          "users",
+          "employee-handbook",
+          "parent-handbook",
+        ];
+      case "L3":
+        return ["enrollments", "applicants"];
+      case "L4":
+      default:
+        return ["enrollments"];
+    }
+  };
+
+  const accessibleTabs = getAccessibleTabs();
+
+  // Set active tab - ensure it's an accessible one
+  useEffect(() => {
+    if (!accessibleTabs.includes(activeTab)) {
+      setActiveTab(accessibleTabs[0]);
+    }
+  }, [userLevel, activeTab]);
 
   useEffect(() => {
     if (!token) {
@@ -61,6 +94,11 @@ const BranchPage = () => {
     );
   }
 
+  // Helper function to check if a tab should be visible
+  const isTabVisible = (tabName) => {
+    return accessibleTabs.includes(tabName);
+  };
+
   return (
     <div className="branch-page">
       <header className="branch-header">
@@ -74,50 +112,67 @@ const BranchPage = () => {
       </header>
 
       <div className="tab-navigation">
-        <button
-          className={`tab-button ${
-            activeTab === "enrollments" ? "active" : ""
-          }`}
-          onClick={() => setActiveTab("enrollments")}
-        >
-          Enrollments
-        </button>
+        {isTabVisible("enrollments") && (
+          <button
+            className={`tab-button ${
+              activeTab === "enrollments" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("enrollments")}
+          >
+            Enrollments
+          </button>
+        )}
 
-        <button
-          className={`tab-button ${activeTab === "applicants" ? "active" : ""}`}
-          onClick={() => setActiveTab("applicants")}
-        >
-          Job Applicants
-        </button>
+        {isTabVisible("applicants") && (
+          <button
+            className={`tab-button ${
+              activeTab === "applicants" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("applicants")}
+          >
+            Job Applicants
+          </button>
+        )}
 
-        <button
-          className={`tab-button ${activeTab === "reviews" ? "active" : ""}`}
-          onClick={() => setActiveTab("reviews")}
-        >
-          Reviews
-        </button>
-        <button
-          className={`tab-button ${activeTab === "users" ? "active" : ""}`}
-          onClick={() => setActiveTab("users")}
-        >
-          Users
-        </button>
-        <button
-          className={`tab-button ${
-            activeTab === "employee-handbook" ? "active" : ""
-          }`}
-          onClick={() => setActiveTab("employee-handbook")}
-        >
-          Employee Handbook
-        </button>
-        <button
-          className={`tab-button ${
-            activeTab === "parent-handbook" ? "active" : ""
-          }`}
-          onClick={() => setActiveTab("parent-handbook")}
-        >
-          Parent Handbook
-        </button>
+        {isTabVisible("reviews") && (
+          <button
+            className={`tab-button ${activeTab === "reviews" ? "active" : ""}`}
+            onClick={() => setActiveTab("reviews")}
+          >
+            Reviews
+          </button>
+        )}
+
+        {isTabVisible("users") && (
+          <button
+            className={`tab-button ${activeTab === "users" ? "active" : ""}`}
+            onClick={() => setActiveTab("users")}
+          >
+            Users
+          </button>
+        )}
+
+        {isTabVisible("employee-handbook") && (
+          <button
+            className={`tab-button ${
+              activeTab === "employee-handbook" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("employee-handbook")}
+          >
+            Employee Handbook
+          </button>
+        )}
+
+        {isTabVisible("parent-handbook") && (
+          <button
+            className={`tab-button ${
+              activeTab === "parent-handbook" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("parent-handbook")}
+          >
+            Parent Handbook
+          </button>
+        )}
       </div>
 
       <div className="tab-content">
@@ -125,12 +180,15 @@ const BranchPage = () => {
           <div className="applicants-section">
             <div className="section-header">
               <h2>Enrollments</h2>
+              <Link to="/viewform">
+                <button className="approve-button">Enrollment Form</button>
+              </Link>
             </div>
             <EnrollmentList branchId={id} />
           </div>
         )}
 
-        {activeTab === "applicants" && (
+        {activeTab === "applicants" && isTabVisible("applicants") && (
           <div className="applicants-section">
             <div className="section-header">
               <h2>Job Applicants</h2>
@@ -139,17 +197,20 @@ const BranchPage = () => {
           </div>
         )}
 
-        {activeTab === "users" && <BranchUsers />}
+        {activeTab === "users" && isTabVisible("users") && <BranchUsers />}
 
-        {activeTab === "employee-handbook" && (
-          <HandbookManager branchId={id} type="employee" />
-        )}
+        {activeTab === "employee-handbook" &&
+          isTabVisible("employee-handbook") && (
+            <HandbookManager branchId={id} type="employee" />
+          )}
 
-        {activeTab === "parent-handbook" && (
+        {activeTab === "parent-handbook" && isTabVisible("parent-handbook") && (
           <HandbookManager branchId={id} type="parent" />
         )}
 
-        {activeTab === "reviews" && <Reviews id={id} />}
+        {activeTab === "reviews" && isTabVisible("reviews") && (
+          <Reviews id={id} />
+        )}
       </div>
     </div>
   );

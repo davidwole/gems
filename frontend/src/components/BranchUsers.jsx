@@ -108,7 +108,7 @@ const BranchUsers = () => {
     <div className="branch-users-section">
       <div className="section-header">
         <h2>Branch Users</h2>
-        {isL1User && <button className="action-button">Add New User</button>}
+        {/* {isL1User && <button className="action-button">Add New User</button>} */}
       </div>
 
       {error && <div className="error-message">{error}</div>}

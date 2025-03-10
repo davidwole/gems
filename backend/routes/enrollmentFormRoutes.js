@@ -21,7 +21,7 @@ router.post("/", authMiddleware, createEnrollmentForm);
 router.get(
   "/",
   authMiddleware,
-  roleMiddleware(["L1", "L2"]),
+  roleMiddleware(["L1", "L2", "L3", "L4"]),
   getAllEnrollmentForms
 );
 
@@ -40,7 +40,7 @@ router.get("/me", authMiddleware, getEnrollmentFormsByUser);
 router.get(
   "/user/:userId",
   authMiddleware,
-  roleMiddleware(["L1", "L2"]),
+  roleMiddleware(["L1", "L2", "L3", "L4"]),
   getEnrollmentFormsByUser
 );
 
@@ -54,7 +54,7 @@ router.put("/:id", authMiddleware, updateEnrollmentForm);
 router.patch(
   "/:id",
   authMiddleware,
-  roleMiddleware(["L1", "L2"]),
+  roleMiddleware(["L1", "L2", "L3", "L4"]),
   updateFormStatus
 );
 

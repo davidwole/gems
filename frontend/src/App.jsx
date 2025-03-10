@@ -22,6 +22,7 @@ import ParentHandbookSign from "./pages/ParentHandbookSign";
 import IESFormSigning from "./pages/forms/IESFormSigning";
 import ApplicationViewForm from "./pages/forms/ApplicationViewForm";
 import { connect } from "./services/api";
+import IESFormUnfilled from "./pages/forms/IESFormUnfilled";
 
 // Suspension Modal Component
 const SuspensionModal = ({ onClose }) => {
@@ -164,6 +165,7 @@ const AppContent = () => {
       <Route path="/enroll/:branchId" element={<ParentRegistration />} />
       <Route path="/applicant-registration/:branchId" element={<I9Form />} />
       <Route path="/parent-registration/:branchId" element={<IESForm />} />
+      <Route path="/viewform" element={<IESFormUnfilled />} />
       <Route path="/uploadid" element={<UploadID />} />
       <Route path="/uploaddocuments" element={<UploadDocuments />} />
     </Routes>
