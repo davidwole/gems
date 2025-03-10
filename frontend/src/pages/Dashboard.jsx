@@ -280,17 +280,22 @@ const renderRoleSpecificContent = (role, actions) => {
           </div>
         </div>
       );
-    case "L30":
+    case "L5":
       return (
         <>
-          <div className="branches-section">
-            <h3>Branches</h3>
-          </div>
           <div className="director-section">
-            <h3>Branch Director Tools</h3>
+            <h3>Employee Tools</h3>
             <div className="action-buttons">
-              <button className="action-button">View Applicants</button>
-              <button className="action-button">Track Hiring</button>
+              <button
+                className="action-button"
+                onClick={() =>
+                  (window.location.href =
+                    "https://gator3139.hostgator.com:2096/webmaillogin.cgi")
+                }
+              >
+                Email Service
+              </button>
+              <button className="action-button">Payroll Portal</button>
             </div>
           </div>
         </>
