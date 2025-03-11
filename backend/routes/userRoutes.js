@@ -6,6 +6,7 @@ const {
   deleteUser,
   getAllUsers,
   toggleUserSuspension,
+  upgradeToL5,
 } = require("../controllers/userController");
 
 const router = express.Router();
@@ -18,6 +19,12 @@ router.patch(
   authMiddleware,
   roleMiddleware(["L1"]),
   toggleUserSuspension
+);
+router.patch(
+  "/:id/upgrade",
+  authMiddleware,
+  roleMiddleware(["L1", "L2", "L3"]),
+  upgradeToL5
 );
 
 module.exports = router;

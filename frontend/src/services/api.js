@@ -514,3 +514,19 @@ export const editReview = async (id, body, token) => {
     return { error: "Failed to connect to server" };
   }
 };
+
+export const upgradeToL6 = async (userId, token) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${userId}/upgrade`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error upgrading user:", error);
+    return { error: "Failed to connect to server" };
+  }
+};

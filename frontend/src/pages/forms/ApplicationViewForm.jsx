@@ -3,7 +3,11 @@ import { useState, useEffect, useContext } from "react";
 import "../../styles/I9Form.css";
 import Signature from "../../components/Signature";
 import { AuthContext } from "../../context/AuthContext";
-import { getApplication, submitJobApplication } from "../../services/api";
+import {
+  getApplication,
+  submitJobApplication,
+  upgradeToL6,
+} from "../../services/api";
 import { useParams } from "react-router-dom";
 
 export default function ApplicationViewForm() {
@@ -81,28 +85,8 @@ export default function ApplicationViewForm() {
     }
   };
 
-  const handleSignatureSave = (dataUrl) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      signature: dataUrl,
-    }));
-  };
-
-  // Form submission handler
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await submitJobApplication(formData, token);
-
-      if (!response.ok) {
-        console.log(response);
-      }
-
-      console.log("Success");
-    } catch (error) {
-      console.log(error);
-    }
+  const upgrade = async () => {
+    const response = await upgradeToL6(formData.user._id, token);
   };
 
   useEffect(() => {
@@ -127,7 +111,11 @@ export default function ApplicationViewForm() {
           <h4>Applicant Information</h4>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <button className="approve-button" onClick={upgrade}>
+          Upgrade to L5
+        </button>
+
+        <form>
           <fieldset disabled>
             {/* Applicant Information */}
             <div className="flex align_center">
