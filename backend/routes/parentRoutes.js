@@ -1,8 +1,22 @@
 const express = require("express");
 const router = express.Router();
-const { registerParent } = require("../controllers/parentController");
+const {
+  registerParent,
+  uploadChildDocuments,
+  getUserDocuments,
+  deleteDocument,
+} = require("../controllers/parentController");
+const authMiddleware = require("../middleware/authMiddleware");
 
 // POST /api/parents/register
-router.post("/register", registerParent);
+router.post("/register", authMiddleware, registerParent);
+
+router.post("/upload_document", authMiddleware, uploadChildDocuments);
+
+// GET /api/parents/documents/:userId
+router.get("/documents/:userId", authMiddleware, getUserDocuments);
+
+// DELETE /api/parents/documents/:documentId
+router.delete("/documents/:documentId", authMiddleware, deleteDocument);
 
 module.exports = router;

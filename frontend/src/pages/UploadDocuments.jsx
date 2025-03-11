@@ -1,8 +1,10 @@
 import "../styles/UploadDocuments.css";
 import { Upload, FileText } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 export default function UploadDocuments() {
+  const { user, token } = useContext(AuthContext);
   const [selectedFile, setSelectedFile] = useState(null);
   const [documentType, setDocumentType] = useState("");
   const fileInputRef = useRef(null);
@@ -28,12 +30,56 @@ export default function UploadDocuments() {
     fileInputRef.current.click();
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (selectedFile && documentType) {
-      // TODO: Implement file upload logic
-      console.log("Uploading file:", selectedFile);
-      console.log("Document Type:", documentType);
+
+    if (!selectedFile || !documentType) {
+      setMessage({
+        type: "error",
+        text: "Please select a document type and file",
+      });
+      return;
+    }
+
+    setLoading(true);
+    setMessage(null);
+
+    try {
+      const documentData = {
+        user: user._id,
+        documentType: documentType,
+      };
+
+      const response = await uploadChildDocument(
+        documentData,
+        selectedFile,
+        token
+      );
+
+      // If upload was successful, add the new document to the list
+      if (response.success) {
+        setDocuments([...documents, response.document]);
+        setMessage({
+          type: "success",
+          text: "Document uploaded successfully",
+        });
+        // Reset form
+        setSelectedFile(null);
+        setDocumentType("");
+      } else {
+        setMessage({
+          type: "error",
+          text: response.message || "Failed to upload document",
+        });
+      }
+    } catch (error) {
+      console.error("Error uploading document:", error);
+      setMessage({
+        type: "error",
+        text: error.message || "An error occurred while uploading the document",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 

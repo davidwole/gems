@@ -530,3 +530,74 @@ export const upgradeToL6 = async (userId, token) => {
     return { error: "Failed to connect to server" };
   }
 };
+
+// Add this to your existing api.js file
+
+// Upload child document
+export const uploadChildDocument = async (documentData, file, token) => {
+  try {
+    const formData = new FormData();
+    formData.append("userId", documentData.user);
+    formData.append("documentType", documentData.documentType);
+    formData.append("file", file);
+
+    const response = await fetch(`${API_URL}/parents/upload_document`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to upload document");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error uploading document:", error);
+    throw error;
+  }
+};
+
+// Get all documents for a user
+export const getUserDocuments = async (userId, token) => {
+  try {
+    const response = await fetch(`${API_URL}/parents/documents/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch documents");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Delete a document
+export const deleteDocument = async (documentId, token) => {
+  try {
+    const response = await fetch(`${API_URL}/parents/documents/${documentId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete document");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting document:", error);
+    return { success: false, error: error.message };
+  }
+};
