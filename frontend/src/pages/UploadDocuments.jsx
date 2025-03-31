@@ -2,6 +2,7 @@ import "../styles/UploadDocuments.css";
 import { Upload, FileText } from "lucide-react";
 import { useState, useRef, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { uploadChildDocument } from "../services/api";
 
 export default function UploadDocuments() {
   const { user, token } = useContext(AuthContext);
