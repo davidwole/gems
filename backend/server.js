@@ -19,6 +19,7 @@ app.use("/api/parents", require("./routes/parentRoutes"));
 app.use("/api/enrollment-forms", require("./routes/enrollmentFormRoutes"));
 app.use("/api/job-applications", require("./routes/jobApplicationRoutes"));
 app.use("/api/reviews", require("./routes/reviewRoutes"));
+app.use("/api/contact", require("./routes/contactRoutes")); // Add this line for the new contact routes
 
 app.get("/api/connect", (req, res) => {
   res.json({
