@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API_URL } from "../../services/api";
 import "../../styles/applicantRegistration.css";
+import "../../styles/forms.css"; // Import the forms.css styles
 
 const ApplicantRegistration = () => {
   const { branchId } = useParams();
@@ -16,6 +17,7 @@ const ApplicantRegistration = () => {
   const [branchName, setBranchName] = useState("");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
 
   // Fetch branch info to display the specific branch name
   useEffect(() => {
@@ -41,6 +43,36 @@ const ApplicantRegistration = () => {
     }
   }, [branchId]);
 
+  // Validate password strength
+  const validatePassword = (password) => {
+    // Check if password is at least 8 characters
+    if (password.length < 8) {
+      return "Password must be at least 8 characters long";
+    }
+
+    // Check if password contains at least one uppercase letter
+    if (!/[A-Z]/.test(password)) {
+      return "Password must contain at least one uppercase letter";
+    }
+
+    // Check if password contains at least one lowercase letter
+    if (!/[a-z]/.test(password)) {
+      return "Password must contain at least one lowercase letter";
+    }
+
+    // Check if password contains at least one number
+    if (!/[0-9]/.test(password)) {
+      return "Password must contain at least one number";
+    }
+
+    // Check if password contains at least one special character
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      return "Password must contain at least one special character";
+    }
+
+    return "";
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -57,6 +89,50 @@ const ApplicantRegistration = () => {
       ...formData,
       [name]: value,
     });
+
+    // Validate password as user types
+    if (name === "password") {
+      const passwordError = validatePassword(value);
+      if (passwordError) {
+        setErrors((prev) => ({
+          ...prev,
+          password: passwordError,
+        }));
+      }
+    }
+
+    // Check password match when confirmPassword changes
+    if (name === "confirmPassword") {
+      if (value !== formData.password) {
+        setErrors((prev) => ({
+          ...prev,
+          confirmPassword: "Passwords do not match",
+        }));
+      }
+    }
+  };
+
+  const handleFocus = (e) => {
+    const { name } = e.target;
+    if (name === "password") {
+      setPasswordFocused(true);
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    if (name === "password") {
+      setPasswordFocused(false);
+
+      // Validate password on blur
+      const passwordError = validatePassword(formData.password);
+      if (passwordError) {
+        setErrors((prev) => ({
+          ...prev,
+          password: passwordError,
+        }));
+      }
+    }
   };
 
   const validateForm = () => {
@@ -82,6 +158,11 @@ const ApplicantRegistration = () => {
     }
 
     // Password validation
+    const passwordError = validatePassword(formData.password);
+    if (passwordError) {
+      newErrors.password = passwordError;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
@@ -151,8 +232,9 @@ const ApplicantRegistration = () => {
             onChange={handleChange}
             placeholder="Enter your full name"
             required
+            className={errors.name ? "input-error" : ""}
           />
-          {errors.name && <div className="field-error">{errors.name}</div>}
+          {errors.name && <div className="error-text">{errors.name}</div>}
         </div>
         <div className="form-group">
           <label>Email</label>
@@ -163,8 +245,9 @@ const ApplicantRegistration = () => {
             onChange={handleChange}
             placeholder="Enter your email"
             required
+            className={errors.email ? "input-error" : ""}
           />
-          {errors.email && <div className="field-error">{errors.email}</div>}
+          {errors.email && <div className="error-text">{errors.email}</div>}
         </div>
         <div className="form-group">
           <label>Position Applying For</label>
@@ -175,9 +258,10 @@ const ApplicantRegistration = () => {
             onChange={handleChange}
             placeholder="Enter the position you're applying for"
             required
+            className={errors.position ? "input-error" : ""}
           />
           {errors.position && (
-            <div className="field-error">{errors.position}</div>
+            <div className="error-text">{errors.position}</div>
           )}
         </div>
         <div className="form-group">
@@ -187,9 +271,51 @@ const ApplicantRegistration = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             placeholder="Create a password"
             required
+            className={errors.password ? "input-error" : ""}
           />
+          {errors.password && (
+            <div className="error-text">{errors.password}</div>
+          )}
+          {/* Password requirements hint */}
+          <div
+            className={`password-hint ${
+              passwordFocused || formData.password ? "visible" : ""
+            }`}
+          >
+            <div className="hint-icon">i</div>
+            <div className="hint-text">
+              Password must contain:
+              <ul>
+                <li className={formData.password.length >= 8 ? "valid" : ""}>
+                  At least 8 characters
+                </li>
+                <li className={/[A-Z]/.test(formData.password) ? "valid" : ""}>
+                  One uppercase letter
+                </li>
+                <li className={/[a-z]/.test(formData.password) ? "valid" : ""}>
+                  One lowercase letter
+                </li>
+                <li className={/[0-9]/.test(formData.password) ? "valid" : ""}>
+                  One number
+                </li>
+                <li
+                  className={
+                    /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
+                      formData.password
+                    )
+                      ? "valid"
+                      : ""
+                  }
+                >
+                  One special character
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
         <div className="form-group">
           <label>Confirm Password</label>
@@ -200,9 +326,10 @@ const ApplicantRegistration = () => {
             onChange={handleChange}
             placeholder="Confirm your password"
             required
+            className={errors.confirmPassword ? "input-error" : ""}
           />
           {errors.confirmPassword && (
-            <div className="field-error">{errors.confirmPassword}</div>
+            <div className="error-text">{errors.confirmPassword}</div>
           )}
         </div>
         <button type="submit" className="submit-button" disabled={isLoading}>
