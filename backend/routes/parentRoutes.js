@@ -9,7 +9,7 @@ const {
 const authMiddleware = require("../middleware/authMiddleware");
 
 // POST /api/parents/register
-router.post("/register", authMiddleware, registerParent);
+router.post("/register", registerParent);
 
 router.post("/upload_document", authMiddleware, uploadChildDocuments);
 
