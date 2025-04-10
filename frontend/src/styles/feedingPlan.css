@@ -38,10 +38,6 @@
   align-items: center;
 }
 
-.question {
-  /* font-weight: bold; */
-}
-
 .answers {
   display: flex;
   gap: 2rem;
