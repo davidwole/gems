@@ -1,4 +1,4 @@
-import "../../styles/feedingplan.css";
+import "../../styles/feedingplan2.css";
 
 export default function InfantFeedingPlan() {
   return (

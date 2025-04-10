@@ -1,7 +1,9 @@
+import "../../styles/infantaffidavit.css";
+
 export default function InfantAffidavit() {
   return (
-    <div>
-      <h3>Infant Affidavit</h3>
+    <div className="infant_affidavit_container">
+      <h3 className="infant_affidavit_header">Infant Affidavit</h3>
       <div>
         <label>Name of Sponsor(if applicable)</label>
         <input type="text" />

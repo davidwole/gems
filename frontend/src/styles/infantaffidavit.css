@@ -1,0 +1,17 @@
+.infant_affidavit_container {
+  width: 90%;
+  margin: auto;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.infant_affidavit_header {
+  text-align: center;
+  margin-block: 2rem;
+}
+
+.infant_affidavit_container input[type="text"],
+.infant_affidavit_container input[type="date"] {
+  border: none;
+  border-bottom: 1px solid black;
+  background: transparent;
+}
