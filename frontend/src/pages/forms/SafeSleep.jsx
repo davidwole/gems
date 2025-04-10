@@ -1,7 +1,9 @@
+import "../../styles/safesleep.css";
+
 export default function SafeSleep() {
   return (
-    <div>
-      <h3>Safe Sleep Practices Policy</h3>
+    <div className="safe_sleep">
+      <h3 className="safe_sleep_header">Safe Sleep Practices Policy</h3>
       <div>
         <label>Child’s name:</label>
         <input type="text" />
@@ -14,6 +16,7 @@ export default function SafeSleep() {
         <input type="text" />
       </div>
 
+      <p>Safe Sleep Practices/Policies:</p>
       <ol>
         <li>
           Infants will be placed on their backs in a crib to sleep unless a

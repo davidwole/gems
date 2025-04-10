@@ -1,0 +1,20 @@
+.safe_sleep {
+  width: 90%;
+  margin: auto;
+}
+
+.safe_sleep input[type="text"],
+.safe_sleep input[type="date"] {
+  border: none;
+  border-bottom: 1px solid black;
+  background: transparent;
+}
+
+.safe_sleep li {
+  margin-block: 1rem;
+}
+
+.safe_sleep_header {
+  text-align: center;
+  margin-block: 1rem;
+}
