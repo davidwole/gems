@@ -23,6 +23,10 @@ import IESFormSigning from "./pages/forms/IESFormSigning";
 import ApplicationViewForm from "./pages/forms/ApplicationViewForm";
 import { connect } from "./services/api";
 import IESFormUnfilled from "./pages/forms/IESFormUnfilled";
+import Contact from "./pages/Contact";
+import InfantFeedingPlan from "./pages/forms/InfantFeedingPlan";
+import SafeSleep from "./pages/forms/SafeSleep";
+import InfantAffidavit from "./pages/forms/InfantAffidavit";
 
 // Suspension Modal Component
 const SuspensionModal = ({ onClose }) => {
@@ -159,10 +163,37 @@ const AppContent = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/infantfeedingplan/:branchId"
+        element={
+          <ProtectedRoute>
+            <InfantFeedingPlan />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/safesleep/:branchId"
+        element={
+          <ProtectedRoute>
+            <SafeSleep />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/infantaffidavit/:branchId"
+        element={
+          <ProtectedRoute>
+            <InfantAffidavit />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Add the new route for applicant registration */}
       <Route path="/apply/:branchId" element={<ApplicantRegistration />} />
       <Route path="/enroll/:branchId" element={<ParentRegistration />} />
+      <Route path="/contact/:branchId" element={<Contact />} />
       <Route path="/applicant-registration/:branchId" element={<I9Form />} />
       <Route path="/parent-registration/:branchId" element={<IESForm />} />
       <Route path="/viewform" element={<IESFormUnfilled />} />

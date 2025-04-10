@@ -601,3 +601,131 @@ export const deleteDocument = async (documentId, token) => {
     return { success: false, error: error.message };
   }
 };
+
+// Submit contact form
+export const submitContactForm = async (contactData) => {
+  try {
+    const response = await fetch(`${API_URL}/contact`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(contactData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to submit contact form");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error submitting contact form:", error);
+    throw error;
+  }
+};
+
+// Get all contacts (for admins)
+export const getAllContacts = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/contact`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch contacts");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching contacts:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Get contacts by branch
+export const getContactsByBranch = async (branchId, token) => {
+  try {
+    const response = await fetch(`${API_URL}/contact/branch/${branchId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch branch contacts");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching branch contacts:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Update contact status
+export const updateContactStatus = async (contactId, status, token) => {
+  try {
+    const response = await fetch(`${API_URL}/contact/${contactId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update contact status");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating contact status:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Delete contact
+export const deleteContact = async (contactId, token) => {
+  try {
+    const response = await fetch(`${API_URL}/contact/${contactId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete contact");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting contact:", error);
+    return { success: false, error: error.message };
+  }
+};
+
+export const getEnrollmentFormsByUser = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/enrollment-forms/me`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch enrollment forms");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching enrollment forms:", error);
+    throw error;
+  }
+};

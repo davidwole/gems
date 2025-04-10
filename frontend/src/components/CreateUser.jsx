@@ -20,6 +20,7 @@ const CreateUser = ({ onClose, onSuccess }) => {
   const [fetchingBranches, setFetchingBranches] = useState(true);
   const [touchedFields, setTouchedFields] = useState({});
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(""); // New state for success message
 
   // Role descriptions for better clarity
   const roleDescriptions = {
@@ -245,6 +246,7 @@ const CreateUser = ({ onClose, onSuccess }) => {
 
     setLoading(true);
     setError("");
+    setSuccessMessage(""); // Clear any previous success message
 
     try {
       // Prepare the data to send
@@ -266,8 +268,14 @@ const CreateUser = ({ onClose, onSuccess }) => {
       }
 
       setLoading(false);
-      onSuccess && onSuccess(data);
-      onClose && onClose();
+      // Show success message
+      setSuccessMessage(`User ${formData.name} created successfully!`);
+
+      // Wait 2 seconds before closing the modal or calling onSuccess
+      setTimeout(() => {
+        onSuccess && onSuccess(data);
+        onClose && onClose();
+      }, 2000);
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -324,8 +332,11 @@ const CreateUser = ({ onClose, onSuccess }) => {
 
   return (
     <div className="form-container">
-      <h2>Create New User</h2>
+      <h2 className="form-title">Create New User</h2>
       {error && <div className="error-message">{error}</div>}
+      {successMessage && (
+        <div className="success-message">{successMessage}</div>
+      )}
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -482,8 +493,34 @@ const CreateUser = ({ onClose, onSuccess }) => {
         </div>
       </form>
 
-      {/* CSS for the password hint */}
+      {/* CSS for the password hint and additional styles */}
       <style jsx>{`
+        /* Additional styles */
+        .form-title {
+          margin-bottom: 0px;
+          color: #2c3e50;
+          font-size: 1.5rem;
+        }
+
+        .success-message {
+          background-color: #d4edda;
+          color: #155724;
+          padding: 12px;
+          margin-bottom: 20px;
+          border-left: 4px solid #28a745;
+          border-radius: 3px;
+          animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
         .password-hint {
           display: flex;
           margin-top: 6px;

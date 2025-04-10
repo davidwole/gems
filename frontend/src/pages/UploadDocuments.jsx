@@ -8,6 +8,9 @@ export default function UploadDocuments() {
   const { user, token } = useContext(AuthContext);
   const [selectedFile, setSelectedFile] = useState(null);
   const [documentType, setDocumentType] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [documents, setDocuments] = useState([]);
   const fileInputRef = useRef(null);
 
   const handleFileSelect = (event) => {
@@ -92,6 +95,10 @@ export default function UploadDocuments() {
         </div>
       </div>
       <div className="dashboard-content">
+        {message && (
+          <div className={`message ${message.type}`}>{message.text}</div>
+        )}
+
         <form onSubmit={handleSubmit} className="document-upload-section">
           <div className="data-admin-section">
             <h3>Select Document Type</h3>
@@ -150,9 +157,9 @@ export default function UploadDocuments() {
             <button
               type="submit"
               className="action-button"
-              disabled={!selectedFile || !documentType}
+              disabled={!selectedFile || !documentType || loading}
             >
-              Upload Document
+              {loading ? "Uploading..." : "Upload Document"}
             </button>
           </div>
         </form>

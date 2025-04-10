@@ -1,0 +1,109 @@
+.feeding_plan_container {
+  font-family: "Times New Roman", Times, serif;
+  width: 90%;
+  margin: auto;
+}
+
+.feeding_header {
+  text-align: center;
+  margin-block: 2rem;
+}
+
+.feeding_plan_container input[type="text"],
+.feeding_plan_container input[type="date"] {
+  border: none;
+  border-bottom: 1px solid black;
+  background: transparent;
+}
+
+.feeding_plan_container .flex {
+  display: flex;
+  align-items: center;
+}
+
+.check_spacer {
+  margin-left: 5rem;
+}
+
+.check_spacer input[type="checkbox"] {
+  margin-right: 3rem;
+  margin-left: 0.4rem;
+}
+
+.form-group {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 1rem;
+  margin-bottom: 0 !important;
+  align-items: center;
+}
+
+.question {
+  /* font-weight: bold; */
+}
+
+.answers {
+  display: flex;
+  gap: 2rem;
+}
+
+.answers label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* font-weight: normal; */
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.checkbox-item {
+  width: 160px; /* makes both items the same width for clean alignment */
+}
+
+.checkbox-item label {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 87%;
+  /* font-weight: normal; */
+}
+
+.feeding_table input[type="text"] {
+  border: none;
+}
+
+.solid_foods {
+  text-align: center;
+  text-decoration: underline;
+  margin-block: 1rem;
+}
+
+.question-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.question-label {
+  width: 340px; /* Adjust based on how much space your labels need */
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.yes-no-group {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.yes-no-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: normal;
+  font-size: 14px;
+}

@@ -3,9 +3,13 @@ import "../../styles/IESForm.css";
 import { AuthContext } from "../../context/AuthContext";
 import { submitEnrollmentForm } from "../../services/api";
 import Signature from "../../components/Signature";
+import { useNavigate } from "react-router-dom";
 
 export default function IESForm() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const [formData, setFormdata] = useState({
     user: user?.id,
@@ -194,12 +198,23 @@ export default function IESForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
 
     try {
       const result = await submitEnrollmentForm(formData);
       console.log(result);
+      if (result.success) {
+        setSubmitSuccess(true);
+        // Redirect to dashboard after 3 seconds
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 3000);
+      }
     } catch (error) {
       console.error("Submission failed:", error);
+      alert("Form submission failed. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -212,6 +227,25 @@ export default function IESForm() {
       }));
     }
   }, [user]);
+
+  // Success message overlay
+  if (submitSuccess) {
+    return (
+      <div className="success-overlay">
+        <div className="success-message">
+          <h2>Form Submitted Successfully!</h2>
+          <p>Thank you for submitting your enrollment form.</p>
+          <p>You will be redirected to the dashboard in a moment...</p>
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="success-button"
+          >
+            Return to Dashboard Now
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="ies">
@@ -1491,7 +1525,12 @@ export default function IESForm() {
           <label>Signature:</label>
           <Signature onSave={handleSignatureSave} />
         </div>
-        <button id="i9_button">Submit</button>
+        {/* <button id="i9_button">Submit</button> */}
+        <div className="form-actions">
+          <button type="submit" className="submit-button" disabled={submitting}>
+            {submitting ? "Submitting..." : "Submit"}
+          </button>
+        </div>
       </form>
     </div>
   );

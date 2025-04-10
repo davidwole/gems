@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { getBranches } from "../services/api";
+import { getBranches, getEnrollmentFormsByUser } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import CreateUser from "../components/CreateUser";
 import CreateBranch from "../components/CreateBranch";
@@ -12,6 +12,8 @@ const Dashboard = () => {
   const { user, logout, token } = useContext(AuthContext);
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [enrollmentForms, setEnrollmentForms] = useState([]);
+  const [loadingForms, setLoadingForms] = useState(false);
   const navigate = useNavigate();
   const [selectedBranch, setSelectedBranch] = useState(null);
 
@@ -38,6 +40,19 @@ const Dashboard = () => {
         console.log(branchData);
         setBranches(branchData || []);
       }
+
+      // Fetch enrollment forms for L8 users
+      if (user?.role === "L8") {
+        setLoadingForms(true);
+        try {
+          const forms = await getEnrollmentFormsByUser(token);
+          setEnrollmentForms(forms?.data || []);
+        } catch (error) {
+          console.error("Error fetching enrollment forms:", error);
+        }
+        setLoadingForms(false);
+      }
+
       setLoading(false);
     };
 
@@ -81,7 +96,7 @@ const Dashboard = () => {
   };
 
   const handleParentEnrollment = () => {
-    // Navigate to I9Form page with the user's branch ID
+    // Navigate to IESForm page with the user's branch ID
     navigate(`/parent-registration/${user.branch}`);
   };
 
@@ -106,6 +121,9 @@ const Dashboard = () => {
     // This will be implemented later
     navigate(`/parenthandbook/${user.branch}`);
   };
+
+  // Check if user has already submitted an enrollment form
+  const hasSubmittedEnrollmentForm = enrollmentForms.length > 0;
 
   if (!user) {
     return <div className="loading">Loading user data...</div>;
@@ -233,6 +251,8 @@ const Dashboard = () => {
           uploadDocuments: handleUploadDocuments,
           signAcknowledgements: handleSignAcknowledgements,
           parentSignAcknowledgements: handleParentSignAcknowledgements,
+          hasSubmittedEnrollmentForm,
+          loadingForms,
         })}
       </div>
     </div>
@@ -323,17 +343,44 @@ const renderRoleSpecificContent = (role, actions) => {
           </div>
         </div>
       );
+    case "L7": // Parent role
+      return (
+        <div className="general-section">
+          <h3>Quick Actions</h3>
+          <div className="action-buttons">
+            <button className="action-button">Review Child Data</button>
+            <button className="action-button" onClick={actions.uploadDocuments}>
+              Upload Documents
+            </button>
+            <button
+              className="action-button"
+              onClick={actions.parentSignAcknowledgements}
+            >
+              Sign Consent Forms
+            </button>
+          </div>
+        </div>
+      );
     case "L8": // Parent role
       return (
         <div className="general-section">
           <h3>Quick Actions</h3>
           <div className="action-buttons">
-            <button
-              className="action-button"
-              onClick={actions.fillParentEnrollment}
-            >
-              Fill Enrollment Application
-            </button>
+            {actions.loadingForms ? (
+              <button className="action-button disabled">Loading...</button>
+            ) : (
+              <button
+                className={`action-button ${
+                  actions.hasSubmittedEnrollmentForm ? "disabled" : ""
+                }`}
+                onClick={actions.fillParentEnrollment}
+                disabled={actions.hasSubmittedEnrollmentForm}
+              >
+                {actions.hasSubmittedEnrollmentForm
+                  ? "Enrollment Form Submitted"
+                  : "Fill Enrollment Application"}
+              </button>
+            )}
             <button className="action-button" onClick={actions.uploadDocuments}>
               Upload Documents
             </button>
@@ -342,6 +389,24 @@ const renderRoleSpecificContent = (role, actions) => {
               onClick={actions.parentSignAcknowledgements}
             >
               Sign Acknowledgements
+            </button>
+            <button
+              className="action-button"
+              onClick={navigate(`/infantfeedingplan/${user.branch}`)}
+            >
+              Infant Feeding Plan
+            </button>
+            <button
+              className="action-button"
+              onClick={navigate(`/safesleep/${user.branch}`)}
+            >
+              Safe Sleep Practices Policy
+            </button>
+            <button
+              className="action-button"
+              onClick={navigate(`/infantaffidavit/${user.branch}`)}
+            >
+              Infant Affidavit
             </button>
           </div>
         </div>
