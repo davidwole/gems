@@ -116,10 +116,20 @@ const Dashboard = () => {
   };
 
   const handleParentSignAcknowledgements = () => {
-    console.log("hello");
-    console.log(user.branch);
     // This will be implemented later
     navigate(`/parenthandbook/${user.branch}`);
+  };
+
+  const handleInfantFeedingPlan = () => {
+    navigate(`/infantfeedingplan/${user.branch}`);
+  };
+
+  const handleSafeSleep = () => {
+    navigate(`/safesleep/${user.branch}`);
+  };
+
+  const handleInfantAffidavit = () => {
+    navigate(`/infantaffidavit/${user.branch}`);
   };
 
   // Check if user has already submitted an enrollment form
@@ -251,6 +261,9 @@ const Dashboard = () => {
           uploadDocuments: handleUploadDocuments,
           signAcknowledgements: handleSignAcknowledgements,
           parentSignAcknowledgements: handleParentSignAcknowledgements,
+          infantFeedingPlan: handleInfantFeedingPlan,
+          safeSleep: handleSafeSleep,
+          infantAffidavit: handleInfantAffidavit,
           hasSubmittedEnrollmentForm,
           loadingForms,
         })}
@@ -392,20 +405,14 @@ const renderRoleSpecificContent = (role, actions) => {
             </button>
             <button
               className="action-button"
-              onClick={navigate(`/infantfeedingplan/${user.branch}`)}
+              onClick={actions.infantFeedingPlan}
             >
               Infant Feeding Plan
             </button>
-            <button
-              className="action-button"
-              onClick={navigate(`/safesleep/${user.branch}`)}
-            >
+            <button className="action-button" onClick={actions.safeSleep}>
               Safe Sleep Practices Policy
             </button>
-            <button
-              className="action-button"
-              onClick={navigate(`/infantaffidavit/${user.branch}`)}
-            >
+            <button className="action-button" onClick={actions.infantAffidavit}>
               Infant Affidavit
             </button>
           </div>
