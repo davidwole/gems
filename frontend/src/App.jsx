@@ -27,6 +27,7 @@ import Contact from "./pages/Contact";
 import InfantFeedingPlan from "./pages/forms/InfantFeedingPlan";
 import SafeSleep from "./pages/forms/SafeSleep";
 import InfantAffidavit from "./pages/forms/InfantAffidavit";
+import EnrollmentForm from "./pages/forms/EnrollmentForm";
 
 // Suspension Modal Component
 const SuspensionModal = ({ onClose }) => {
@@ -195,7 +196,10 @@ const AppContent = () => {
       <Route path="/enroll/:branchId" element={<ParentRegistration />} />
       <Route path="/contact/:branchId" element={<Contact />} />
       <Route path="/applicant-registration/:branchId" element={<I9Form />} />
-      <Route path="/parent-registration/:branchId" element={<IESForm />} />
+      <Route
+        path="/parent-registration/:branchId"
+        element={<EnrollmentForm />}
+      />
       <Route path="/viewform" element={<IESFormUnfilled />} />
       <Route path="/uploadid" element={<UploadID />} />
       <Route path="/uploaddocuments" element={<UploadDocuments />} />
