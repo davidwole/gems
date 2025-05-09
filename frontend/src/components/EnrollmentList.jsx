@@ -37,6 +37,7 @@ export default function EnrollmentList({ branchId }) {
 
         const data = await response.json();
         setEnrollments(data.data);
+        console.log(data.data);
       } catch (error) {
         console.error("Failed to fetch enrollments:", error);
       } finally {
