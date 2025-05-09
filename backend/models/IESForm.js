@@ -125,4 +125,4 @@ const IESForm = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("EnrollmentForm", IESForm);
+module.exports = mongoose.model("IESForm", IESForm);
