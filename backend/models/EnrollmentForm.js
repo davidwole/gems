@@ -1,83 +1,7 @@
 const mongoose = require("mongoose");
 
-const enrolledChildSchema = new mongoose.Schema({
-  name: String,
-  caseNumber: String,
-  headStart: { type: Boolean, default: false },
-  fosterChild: { type: Boolean, default: false },
-  migrant: { type: Boolean, default: false },
-  runaway: { type: Boolean, default: false },
-  homeless: { type: Boolean, default: false },
-});
-
-const householdMemberSchema = new mongoose.Schema({
-  name: String,
-  workEarnings: String,
-  subsidies: String,
-  subsidiesFreq: String,
-  socialSecurity: String,
-  otherIncome: String,
-});
-
-const centerAttendanceSchema = new mongoose.Schema({
-  Sunday: { type: Boolean, default: false },
-  Monday: { type: Boolean, default: false },
-  Tuesday: { type: Boolean, default: false },
-  Wednesday: { type: Boolean, default: false },
-  Thursday: { type: Boolean, default: false },
-  Friday: { type: Boolean, default: false },
-  Saturday: { type: Boolean, default: false },
-});
-
-const mealsReceivedSchema = new mongoose.Schema({
-  Breakfast: { type: Boolean, default: false },
-  amSnack: { type: Boolean, default: false },
-  Lunch: { type: Boolean, default: false },
-  pmSnack: { type: Boolean, default: false },
-  Supper: { type: Boolean, default: false },
-  EveningSnack: { type: Boolean, default: false },
-});
-
-const ethnicitySchema = new mongoose.Schema({
-  hispanic: { type: Boolean, default: false },
-  nonHispanic: { type: Boolean, default: false },
-});
-
-const raceSchema = new mongoose.Schema({
-  americanIndian: { type: Boolean, default: false },
-  asian: { type: Boolean, default: false },
-  black: { type: Boolean, default: false },
-  hawaiian: { type: Boolean, default: false },
-  white: { type: Boolean, default: false },
-  multiracial: { type: Boolean, default: false },
-});
-
 const EnrollmentFormSchema = new mongoose.Schema(
   {
-    determiningSignature: {
-      type: String,
-      default: "",
-    },
-    determiningSignatureDate: {
-      type: String,
-      default: "",
-    },
-    confirmingSignature: {
-      type: String,
-      default: "",
-    },
-    confirmingSignatureDate: {
-      type: String,
-      default: "",
-    },
-    followUpSignature: {
-      type: String,
-      default: "",
-    },
-    followUpSignatureDate: {
-      type: String,
-      default: "",
-    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -87,40 +11,194 @@ const EnrollmentFormSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Branch",
     },
-    enrolledChildOne: enrolledChildSchema,
-    enrolledChildTwo: enrolledChildSchema,
-    enrolledChildThree: enrolledChildSchema,
-    enrolledChildFour: enrolledChildSchema,
-    enrolledChildFive: enrolledChildSchema,
-    childIncome: String,
-    frequency: {
-      type: String,
-      enum: ["Weekly", "Bi-Weekly", "Monthly", "Annually"],
-      default: "Weekly",
+    // Basic child info
+    childName: { type: String, required: true },
+    dateOfBirth: { type: Date, required: true },
+    dateEnrolled: { type: Date, required: true },
+    dateCompleted: { type: Date },
+
+    // Admin section
+    directorName: String,
+    directorSignature: String,
+
+    // Enrollment application
+    entranceDate: Date,
+    withdrawalDate: Date,
+    gender: { type: String, enum: ["male", "female", "other"] },
+    age: Number,
+
+    // Sponsor information
+    sponsorName: { type: String, required: true },
+    sponsorAddress: {
+      street: String,
+      city: String,
+      state: String,
+      zipCode: String,
     },
-    houseHoldMemberOne: householdMemberSchema,
-    houseHoldMemberTwo: householdMemberSchema,
-    houseHoldMemberThree: householdMemberSchema,
-    houseHoldMemberFour: householdMemberSchema,
-    houseHoldMemberFive: householdMemberSchema,
-    totalHouseholdMemebers: String,
-    ssn: String,
-    ssnNotAvailable: { type: Boolean, default: false },
-    facilityStartHours: String,
-    facilityEndHours: String,
-    OnlyCareProvided: { type: Boolean, default: false },
-    centerAttendanceDays: centerAttendanceSchema,
-    mealsReceived: mealsReceivedSchema,
-    signature: String,
-    printName: String,
-    date: String,
-    address: String,
-    city: String,
-    state: String,
-    zip: String,
-    phone: String,
-    ethnicity: ethnicitySchema,
-    race: raceSchema,
+    sponsorCellPhone: String,
+    sponsorWorkPhone: String,
+    sponsorEmail: String,
+    sponsorEmployer: String,
+    sponsorEmployerAddress: String,
+    sponsorEmployerPhone: String,
+
+    // Co-sponsor information
+    coSponsorName: String,
+    coSponsorAddress: {
+      street: String,
+      city: String,
+      state: String,
+      zipCode: String,
+    },
+    coSponsorCellPhone: String,
+    coSponsorWorkPhone: String,
+    coSponsorEmail: String,
+
+    // Living arrangements and guardianship
+    livingArrangements: String,
+    legalGuardian: String,
+
+    // Authorization to release child
+    authorizedPersons: [
+      {
+        name: String,
+        address: {
+          street: String,
+          city: String,
+          state: String,
+          zipCode: String,
+        },
+        phone: String,
+        alternatePhone: String,
+        relationshipToChild: String,
+      },
+    ],
+
+    // Emergency contact
+    emergencyContact: {
+      name: String,
+      address: {
+        street: String,
+        city: String,
+        state: String,
+        zipCode: String,
+      },
+      phone: String,
+      alternatePhone: String,
+      relationshipToChild: String,
+    },
+
+    // School information
+    schoolInfo: {
+      name: String,
+      address: String,
+      phone: String,
+      teacherName: String,
+    },
+
+    // Parent agreement
+    parentAgreementSignature: String,
+    parentAgreementDate: Date,
+
+    // Emergency medical authorization
+    emergencyMedicalChildName: String,
+    emergencyMedicalDOB: Date,
+    primaryHealthCare: String,
+    physicianName: String,
+    physicianPhone: String,
+    medicalConditions: [String],
+    parentGuardianSignature: String,
+    signatureDate: Date,
+    phoneNumbers: {
+      home: String,
+      work: String,
+      cell: String,
+    },
+
+    // Physician information
+    doctorName: String,
+    doctorAddress: {
+      street: String,
+      city: String,
+      state: String,
+      zipCode: String,
+    },
+    doctorPhone: String,
+    specialAccommodations: String,
+    allergies: String,
+    takesRoutineMedication: Boolean,
+    medicationExplanation: String,
+
+    // Transportation agreement
+    transportChildName: String,
+    transportFrom: String,
+    transportFromTime: String,
+    transportFromAMPM: { type: String, enum: ["AM", "PM"] },
+    transportTo: String,
+    transportToTime: String,
+    transportToAMPM: { type: String, enum: ["AM", "PM"] },
+    transportChildFrom: String,
+    transportChildFromTime: String,
+    transportChildFromAMPM: { type: String, enum: ["AM", "PM"] },
+    transportChildTo: String,
+    transportChildToTime: String,
+    transportChildToAMPM: { type: String, enum: ["AM", "PM"] },
+    transportDays: {
+      monday: Boolean,
+      tuesday: Boolean,
+      wednesday: Boolean,
+      thursday: Boolean,
+      friday: Boolean,
+    },
+    authorizedReceiver: String,
+    alternatePickupProcedures: String,
+    distanceInMiles: Number,
+    transportParentSignature: String,
+    transportSignatureDate: Date,
+
+    // Vehicle emergency info
+    vehicleChildName: String,
+    vehicleChildDOB: Date,
+    vehicleAddress: String,
+    vehicleCity: String,
+    vehicleState: String,
+    vehicleZip: String,
+    vehicleHomePhone: String,
+    vehicleWorkPhone: String,
+    vehicleCellPhone: String,
+    vehicleEmail: String,
+    motherName: String,
+    motherWorkPhone: String,
+    motherCellPhone: String,
+    motherEmail: String,
+    fatherName: String,
+    fatherWorkPhone: String,
+    fatherCellPhone: String,
+    fatherEmail: String,
+
+    // Emergency non-parent contact
+    emergencyNonParentName: String,
+    emergencyNonParentPhone: String,
+    childDoctor: String,
+    childDoctorPhone: String,
+    childAllergies: String,
+    currentPrescribedMedication: String,
+    childSpecialNeeds: String,
+    emergencyChildName: String,
+    emergencyParentSignature: String,
+    emergencyWitness: String,
+    emergencyWitnessDate: Date,
+
+    // Allergy statement
+    allergyChildName: String,
+    allergyParentName: String,
+    natureOfAllergy: String,
+    allergicFoods: [String],
+    substituteFoods: [String],
+    healthcarePractitionerName: String,
+    healthcarePractitionerTitle: String,
+    healthcareProviderSignature: String,
+    healthcareProviderDate: Date,
   },
   { timestamps: true }
 );

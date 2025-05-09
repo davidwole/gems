@@ -18,7 +18,7 @@ export default function EnrollmentList({ branchId }) {
   useEffect(() => {
     if (!token || !branchId) return;
 
-    const fetchEnrollments = async (token) => {
+    const fetchEnrollments = async () => {
       try {
         const response = await fetch(
           `${API_URL}/enrollment-forms/branch/${id}`,
@@ -45,7 +45,7 @@ export default function EnrollmentList({ branchId }) {
     };
 
     fetchEnrollments();
-  }, [branchId, token]);
+  }, [branchId, token, id]);
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
@@ -59,29 +59,18 @@ export default function EnrollmentList({ branchId }) {
   // Sort enrollments
   const sortedEnrollments = [...filteredEnrollments].sort((a, b) => {
     if (sortBy === "date") {
-      const dateA = new Date(a.createdAt || a.date);
-      const dateB = new Date(b.createdAt || b.date);
+      const dateA = new Date(a.createdAt || a.dateEnrolled || a.date);
+      const dateB = new Date(b.createdAt || b.dateEnrolled || b.date);
       return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
     } else if (sortBy === "name") {
-      const nameA = a.printName || "";
-      const nameB = b.printName || "";
+      const nameA = a.childName || "";
+      const nameB = b.childName || "";
       return sortOrder === "asc"
         ? nameA.localeCompare(nameB)
         : nameB.localeCompare(nameA);
     }
     return 0;
   });
-
-  const getChildrenCount = (enrollment) => {
-    const children = [
-      enrollment.enrolledChildOne,
-      enrollment.enrolledChildTwo,
-      enrollment.enrolledChildThree,
-      enrollment.enrolledChildFour,
-      enrollment.enrolledChildFive,
-    ];
-    return children.filter((child) => child && child.name).length;
-  };
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -134,28 +123,25 @@ export default function EnrollmentList({ branchId }) {
               onClick={() => toggleExpand(enrollment._id)}
             >
               <div className="enrollment-summary">
-                <h3>{enrollment.printName || "Unnamed"}</h3>
+                <h3>{enrollment.childName || "Unnamed Child"}</h3>
                 <div className="enrollment-meta">
                   <span>
                     Submitted:{" "}
-                    {formatDate(enrollment.createdAt || enrollment.date)}
+                    {formatDate(
+                      enrollment.createdAt ||
+                        enrollment.dateEnrolled ||
+                        enrollment.date
+                    )}
                   </span>
-                  <span>Children: {getChildrenCount(enrollment)}</span>
                 </div>
               </div>
               <div className="enrollment-status-section">
                 <div
                   className={`status-badge ${
-                    enrollment.determiningSignature != "" &&
-                    enrollment.confirmingSignature != "" &&
-                    enrollment.followUpSignatures != ""
-                      ? "approved"
-                      : "pending"
+                    enrollment.directorSignature ? "approved" : "pending"
                   }`}
                 >
-                  {enrollment.determiningSignature != "" &&
-                  enrollment.confirmingSignature != "" &&
-                  enrollment.followUpSignatures != ""
+                  {enrollment.directorSignature
                     ? "Signed"
                     : "Pending Signature"}
                 </div>
@@ -168,89 +154,95 @@ export default function EnrollmentList({ branchId }) {
             {expandedId === enrollment._id && (
               <div className="enrollment-details">
                 <div className="enrollment-detail-section">
-                  <h4>Contact Information</h4>
+                  <h4>Child Information</h4>
                   <div className="detail-row">
-                    <span>Name:</span> {enrollment.printName || "N/A"}
+                    <span>Name:</span> {enrollment.childName || "N/A"}
+                  </div>
+                  <div className="detail-row">
+                    <span>Date of Birth:</span>{" "}
+                    {formatDate(enrollment.dateOfBirth)}
+                  </div>
+                  <div className="detail-row">
+                    <span>Gender:</span> {enrollment.gender || "N/A"}
+                  </div>
+                  <div className="detail-row">
+                    <span>Age:</span> {enrollment.age || "N/A"}
+                  </div>
+                </div>
+
+                <div className="enrollment-detail-section">
+                  <h4>Sponsor Information</h4>
+                  <div className="detail-row">
+                    <span>Name:</span> {enrollment.sponsorName || "N/A"}
                   </div>
                   <div className="detail-row">
                     <span>Address:</span>{" "}
-                    {enrollment.address
-                      ? `${enrollment.address}, ${enrollment.city}, ${enrollment.state} ${enrollment.zip}`
+                    {enrollment.sponsorAddress?.street
+                      ? `${enrollment.sponsorAddress.street}, ${
+                          enrollment.sponsorAddress.city || ""
+                        }, ${enrollment.sponsorAddress.state || ""} ${
+                          enrollment.sponsorAddress.zipCode || ""
+                        }`
                       : "N/A"}
                   </div>
                   <div className="detail-row">
-                    <span>Phone:</span> {enrollment.phone || "N/A"}
+                    <span>Cell Phone:</span>{" "}
+                    {enrollment.sponsorCellPhone || "N/A"}
+                  </div>
+                  <div className="detail-row">
+                    <span>Work Phone:</span>{" "}
+                    {enrollment.sponsorWorkPhone || "N/A"}
+                  </div>
+                  <div className="detail-row">
+                    <span>Email:</span> {enrollment.sponsorEmail || "N/A"}
                   </div>
                 </div>
 
-                <div className="enrollment-detail-section">
-                  <h4>Enrolled Children</h4>
-                  {[
-                    enrollment.enrolledChildOne,
-                    enrollment.enrolledChildTwo,
-                    enrollment.enrolledChildThree,
-                    enrollment.enrolledChildFour,
-                    enrollment.enrolledChildFive,
-                  ]
-                    .filter((child) => child && child.name)
-                    .map((child, index) => (
-                      <div key={index} className="child-entry">
-                        <div className="detail-row">
-                          <span>Name:</span> {child.name}
-                        </div>
-                        {child.caseNumber && (
-                          <div className="detail-row">
-                            <span>Case Number:</span> {child.caseNumber}
-                          </div>
-                        )}
-                        <div className="detail-row">
-                          <span>Special Programs:</span>{" "}
-                          {[
-                            child.headStart && "Head Start",
-                            child.fosterChild && "Foster Child",
-                            child.migrant && "Migrant",
-                            child.runaway && "Runaway",
-                            child.homeless && "Homeless",
-                          ]
-                            .filter(Boolean)
-                            .join(", ") || "None"}
-                        </div>
-                      </div>
-                    ))}
-                </div>
+                {enrollment.coSponsorName && (
+                  <div className="enrollment-detail-section">
+                    <h4>Co-Sponsor Information</h4>
+                    <div className="detail-row">
+                      <span>Name:</span> {enrollment.coSponsorName}
+                    </div>
+                    <div className="detail-row">
+                      <span>Address:</span>{" "}
+                      {enrollment.coSponsorAddress?.street
+                        ? `${enrollment.coSponsorAddress.street}, ${
+                            enrollment.coSponsorAddress.city || ""
+                          }, ${enrollment.coSponsorAddress.state || ""} ${
+                            enrollment.coSponsorAddress.zipCode || ""
+                          }`
+                        : "N/A"}
+                    </div>
+                    <div className="detail-row">
+                      <span>Cell Phone:</span>{" "}
+                      {enrollment.coSponsorCellPhone || "N/A"}
+                    </div>
+                    <div className="detail-row">
+                      <span>Work Phone:</span>{" "}
+                      {enrollment.coSponsorWorkPhone || "N/A"}
+                    </div>
+                    <div className="detail-row">
+                      <span>Email:</span> {enrollment.coSponsorEmail || "N/A"}
+                    </div>
+                  </div>
+                )}
 
                 <div className="enrollment-detail-section">
-                  <h4>Schedule Information</h4>
+                  <h4>Enrollment Details</h4>
                   <div className="detail-row">
-                    <span>Hours:</span>{" "}
-                    {enrollment.facilityStartHours &&
-                    enrollment.facilityEndHours
-                      ? `${enrollment.facilityStartHours} - ${enrollment.facilityEndHours}`
-                      : "N/A"}
+                    <span>Date Enrolled:</span>{" "}
+                    {formatDate(enrollment.dateEnrolled)}
                   </div>
                   <div className="detail-row">
-                    <span>Days:</span>{" "}
-                    {enrollment.centerAttendanceDays
-                      ? Object.entries(enrollment.centerAttendanceDays)
-                          .filter(([_, value]) => value === true)
-                          .map(([day]) => day)
-                          .join(", ")
-                      : "N/A"}
+                    <span>Date Completed:</span>{" "}
+                    {formatDate(enrollment.dateCompleted) || "Not completed"}
                   </div>
                   <div className="detail-row">
-                    <span>Meals:</span>{" "}
-                    {enrollment.mealsReceived
-                      ? Object.entries(enrollment.mealsReceived)
-                          .filter(([_, value]) => value === true)
-                          .map(([meal]) => meal)
-                          .join(", ")
-                      : "N/A"}
+                    <span>Director:</span>{" "}
+                    {enrollment.directorName || "Not assigned"}
                   </div>
-                  {enrollment.determiningSignature != "" &&
-                  enrollment.confirmingSignature != "" &&
-                  enrollment.followUpSignatures != "" ? (
-                    <p>Signed</p>
-                  ) : (
+                  {!enrollment.directorSignature && (
                     <Link to={`/signing/${enrollment._id}`}>
                       <button className="approve-button">Sign</button>
                     </Link>
