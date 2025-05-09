@@ -52,7 +52,7 @@ const raceSchema = new mongoose.Schema({
   multiracial: { type: Boolean, default: false },
 });
 
-const EnrollmentFormSchema = new mongoose.Schema(
+const IESForm = new mongoose.Schema(
   {
     determiningSignature: {
       type: String,
