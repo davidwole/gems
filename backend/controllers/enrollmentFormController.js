@@ -48,9 +48,9 @@ exports.getEnrollmentFormsByBranch = async (req, res) => {
   const { branchId } = req.params;
 
   try {
-    const forms = await EnrollmentForm.find({ branch: branchId })
-      .populate("user", "name email")
-      .populate("branch", "name");
+    const forms = await EnrollmentForm.find({ branch: branchId });
+    // .populate("user", "name email")
+    // .populate("branch", "name");
 
     res.status(200).json({
       success: true,
