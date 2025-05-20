@@ -20,10 +20,10 @@ app.use("/api/enrollment-forms", require("./routes/enrollmentFormRoutes"));
 app.use("/api/job-applications", require("./routes/jobApplicationRoutes"));
 app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/contact", require("./routes/contactRoutes"));
-app.use(
-  "/api/infant-feeding-plans",
-  require("./routes/infantFeedingPlanRoutes")
-);
+// app.use(
+//   "/api/infant-feeding-plans",
+//   require("./routes/infantFeedingPlanRoutes")
+// );
 
 app.get("/api/connect", (req, res) => {
   res.json({
