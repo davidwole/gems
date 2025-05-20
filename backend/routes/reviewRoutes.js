@@ -6,10 +6,12 @@ const {
   createReview,
   editReview,
   deleteReivew,
+  getReviewByUser,
 } = require("../controllers/reviewController");
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 
+router.get("/", authMiddleware, roleMiddleware(["L1", "L2"]), getReviews);
 router.get(
   "/:branch",
   authMiddleware,
@@ -17,7 +19,18 @@ router.get(
   getReviews
 );
 router.get("/:id", authMiddleware, roleMiddleware(["L1", "L2"]), getReview);
-router.post("/", authMiddleware, roleMiddleware(["L1", "L2"]), createReview);
+router.get(
+  "/getuser/:id",
+  // authMiddleware,
+  // roleMiddleware(["L1", "L2", "L7", "L8"]),
+  getReviewByUser
+);
+router.post(
+  "/",
+  authMiddleware,
+  roleMiddleware(["L1", "L2", "L7", "L8"]),
+  createReview
+);
 router.patch("/:id", authMiddleware, roleMiddleware(["L1", "L2"]), editReview);
 router.delete(
   "/:id",

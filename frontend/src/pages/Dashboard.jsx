@@ -7,12 +7,14 @@ import CreateBranch from "../components/CreateBranch";
 import EditBranch from "../components/EditBranch";
 import ManageUsers from "../components/ManageUsers";
 import "../styles/dashboard.css";
+import { checkUserHasReviewed } from "../services/api";
 
 const Dashboard = () => {
   const { user, logout, token } = useContext(AuthContext);
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [enrollmentForms, setEnrollmentForms] = useState([]);
+  const [review, setReview] = useState([]);
   const [loadingForms, setLoadingForms] = useState(false);
   const navigate = useNavigate();
   const [selectedBranch, setSelectedBranch] = useState(null);
@@ -24,7 +26,7 @@ const Dashboard = () => {
   const [showManageUsers, setShowManageUsers] = useState(false);
 
   useEffect(() => {
-    if (!token) {
+    if (!token || !user) {
       return;
     }
 
@@ -53,6 +55,19 @@ const Dashboard = () => {
         setLoadingForms(false);
       }
 
+      const fetchUserReviews = async () => {
+        try {
+          const result = await checkUserHasReviewed(token, user.id);
+
+          setReview(result[0]);
+        } catch (error) {
+          // Handle any errors
+          console.error("Failed to get user reviews:", error);
+        }
+      };
+
+      // Call the async function
+      fetchUserReviews();
       setLoading(false);
     };
 
@@ -130,6 +145,14 @@ const Dashboard = () => {
 
   const handleInfantAffidavit = () => {
     navigate(`/infantaffidavit/${user.branch}`);
+  };
+
+  const handlePostReview = () => {
+    navigate(`/post-review/${user.branch}`);
+  };
+
+  const handleIESForm = () => {
+    navigate(`/iesform/${user.branch}`);
   };
 
   // Check if user has already submitted an enrollment form
@@ -251,28 +274,34 @@ const Dashboard = () => {
         )}
 
         {/* Render different sections based on user role */}
-        {renderRoleSpecificContent(user.role, {
-          openCreateUser: () => setShowCreateUser(true),
-          openCreateBranch: () => setShowCreateBranch(true),
-          openManageUsers: () => setShowManageUsers(true),
-          fillEmploymentApplication: handleFillEmploymentApplication,
-          fillParentEnrollment: handleParentEnrollment,
-          uploadID: handleUploadID,
-          uploadDocuments: handleUploadDocuments,
-          signAcknowledgements: handleSignAcknowledgements,
-          parentSignAcknowledgements: handleParentSignAcknowledgements,
-          infantFeedingPlan: handleInfantFeedingPlan,
-          safeSleep: handleSafeSleep,
-          infantAffidavit: handleInfantAffidavit,
-          hasSubmittedEnrollmentForm,
-          loadingForms,
-        })}
+        {renderRoleSpecificContent(
+          user.role,
+          {
+            openCreateUser: () => setShowCreateUser(true),
+            openCreateBranch: () => setShowCreateBranch(true),
+            openManageUsers: () => setShowManageUsers(true),
+            fillEmploymentApplication: handleFillEmploymentApplication,
+            fillParentEnrollment: handleParentEnrollment,
+            uploadID: handleUploadID,
+            uploadDocuments: handleUploadDocuments,
+            signAcknowledgements: handleSignAcknowledgements,
+            parentSignAcknowledgements: handleParentSignAcknowledgements,
+            infantFeedingPlan: handleInfantFeedingPlan,
+            safeSleep: handleSafeSleep,
+            infantAffidavit: handleInfantAffidavit,
+            hasSubmittedEnrollmentForm,
+            loadingForms,
+            postReview: handlePostReview,
+            iesForm: handleIESForm,
+          },
+          review
+        )}
       </div>
     </div>
   );
 };
 
-const renderRoleSpecificContent = (role, actions) => {
+const renderRoleSpecificContent = (role, actions, review) => {
   switch (role) {
     case "L1":
       return (
@@ -361,6 +390,9 @@ const renderRoleSpecificContent = (role, actions) => {
         <div className="general-section">
           <h3>Quick Actions</h3>
           <div className="action-buttons">
+            <button className="action-button" onClick={actions.iesForm}>
+              Eligibility Statement
+            </button>
             <button className="action-button">Review Child Data</button>
             <button className="action-button" onClick={actions.uploadDocuments}>
               Upload Documents
@@ -371,6 +403,14 @@ const renderRoleSpecificContent = (role, actions) => {
             >
               Sign Consent Forms
             </button>
+
+            {
+              !review(
+                <button className="action-button" onClick={actions.postReview}>
+                  Post Review
+                </button>
+              )
+            }
           </div>
         </div>
       );
@@ -415,6 +455,12 @@ const renderRoleSpecificContent = (role, actions) => {
             <button className="action-button" onClick={actions.infantAffidavit}>
               Infant Affidavit
             </button>
+
+            {!review && (
+              <button className="action-button" onClick={actions.postReview}>
+                Post Review
+              </button>
+            )}
           </div>
         </div>
       );

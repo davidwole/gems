@@ -1,15 +1,13 @@
 import "../../styles/enrollmentForm.css";
-import { useState, useContext, useEffect, useRef } from "react";
-import SignaturePad from "../../components/SignaturePad";
+import { useState, useContext, useEffect } from "react";
+import SignaturePadView from "../../components/SignaturePadView";
 import { AuthContext } from "../../context/AuthContext";
-import { submitEnrollmentForm } from "../../services/api";
+import { API_URL, submitEnrollmentForm } from "../../services/api";
+import { useParams } from "react-router-dom";
 
-export default function EnrollmentForm() {
-  const { user } = useContext(AuthContext);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [error, setError] = useState(false);
-  const errorRef = useRef(null);
-
+export default function EnrollmentFormFilled() {
+  const { user, token } = useContext(AuthContext);
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     user: user?.id,
     branch: user?.branch,
@@ -28,6 +26,7 @@ export default function EnrollmentForm() {
     entranceDate: "",
     withdrawalDate: "",
     gender: "",
+
     age: "",
 
     // Sponsor information
@@ -228,13 +227,6 @@ export default function EnrollmentForm() {
     healthcareProviderDate: "",
   });
 
-  const handleCheckboxChange = (selectedGender) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      gender: prevFormData.gender === selectedGender ? "" : selectedGender,
-    }));
-  };
-
   // Handle input changes for simple fields
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -373,59 +365,39 @@ export default function EnrollmentForm() {
     }
   };
 
-  const errorHandler = (message) => {
-    setError(message);
-    setTimeout(() => {
-      setError(false);
-    }, 3800);
-  };
-
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      const missingSignatures = [
-        "parentSignature",
-        "directorSignature",
-        "parentAgreementSignature",
-        "parentGuardianSignature",
-        "emergencyParentSignature",
-        "transportParentSignature",
-        "healthcareProviderSignature",
-      ].filter((sig) => !formData[sig]);
-
-      if (missingSignatures.length > 0) {
-        errorHandler("All signatures required!");
-
-        // Scroll to the error message
-        if (errorRef.current) {
-          errorRef.current.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }
-
-        return;
-      }
-
-      const result = await submitEnrollmentForm(formData);
-      if (result.success) {
-        setSubmitSuccess(true);
-        // Redirect to dashboard after 3 seconds
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 3000);
-      }
-      // Process form submission
-      console.log("Form submitted with data:", formData);
-      // Here you would typically send the data to your server
-    } catch (error) {
-      errorHandler(error.message);
+    console.log(formData);
+    return;
+    const result = await submitEnrollmentForm(formData);
+    if (result.success) {
+      setSubmitSuccess(true);
+      // Redirect to dashboard after 3 seconds
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 3000);
     }
+    // Process form submission
+    console.log("Form submitted with data:", formData);
+    // Here you would typically send the data to your server
+  };
+
+  const getEnrollementForm = async () => {
+    const response = await fetch(`${API_URL}/enrollment-forms/${id}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+
+    setFormData(data.data);
   };
 
   useEffect(() => {
+    getEnrollementForm();
     if (user) {
       setFormData((prevData) => ({
         ...prevData,
@@ -473,14 +445,9 @@ export default function EnrollmentForm() {
   };
 
   return (
-    <>
-      {error && (
-        <div className="errors" ref={errorRef}>
-          <p>{error}</p>
-        </div>
-      )}
-      <div className="enrollment_form">
-        <form onSubmit={handleSubmit}>
+    <div className="enrollment_form">
+      <form onSubmit={handleSubmit}>
+        <fieldset disabled>
           <div className="flex spacer_lg">
             <label>Child's Name:</label>
             <input
@@ -559,9 +526,21 @@ export default function EnrollmentForm() {
             </div>
 
             <div>
-              <SignaturePad
+              {/* <label>Parent Signature:</label>
+            <input
+              type="text"
+              className="short_input"
+              name="parentSignature"
+              value={formData.parentSignature || ""}
+              onChange={handleChange}
+            /> */}
+              {/* <SignaturePadView
+              label="Parent Signature"
+              signature={formData.ParentSignature}
+            /> */}
+              <SignaturePadView
                 label="Parent Signature"
-                onSignatureChange={handleParentSignature}
+                signature={formData.parentSignature}
               />
             </div>
           </div>
@@ -581,7 +560,7 @@ export default function EnrollmentForm() {
               </div>
 
               <div className="flex column">
-                <SignaturePad onSignatureChange={handleDirectorSignature} />
+                <SignaturePadView signature={formData.directorSignature} />
                 {/* <input
                 type="text"
                 name="directorSignature"
@@ -629,8 +608,8 @@ export default function EnrollmentForm() {
                 Male
                 <input
                   type="checkbox"
-                  checked={formData.gender === "Male"}
-                  onChange={() => handleCheckboxChange("Male")}
+                  checked={formData.gender === "male"}
+                  onChange={() => handleCheckboxChange("male")}
                 />
               </label>
 
@@ -638,11 +617,10 @@ export default function EnrollmentForm() {
                 Female
                 <input
                   type="checkbox"
-                  checked={formData.gender === "Female"}
-                  onChange={() => handleCheckboxChange("Female")}
+                  checked={formData.gender === "female"}
+                  onChange={() => handleCheckboxChange("female")}
                 />
               </label>
-
               <label>Age</label>
               <input
                 type="text"
@@ -1589,9 +1567,9 @@ export default function EnrollmentForm() {
               value={formData.parentAgreementSignature}
               onChange={handleChange}
             /> */}
-              <SignaturePad
+              <SignaturePadView
                 label={"Signature of Parent/Guardian"}
-                onSignatureChange={handleParentAgreementSignature}
+                signature={formData.parentAgreementSignature}
               />
             </div>
             <div>
@@ -1731,9 +1709,9 @@ export default function EnrollmentForm() {
             <div className="sign">
               <label>Signed:</label>
               <div className="flex column">
-                <SignaturePad
+                <SignaturePadView
                   label={"Parent/Legal Guardian"}
-                  onSignatureChange={handleParentGuardianSignature}
+                  signature={formData.parentGuardianSignature}
                 />
                 {/* <input
                 type="text"
@@ -1939,25 +1917,25 @@ export default function EnrollmentForm() {
             </div>
 
             <div>
-              {/* <div>
-              <label>If yes, please explain and list any medications.</label>
-              <input
-                type="text"
-                name="medicationExplanation"
-                value={formData.medicationExplanation}
-                onChange={handleChange}
-              />
-            </div>
+              <div>
+                <label>If yes, please explain and list any medications.</label>
+                <input
+                  type="text"
+                  name="medicationExplanation"
+                  value={formData.medicationExplanation}
+                  onChange={handleChange}
+                />
+              </div>
 
-            <div>
-              <label>If yes, please explain and list any medications.</label>
-              <input
-                type="text"
-                name="medicationExplanation"
-                value={formData.medicationExplanation}
-                onChange={handleChange}
-              />
-            </div> */}
+              <div>
+                <label>If yes, please explain and list any medications.</label>
+                <input
+                  type="text"
+                  name="medicationExplanation"
+                  value={formData.medicationExplanation}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
 
             <p>
@@ -2256,11 +2234,11 @@ export default function EnrollmentForm() {
               </label>
             </div>
 
-            <div className="flex align_center">
+            <div>
               <div>
-                <SignaturePad
+                <SignaturePadView
                   label={"Signature (Parent/Guardian)"}
-                  onSignatureChange={handleTransportParentSignature}
+                  signature={formData.transportParentSignature}
                 />
                 {/* <label>Signature (Parent/Guardian)</label>
               <input
@@ -2483,7 +2461,7 @@ export default function EnrollmentForm() {
             </div>
 
             <div>
-              <label>Medical Facility used by Gem's Learning Academy:</label>
+              <label>Medical Facility used by Gem's Learning Academy::</label>
               <h5>
                 Southern Regional Medical Center, 11 Upper Riverdale Rd.
                 Riverdale, Ga. 30274
@@ -2534,9 +2512,9 @@ export default function EnrollmentForm() {
                 />
               </div>
               <div className="flex">
-                <SignaturePad
+                <SignaturePadView
                   label={"Signature (Parent/Guardian):"}
-                  onSignatureChange={handleEmergencyParentSignature}
+                  signature={formData.emergencyParentSignature}
                 />
                 {/* <label>Signature (Parent/Guardian):</label>
               <input
@@ -2666,9 +2644,9 @@ export default function EnrollmentForm() {
               onChange={handleChange}
             /> 
             <label>Signature of Healthcare Provider</label> */}
-              <SignaturePad
+              <SignaturePadView
                 label={"Signature of Healthcare Provider"}
-                onSignatureChange={handleHealthcareProviderSignature}
+                signature={formData.healthcareProviderSignature}
               />
             </div>
 
@@ -2683,9 +2661,8 @@ export default function EnrollmentForm() {
               <label>Date</label>
             </div>
           </div>
-          <button className="submit">Submit</button>
-        </form>
-      </div>
-    </>
+        </fieldset>
+      </form>
+    </div>
   );
 }

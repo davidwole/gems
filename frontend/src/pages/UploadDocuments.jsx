@@ -1,6 +1,6 @@
 import "../styles/UploadDocuments.css";
 import { Upload, FileText } from "lucide-react";
-import { useState, useRef, useContext } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { uploadChildDocument } from "../services/api";
 
@@ -50,7 +50,7 @@ export default function UploadDocuments() {
 
     try {
       const documentData = {
-        user: user._id,
+        user: user.id,
         documentType: documentType,
       };
 

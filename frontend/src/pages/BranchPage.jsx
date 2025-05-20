@@ -28,7 +28,7 @@ const BranchPage = () => {
         return [
           "enrollments",
           "applicants",
-          "reviews",
+          // "reviews",
           "users",
           "employee-handbook",
           "parent-handbook",
@@ -134,14 +134,14 @@ const BranchPage = () => {
           </button>
         )}
 
-        {isTabVisible("reviews") && (
+        {/* {isTabVisible("reviews") && (
           <button
             className={`tab-button ${activeTab === "reviews" ? "active" : ""}`}
             onClick={() => setActiveTab("reviews")}
           >
             Reviews
           </button>
-        )}
+        )} */}
 
         {isTabVisible("users") && (
           <button
@@ -208,9 +208,9 @@ const BranchPage = () => {
           <HandbookManager branchId={id} type="parent" />
         )}
 
-        {activeTab === "reviews" && isTabVisible("reviews") && (
+        {/* {activeTab === "reviews" && isTabVisible("reviews") && (
           <Reviews id={id} />
-        )}
+        )} */}
       </div>
     </div>
   );

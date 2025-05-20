@@ -10,10 +10,18 @@
 }
 
 .feeding_plan_container input[type="text"],
-.feeding_plan_container input[type="date"] {
+.feeding_plan_container input[type="date"],
+.feeding_plan_container input[type="number"] {
   border: none;
   border-bottom: 1px solid black;
   background: transparent;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .feeding_plan_container .flex {
@@ -68,7 +76,9 @@
   /* font-weight: normal; */
 }
 
-.feeding_table input[type="text"] {
+.feeding_table input[type="text"],
+.feeding_table input[type="date"],
+.feeding_table input[type="number"] {
   border: none;
 }
 

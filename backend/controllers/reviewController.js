@@ -2,6 +2,18 @@ const Review = require("../models/Review");
 
 const getReviews = async (req, res) => {
   try {
+    const reviews = await Review.find({});
+
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+
+const getReviewsByBranch = async (req, res) => {
+  try {
     const reviews = await Review.find({ branch: req.params.branch });
 
     res.status(200).json(reviews);
@@ -15,6 +27,18 @@ const getReviews = async (req, res) => {
 const getReview = async (req, res) => {
   try {
     const review = await Review.findById(req.params.id);
+
+    res.status(200).json(review);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+
+const getReviewByUser = async (req, res) => {
+  try {
+    const review = await Review.find({ user: req.body.user });
 
     res.status(200).json(review);
   } catch (error) {
@@ -70,7 +94,9 @@ const deleteReivew = async (req, res) => {
 
 module.exports = {
   getReviews,
+  getReviewsByBranch,
   getReview,
+  getReviewByUser,
   createReview,
   editReview,
   deleteReivew,

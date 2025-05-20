@@ -13,18 +13,22 @@ const EnrollmentFormSchema = new mongoose.Schema(
     },
     // Basic child info
     childName: { type: String, required: true },
-    dateOfBirth: { type: Date, required: true },
-    dateEnrolled: { type: Date, required: true },
-    dateCompleted: { type: Date },
+    dateOfBirth: { type: String, required: true },
+    dateEnrolled: { type: String, required: true },
+    dateCompleted: { type: String },
 
     // Admin section
     directorName: String,
     directorSignature: String,
 
     // Enrollment application
-    entranceDate: Date,
-    withdrawalDate: Date,
-    gender: { type: String, enum: ["male", "female", "other"] },
+    entranceDate: String,
+    withdrawalDate: String,
+    gender: {
+      type: String,
+      //enum: ["male", "female", "other"]
+      //
+    },
     age: Number,
 
     // Sponsor information
@@ -98,17 +102,17 @@ const EnrollmentFormSchema = new mongoose.Schema(
 
     // Parent agreement
     parentAgreementSignature: String,
-    parentAgreementDate: Date,
+    parentAgreementDate: String,
 
     // Emergency medical authorization
     emergencyMedicalChildName: String,
-    emergencyMedicalDOB: Date,
+    emergencyMedicalDOB: String,
     primaryHealthCare: String,
     physicianName: String,
     physicianPhone: String,
     medicalConditions: [String],
     parentGuardianSignature: String,
-    signatureDate: Date,
+    signatureDate: String,
     phoneNumbers: {
       home: String,
       work: String,
@@ -133,16 +137,32 @@ const EnrollmentFormSchema = new mongoose.Schema(
     transportChildName: String,
     transportFrom: String,
     transportFromTime: String,
-    transportFromAMPM: { type: String, enum: ["AM", "PM"] },
+    transportFromAMPM: {
+      type: String,
+      //enum: ["AM", "PM"]
+      //
+    },
     transportTo: String,
     transportToTime: String,
-    transportToAMPM: { type: String, enum: ["AM", "PM"] },
+    transportToAMPM: {
+      type: String,
+      //enum: ["AM", "PM"]
+      //
+    },
     transportChildFrom: String,
     transportChildFromTime: String,
-    transportChildFromAMPM: { type: String, enum: ["AM", "PM"] },
+    transportChildFromAMPM: {
+      type: String,
+      //enum: ["AM", "PM"]
+      //
+    },
     transportChildTo: String,
     transportChildToTime: String,
-    transportChildToAMPM: { type: String, enum: ["AM", "PM"] },
+    transportChildToAMPM: {
+      type: String,
+      //enum: ["AM", "PM"]
+      //
+    },
     transportDays: {
       monday: Boolean,
       tuesday: Boolean,
@@ -154,11 +174,11 @@ const EnrollmentFormSchema = new mongoose.Schema(
     alternatePickupProcedures: String,
     distanceInMiles: Number,
     transportParentSignature: String,
-    transportSignatureDate: Date,
+    transportSignatureDate: String,
 
     // Vehicle emergency info
     vehicleChildName: String,
-    vehicleChildDOB: Date,
+    vehicleChildDOB: String,
     vehicleAddress: String,
     vehicleCity: String,
     vehicleState: String,
@@ -187,7 +207,7 @@ const EnrollmentFormSchema = new mongoose.Schema(
     emergencyChildName: String,
     emergencyParentSignature: String,
     emergencyWitness: String,
-    emergencyWitnessDate: Date,
+    emergencyWitnessDate: String,
 
     // Allergy statement
     allergyChildName: String,
@@ -198,7 +218,7 @@ const EnrollmentFormSchema = new mongoose.Schema(
     healthcarePractitionerName: String,
     healthcarePractitionerTitle: String,
     healthcareProviderSignature: String,
-    healthcareProviderDate: Date,
+    healthcareProviderDate: String,
   },
   { timestamps: true }
 );

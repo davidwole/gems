@@ -5,6 +5,27 @@
   padding-inline: 0.5rem;
 }
 
+.enrollment_form .submit {
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 1rem 3rem;
+  transition: all 300ms ease-in;
+}
+
+.enrollment_form .submit:hover {
+  background-color: rgb(58, 58, 58);
+}
+
+.errors {
+  color: white;
+  background-color: red;
+  text-align: center;
+  padding-block: 0.25rem;
+  width: 100%;
+  position: fixed;
+}
+
 .enrollment_form input[type="date"] {
   background-color: transparent;
   border: none;
@@ -76,6 +97,11 @@
   display: flex;
   justify-content: center;
   margin-bottom: 1rem;
+}
+
+.gender_field label,
+.gender_field input[type="checkbox"] {
+  margin-inline: 0.25rem;
 }
 
 .centered-list ul {
@@ -308,7 +334,7 @@
 }
 
 .allergy_statement {
-  margin-bottom: 4rem;
+  margin-bottom: 2.5rem;
 }
 
 .allergy_statement .flex {

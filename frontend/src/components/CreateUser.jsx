@@ -331,260 +331,269 @@ const CreateUser = ({ onClose, onSuccess }) => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-title">Create New User</h2>
-      {error && <div className="error-message">{error}</div>}
-      {successMessage && (
-        <div className="success-message">{successMessage}</div>
-      )}
+    <>
+      <div className="form-container">
+        <h2 className="form-title">Create New User</h2>
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Full Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name || ""}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            required
-            className={formErrors.name ? "input-error" : ""}
-          />
-          {formErrors.name && (
-            <div className="error-text">{formErrors.name}</div>
-          )}
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Full Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name || ""}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              required
+              className={formErrors.name ? "input-error" : ""}
+            />
+            {formErrors.name && (
+              <div className="error-text">{formErrors.name}</div>
+            )}
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email || ""}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            required
-            className={formErrors.email ? "input-error" : ""}
-          />
-          {touchedFields.email && formErrors.email && (
-            <div className="error-text">{formErrors.email}</div>
-          )}
-        </div>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email || ""}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              required
+              className={formErrors.email ? "input-error" : ""}
+            />
+            {touchedFields.email && formErrors.email && (
+              <div className="error-text">{formErrors.email}</div>
+            )}
+          </div>
 
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password || ""}
-            onChange={handleChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            required
-            className={formErrors.password ? "input-error" : ""}
-          />
-          {formErrors.password && (
-            <div className="error-text">{formErrors.password}</div>
-          )}
-          {/* Password requirements hint */}
-          <div
-            className={`password-hint ${
-              passwordFocused || formData.password ? "visible" : ""
-            }`}
-          >
-            <div className="hint-icon">i</div>
-            <div className="hint-text">
-              Password must contain:
-              <ul>
-                <li className={formData.password.length >= 8 ? "valid" : ""}>
-                  At least 8 characters
-                </li>
-                <li className={/[A-Z]/.test(formData.password) ? "valid" : ""}>
-                  One uppercase letter
-                </li>
-                <li className={/[a-z]/.test(formData.password) ? "valid" : ""}>
-                  One lowercase letter
-                </li>
-                <li className={/[0-9]/.test(formData.password) ? "valid" : ""}>
-                  One number
-                </li>
-                <li
-                  className={
-                    /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
-                      formData.password
-                    )
-                      ? "valid"
-                      : ""
-                  }
-                >
-                  One special character
-                </li>
-              </ul>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password || ""}
+              onChange={handleChange}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              required
+              className={formErrors.password ? "input-error" : ""}
+            />
+            {formErrors.password && (
+              <div className="error-text">{formErrors.password}</div>
+            )}
+            {/* Password requirements hint */}
+            <div
+              className={`password-hint ${
+                passwordFocused || formData.password ? "visible" : ""
+              }`}
+            >
+              <div className="hint-icon">i</div>
+              <div className="hint-text">
+                Password must contain:
+                <ul>
+                  <li className={formData.password.length >= 8 ? "valid" : ""}>
+                    At least 8 characters
+                  </li>
+                  <li
+                    className={/[A-Z]/.test(formData.password) ? "valid" : ""}
+                  >
+                    One uppercase letter
+                  </li>
+                  <li
+                    className={/[a-z]/.test(formData.password) ? "valid" : ""}
+                  >
+                    One lowercase letter
+                  </li>
+                  <li
+                    className={/[0-9]/.test(formData.password) ? "valid" : ""}
+                  >
+                    One number
+                  </li>
+                  <li
+                    className={
+                      /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
+                        formData.password
+                      )
+                        ? "valid"
+                        : ""
+                    }
+                  >
+                    One special character
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="form-group">
-          <label htmlFor="role">Role</label>
-          <select
-            id="role"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            required
-          >
-            {Object.entries(roleDescriptions).map(([role, description]) => (
-              <option key={role} value={role}>
-                {role} - {description}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Show branch selection only for branch-specific roles */}
-        {!globalRoles.includes(formData.role) && (
           <div className="form-group">
-            <label htmlFor="branch">Branch</label>
-            {fetchingBranches ? (
-              <div>Loading branches...</div>
-            ) : branches.length === 0 ? (
-              <div className="warning-message">
-                No branches available. Please create a branch first.
-              </div>
-            ) : (
-              <select
-                id="branch"
-                name="branch"
-                value={formData.branch || ""}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                required
-                className={formErrors.branch ? "input-error" : ""}
-              >
-                <option value="">Select a branch</option>
-                {branches.map((branch) => (
-                  <option key={branch._id} value={branch._id}>
-                    {branch.name} - {branch.location}
-                  </option>
-                ))}
-              </select>
-            )}
-            {formErrors.branch && (
-              <div className="error-text">{formErrors.branch}</div>
-            )}
+            <label htmlFor="role">Role</label>
+            <select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              required
+            >
+              {Object.entries(roleDescriptions).map(([role, description]) => (
+                <option key={role} value={role}>
+                  {role} - {description}
+                </option>
+              ))}
+            </select>
           </div>
-        )}
 
-        <div className="form-actions">
-          <button type="button" className="cancel-button" onClick={onClose}>
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="submit-button"
-            disabled={shouldDisableSubmit()}
-          >
-            {loading ? "Creating..." : "Create User"}
-          </button>
-        </div>
-      </form>
+          {/* Show branch selection only for branch-specific roles */}
+          {!globalRoles.includes(formData.role) && (
+            <div className="form-group">
+              <label htmlFor="branch">Branch</label>
+              {fetchingBranches ? (
+                <div>Loading branches...</div>
+              ) : branches.length === 0 ? (
+                <div className="warning-message">
+                  No branches available. Please create a branch first.
+                </div>
+              ) : (
+                <select
+                  id="branch"
+                  name="branch"
+                  value={formData.branch || ""}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  required
+                  className={formErrors.branch ? "input-error" : ""}
+                >
+                  <option value="">Select a branch</option>
+                  {branches.map((branch) => (
+                    <option key={branch._id} value={branch._id}>
+                      {branch.name} - {branch.location}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {formErrors.branch && (
+                <div className="error-text">{formErrors.branch}</div>
+              )}
+            </div>
+          )}
 
-      {/* CSS for the password hint and additional styles */}
-      <style jsx>{`
-        /* Additional styles */
-        .form-title {
-          margin-bottom: 0px;
-          color: #2c3e50;
-          font-size: 1.5rem;
-        }
+          <div className="form-actions">
+            <button type="button" className="cancel-button" onClick={onClose}>
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="submit-button"
+              disabled={shouldDisableSubmit()}
+            >
+              {loading ? "Creating..." : "Create User"}
+            </button>
+          </div>
 
-        .success-message {
-          background-color: #d4edda;
-          color: #155724;
-          padding: 12px;
-          margin-bottom: 20px;
-          border-left: 4px solid #28a745;
-          border-radius: 3px;
-          animation: fadeIn 0.5s;
-        }
+          {error && <div className="error-message">{error}</div>}
+          {successMessage && (
+            <div className="success-message ">{successMessage}</div>
+          )}
+        </form>
 
-        @keyframes fadeIn {
-          from {
+        {/* CSS for the password hint and additional styles */}
+        <style jsx>{`
+          /* Additional styles */
+          .form-title {
+            margin-bottom: 0px;
+            color: #2c3e50;
+            font-size: 1.5rem;
+          }
+
+          .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+            border-radius: 3px;
+            animation: fadeIn 0.5s;
+          }
+
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+            }
+            to {
+              opacity: 1;
+            }
+          }
+
+          .password-hint {
+            display: flex;
+            margin-top: 6px;
+            background-color: #f8f9fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            color: #4a5568;
             opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
           }
-          to {
+
+          .password-hint.visible {
             opacity: 1;
+            max-height: 200px;
+            margin-top: 8px;
           }
-        }
 
-        .password-hint {
-          display: flex;
-          margin-top: 6px;
-          background-color: #f8f9fa;
-          border: 1px solid #e2e8f0;
-          border-radius: 4px;
-          padding: 8px 12px;
-          font-size: 0.85rem;
-          color: #4a5568;
-          opacity: 0;
-          max-height: 0;
-          overflow: hidden;
-          transition: all 0.3s ease;
-        }
+          .hint-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #3182ce;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 10px;
+            flex-shrink: 0;
+          }
 
-        .password-hint.visible {
-          opacity: 1;
-          max-height: 200px;
-          margin-top: 8px;
-        }
+          .hint-text {
+            flex: 1;
+          }
 
-        .hint-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 18px;
-          height: 18px;
-          border-radius: 50%;
-          background-color: #3182ce;
-          color: white;
-          font-weight: bold;
-          font-size: 12px;
-          margin-right: 10px;
-          flex-shrink: 0;
-        }
+          .hint-text ul {
+            margin: 6px 0 0 0;
+            padding-left: 18px;
+          }
 
-        .hint-text {
-          flex: 1;
-        }
+          .hint-text li {
+            margin-bottom: 3px;
+            position: relative;
+            list-style-type: none;
+          }
 
-        .hint-text ul {
-          margin: 6px 0 0 0;
-          padding-left: 18px;
-        }
+          .hint-text li:before {
+            content: "○";
+            position: absolute;
+            left: -18px;
+            color: #a0aec0;
+          }
 
-        .hint-text li {
-          margin-bottom: 3px;
-          position: relative;
-          list-style-type: none;
-        }
-
-        .hint-text li:before {
-          content: "○";
-          position: absolute;
-          left: -18px;
-          color: #a0aec0;
-        }
-
-        .hint-text li.valid:before {
-          content: "✓";
-          color: #38a169;
-        }
-      `}</style>
-    </div>
+          .hint-text li.valid:before {
+            content: "✓";
+            color: #38a169;
+          }
+        `}</style>
+      </div>
+    </>
   );
 };
 

@@ -137,7 +137,7 @@ export default function EnrollmentList({ branchId }) {
                 </div>
               </div>
               <div className="enrollment-status-section">
-                <div
+                {/* <div
                   className={`status-badge ${
                     enrollment.directorSignature ? "approved" : "pending"
                   }`}
@@ -145,7 +145,7 @@ export default function EnrollmentList({ branchId }) {
                   {enrollment.directorSignature
                     ? "Signed"
                     : "Pending Signature"}
-                </div>
+                </div> */}
                 <button className="expand-button">
                   {expandedId === enrollment._id ? "▲" : "▼"}
                 </button>
@@ -243,11 +243,14 @@ export default function EnrollmentList({ branchId }) {
                     <span>Director:</span>{" "}
                     {enrollment.directorName || "Not assigned"}
                   </div>
-                  {!enrollment.directorSignature && (
+                  {/* {!enrollment.directorSignature && (
                     <Link to={`/signing/${enrollment._id}`}>
                       <button className="approve-button">Sign</button>
                     </Link>
-                  )}
+                  )} */}
+                  <Link to={`/filled-form/${enrollment._id}`}>
+                    <button className="approve-button">View Form</button>
+                  </Link>
                 </div>
               </div>
             )}

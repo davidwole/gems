@@ -15,3 +15,34 @@
   border-bottom: 1px solid black;
   background: transparent;
 }
+
+.infant_affidavit_container input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.check_flex {
+  display: flex;
+  justify-content: space-between;
+
+  width: 50%;
+}
+
+.infant_affidavit_container .form-container {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.infant_affidavit_container .row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.infant_affidavit_container .checkbox-item {
+  display: flex;
+  align-items: center;
+  width: 50%;
+}
+
+.infant_affidavit_container .checkbox-item label {
+  margin-left: 5px;
+}

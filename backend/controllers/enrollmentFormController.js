@@ -93,9 +93,7 @@ exports.getEnrollmentFormById = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const form = await EnrollmentForm.findById(id)
-      .populate("user", "name email")
-      .populate("branch", "name");
+    const form = await EnrollmentForm.findById(id);
 
     if (!form) {
       return res.status(404).json({

@@ -24,8 +24,6 @@ export default function EnrollmentFormUnfilled() {
     entranceDate: "",
     withdrawalDate: "",
     gender: "",
-    isMale: false,
-    isFemale: false,
     age: "",
 
     // Sponsor information
@@ -586,33 +584,26 @@ export default function EnrollmentFormUnfilled() {
                 onChange={handleChange}
               />
             </div>
-            <div>
+            <div className="gender_field">
               <label>Gender:</label>
-              <input
-                type="text"
-                style={{ width: "5rem" }}
-                name="gender"
-                value={formData.gender}
-                onChange={handleChange}
-              />
 
-              <label>Male</label>
-              <input
-                type="checkbox"
-                style={{ width: "5rem" }}
-                name="isMale"
-                checked={formData.isMale}
-                onChange={handleChange}
-              />
+              <label>
+                Male
+                <input
+                  type="checkbox"
+                  checked={gender === "male"}
+                  onChange={() => handleCheckboxChange("male")}
+                />
+              </label>
 
-              <label>Female</label>
-              <input
-                type="checkbox"
-                style={{ width: "5rem" }}
-                name="isFemale"
-                checked={formData.isFemale}
-                onChange={handleChange}
-              />
+              <label>
+                Female
+                <input
+                  type="checkbox"
+                  checked={gender === "female"}
+                  onChange={() => handleCheckboxChange("female")}
+                />
+              </label>
 
               <label>Age</label>
               <input
@@ -2654,7 +2645,6 @@ export default function EnrollmentFormUnfilled() {
               <label>Date</label>
             </div>
           </div>
-          <button>Submit</button>
         </fieldset>
       </form>
     </div>

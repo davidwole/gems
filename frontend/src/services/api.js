@@ -729,3 +729,212 @@ export const getEnrollmentFormsByUser = async (token) => {
     throw error;
   }
 };
+
+// Infant Feeding Plan API functions to add to your api.js file
+
+// Submit infant feeding plan
+export const submitInfantFeedingPlan = async (planData) => {
+  try {
+    // Configure request options
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(planData),
+    };
+
+    // Make the API call
+    const response = await fetch(`${API_URL}/infant-feeding-plans`, options);
+
+    // Parse JSON response
+    const data = await response.json();
+
+    // Check if request was successful
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to submit infant feeding plan");
+    }
+
+    // Return the data
+    return data;
+  } catch (error) {
+    console.error("Error submitting infant feeding plan:", error);
+    throw error; // Rethrow to allow calling code to handle the error
+  }
+};
+
+// Get all infant feeding plans by current user
+export const getInfantFeedingPlansByUser = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/infant-feeding-plans/me`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch infant feeding plans");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching infant feeding plans:", error);
+    throw error;
+  }
+};
+
+// Get infant feeding plans by branch
+export const getInfantFeedingPlansByBranch = async (branchId, token) => {
+  try {
+    const response = await fetch(
+      `${API_URL}/infant-feeding-plans/branch/${branchId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch infant feeding plans for branch");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching infant feeding plans for branch:", error);
+    throw error;
+  }
+};
+
+// Get a single infant feeding plan by ID
+export const getInfantFeedingPlanById = async (planId, token) => {
+  try {
+    const response = await fetch(`${API_URL}/infant-feeding-plans/${planId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch infant feeding plan");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching infant feeding plan:", error);
+    throw error;
+  }
+};
+
+// Update an infant feeding plan
+export const updateInfantFeedingPlan = async (planId, planData, token) => {
+  try {
+    const response = await fetch(`${API_URL}/infant-feeding-plans/${planId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(planData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update infant feeding plan");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating infant feeding plan:", error);
+    throw error;
+  }
+};
+
+// Update infant feeding plan status (for admin)
+export const updateInfantFeedingPlanStatus = async (
+  planId,
+  statusData,
+  token
+) => {
+  try {
+    // Configure request options
+    const options = {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(statusData),
+    };
+
+    // Make the API call
+    const response = await fetch(
+      `${API_URL}/infant-feeding-plans/${planId}`,
+      options
+    );
+
+    // Parse JSON response
+    const data = await response.json();
+
+    // Check if request was successful
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Failed to update infant feeding plan status"
+      );
+    }
+
+    // Return the data
+    return data;
+  } catch (error) {
+    console.error("Error updating infant feeding plan status:", error);
+    throw error;
+  }
+};
+
+// Delete an infant feeding plan
+export const deleteInfantFeedingPlan = async (planId, token) => {
+  try {
+    const response = await fetch(`${API_URL}/infant-feeding-plans/${planId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete infant feeding plan");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting infant feeding plan:", error);
+    throw error;
+  }
+};
+
+export const checkUserHasReviewed = async (token, user) => {
+  try {
+    const response = await fetch(`${API_URL}/reviews/getuser/${user}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch infant feeding plan");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching infant feeding plan:", error);
+    throw error;
+  }
+};

@@ -70,3 +70,12 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 } */
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.fixed-header {
+  position: fixed;
+}
