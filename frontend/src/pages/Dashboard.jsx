@@ -26,7 +26,11 @@ const Dashboard = () => {
   const [showManageUsers, setShowManageUsers] = useState(false);
 
   useEffect(() => {
-    if (!token || !user) {
+    if (!token) {
+      return;
+    }
+
+    if (!user) {
       return;
     }
 
@@ -213,7 +217,7 @@ const Dashboard = () => {
         </div>
         <div className="user-info">
           <span className="user-name">{user.name}</span>
-          <span className="user-role">{user.role}</span>
+          {/* <span className="user-role">{user.role}</span> */}
           <button onClick={handleLogout} className="logout-button">
             Logout
           </button>
@@ -320,6 +324,16 @@ const renderRoleSpecificContent = (role, actions, review) => {
             <button className="action-button" onClick={actions.openManageUsers}>
               Manage Admin Users
             </button>
+            <button
+              className="action-button"
+              onClick={() =>
+                (window.location.href =
+                  "https://gator3139.hostgator.com:2096/webmaillogin.cgi")
+              }
+            >
+              Email Service
+            </button>
+            <button className="action-button">Payroll Portal</button>
           </div>
         </div>
       );
@@ -328,7 +342,16 @@ const renderRoleSpecificContent = (role, actions, review) => {
         <div className="data-admin-section">
           <h3>Data Administration</h3>
           <div className="action-buttons">
-            <p>Click Manage on any branch to see more...</p>
+            <button
+              className="action-button"
+              onClick={() =>
+                (window.location.href =
+                  "https://gator3139.hostgator.com:2096/webmaillogin.cgi")
+              }
+            >
+              Email Service
+            </button>
+            <button className="action-button">Payroll Portal</button>
           </div>
         </div>
       );
@@ -338,7 +361,16 @@ const renderRoleSpecificContent = (role, actions, review) => {
         <div className="data-admin-section">
           <h3>Branch Administration</h3>
           <div className="action-buttons">
-            <p>Click Manage on your branch to see more...</p>
+            <button
+              className="action-button"
+              onClick={() =>
+                (window.location.href =
+                  "https://gator3139.hostgator.com:2096/webmaillogin.cgi")
+              }
+            >
+              Email Service
+            </button>
+            <button className="action-button">Payroll Portal</button>
           </div>
         </div>
       );
@@ -404,13 +436,11 @@ const renderRoleSpecificContent = (role, actions, review) => {
               Sign Consent Forms
             </button>
 
-            {
-              !review(
-                <button className="action-button" onClick={actions.postReview}>
-                  Post Review
-                </button>
-              )
-            }
+            {!review && (
+              <button className="action-button" onClick={actions.postReview}>
+                Post Review
+              </button>
+            )}
           </div>
         </div>
       );
@@ -454,6 +484,9 @@ const renderRoleSpecificContent = (role, actions, review) => {
             </button>
             <button className="action-button" onClick={actions.infantAffidavit}>
               Infant Affidavit
+            </button>
+            <button className="action-button" onClick={actions.iesForm}>
+              IES Form
             </button>
 
             {!review && (

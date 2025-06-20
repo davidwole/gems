@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import "../../styles/IESForm.css";
 import { AuthContext } from "../../context/AuthContext";
-import { submitEnrollmentForm } from "../../services/api";
+import { submitEnrollmentForm, submitIESForm } from "../../services/api";
 import Signature from "../../components/Signature";
 import { useNavigate } from "react-router-dom";
 
@@ -12,8 +12,8 @@ export default function IESForm() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const [formData, setFormdata] = useState({
-    user: user?.id,
-    branch: user?.branch,
+    user: "",
+    branch: "",
     enrolledChildOne: {
       name: "",
       caseNumber: "",
@@ -201,7 +201,7 @@ export default function IESForm() {
     setSubmitting(true);
 
     try {
-      const result = await submitEnrollmentForm(formData);
+      const result = await submitIESForm(formData);
       console.log(result);
       if (result.success) {
         setSubmitSuccess(true);
@@ -227,6 +227,8 @@ export default function IESForm() {
       }));
     }
   }, [user]);
+
+  useEffect(() => {});
 
   // Success message overlay
   if (submitSuccess) {

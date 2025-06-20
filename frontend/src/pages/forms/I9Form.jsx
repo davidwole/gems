@@ -211,53 +211,60 @@ export default function I9Form() {
 
     // Handle special cases with nested objects/arrays
     if (name.includes(".")) {
-      // Handle nested properties (like education.0.schoolName)
-      const [parentKey, childKey] = name.split(".");
-
-      if (!isNaN(childKey)) {
-        // Handle array items (like education.0)
-        const index = parseInt(childKey);
-        const nestedField = name.split(".")[2];
-
+      // Handle array properties (like disciplinaryExplanation.0)
+      if (name.startsWith("disciplinaryExplanation.")) {
+        const index = parseInt(name.split(".")[1]);
         setFormData((prevState) => {
-          const updatedArray = [...prevState[parentKey]];
-          updatedArray[index] = {
-            ...updatedArray[index],
-            [nestedField]: type === "checkbox" ? checked : value,
-          };
-
+          const updatedArray = [...prevState.disciplinaryExplanation];
+          updatedArray[index] = value; // Just store the string value directly
           return {
             ...prevState,
-            [parentKey]: updatedArray,
-          };
-        });
-      } else if (childKey && name.includes(".", name.indexOf(".") + 1)) {
-        // Handle deeper nesting (like questionnaire.importantToolForChildren.0)
-        const nestedField = name.split(".")[1];
-        const index = parseInt(name.split(".")[2]);
-
-        setFormData((prevState) => {
-          const updatedQuestionnaire = { ...prevState[parentKey] };
-          const updatedArray = [...updatedQuestionnaire[nestedField]];
-          updatedArray[index] = value;
-          updatedQuestionnaire[nestedField] = updatedArray;
-
-          return {
-            ...prevState,
-            [parentKey]: updatedQuestionnaire,
+            disciplinaryExplanation: updatedArray,
           };
         });
       } else {
-        // Handle simple nested objects (like militaryService.branch)
-        const field = name.split(".")[1];
-
-        setFormData((prevState) => ({
-          ...prevState,
-          [parentKey]: {
-            ...prevState[parentKey],
-            [field]: type === "checkbox" ? checked : value,
-          },
-        }));
+        // Handle nested properties (like education.0.schoolName)
+        const [parentKey, childKey] = name.split(".");
+        if (!isNaN(childKey)) {
+          // Handle array items (like education.0)
+          const index = parseInt(childKey);
+          const nestedField = name.split(".")[2];
+          setFormData((prevState) => {
+            const updatedArray = [...prevState[parentKey]];
+            updatedArray[index] = {
+              ...updatedArray[index],
+              [nestedField]: type === "checkbox" ? checked : value,
+            };
+            return {
+              ...prevState,
+              [parentKey]: updatedArray,
+            };
+          });
+        } else if (childKey && name.includes(".", name.indexOf(".") + 1)) {
+          // Handle deeper nesting (like questionnaire.importantToolForChildren.0)
+          const nestedField = name.split(".")[1];
+          const index = parseInt(name.split(".")[2]);
+          setFormData((prevState) => {
+            const updatedQuestionnaire = { ...prevState[parentKey] };
+            const updatedArray = [...updatedQuestionnaire[nestedField]];
+            updatedArray[index] = value;
+            updatedQuestionnaire[nestedField] = updatedArray;
+            return {
+              ...prevState,
+              [parentKey]: updatedQuestionnaire,
+            };
+          });
+        } else {
+          // Handle simple nested objects (like militaryService.branch)
+          const field = name.split(".")[1];
+          setFormData((prevState) => ({
+            ...prevState,
+            [parentKey]: {
+              ...prevState[parentKey],
+              [field]: type === "checkbox" ? checked : value,
+            },
+          }));
+        }
       }
     } else {
       // Handle regular inputs

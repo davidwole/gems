@@ -32,6 +32,10 @@ import EnrollmentFormUnfilled from "./pages/forms/EnrollmentFormUnfilled";
 import EnrollmentFormFilled from "./pages/forms/EnrollmentFormFilled";
 import CreateReview from "./components/CreateReview";
 import PostReview from "./pages/PostReview";
+import InfantFeedingPlanFilled from "./pages/forms/InfantFeedingPlanFilled";
+import SafeSleepFilled from "./pages/forms/SafeSleepFilled";
+import InfantAffidavitFilled from "./pages/forms/InfantAffidavitFilled";
+import Documents from "./pages/Documents";
 
 // Suspension Modal Component
 const SuspensionModal = ({ onClose }) => {
@@ -177,6 +181,14 @@ const AppContent = () => {
         }
       />
       <Route
+        path="/infant-feeding-plan-filled/:userId"
+        element={
+          <ProtectedRoute>
+            <InfantFeedingPlanFilled />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/post-review/:branchId"
         element={
           <ProtectedRoute>
@@ -195,10 +207,46 @@ const AppContent = () => {
       />
 
       <Route
+        path="/safesleepfilled/:userId"
+        element={
+          <ProtectedRoute>
+            <SafeSleepFilled />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
         path="/infantaffidavit/:branchId"
         element={
           <ProtectedRoute>
             <InfantAffidavit />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/infantaffidavitfilled/:userId"
+        element={
+          <ProtectedRoute>
+            <InfantAffidavitFilled />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/documents-submitted/:userId"
+        element={
+          <ProtectedRoute>
+            <Documents />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/iesfilled/:userId"
+        element={
+          <ProtectedRoute>
+            <IESFormSigning />
           </ProtectedRoute>
         }
       />

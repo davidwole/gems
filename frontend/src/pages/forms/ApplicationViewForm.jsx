@@ -5,10 +5,13 @@ import Signature from "../../components/Signature";
 import { AuthContext } from "../../context/AuthContext";
 import {
   getApplication,
+  getUser,
   submitJobApplication,
+  updateJobApplication,
   upgradeToL6,
 } from "../../services/api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import InterviewNotesPopup from "../../components/InterviewNotesPopup";
 
 export default function ApplicationViewForm() {
   const { id } = useParams();
@@ -16,10 +19,21 @@ export default function ApplicationViewForm() {
   const { user } = useContext(AuthContext);
   // Initialize all form fields in a single state object
   const [formData, setFormData] = useState(false);
+  const [userRole, setUserRole] = useState(false);
+  const navigate = useNavigate();
+
+  const [showInterviewNotes, setShowInterviewNotes] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchForm = async () => {
     const data = await getApplication(id, token);
     setFormData(data.data);
+  };
+
+  const fetchUserStatus = async () => {
+    const data = await getUser(formData?.user._id, token);
+    setUserRole(data.role);
+    console.log(data.role);
   };
 
   // Universal handler function for all form inputs
@@ -89,9 +103,42 @@ export default function ApplicationViewForm() {
     const response = await upgradeToL6(formData.user._id, token);
   };
 
+  const handleSaveInterviewNotes = async (notes) => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      // Update the job application with the new interview notes
+      const response = await updateJobApplication(
+        id,
+        { interviewNotes: notes },
+        token
+      );
+
+      // Update local state
+      setFormData((prevState) => ({
+        ...prevState,
+        interviewNotes: notes,
+      }));
+
+      alert("Interview notes saved successfully");
+    } catch (error) {
+      console.error("Error saving interview notes:", error);
+      alert("Failed to save interview notes");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   useEffect(() => {
     fetchForm();
   }, []);
+
+  useEffect(() => {
+    if (formData) {
+      fetchUserStatus();
+    }
+  }, [formData]);
 
   if (!formData) {
     return <div>Loading</div>;
@@ -111,9 +158,29 @@ export default function ApplicationViewForm() {
           <h4>Applicant Information</h4>
         </div>
 
-        <button className="approve-button" onClick={upgrade}>
-          Upgrade to L5
+        <button
+          className="approve-button"
+          onClick={upgrade}
+          disabled={userRole == "L5"}
+        >
+          {userRole == "L5" ? "User Upgraded to L5" : "Upgrade to L5"}
         </button>
+
+        <button
+          className="approve-button"
+          onClick={() => setShowInterviewNotes(true)}
+        >
+          Interview Notes
+        </button>
+
+        <InterviewNotesPopup
+          isOpen={showInterviewNotes}
+          onClose={() => setShowInterviewNotes(false)}
+          notes={formData.interviewNotes}
+          onSave={handleSaveInterviewNotes}
+          applicationId={id}
+          token={token}
+        />
 
         <form>
           <fieldset disabled>

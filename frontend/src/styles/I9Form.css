@@ -146,3 +146,7 @@ td {
   font-weight: 500;
   border: none;
 }
+
+.job_form .approve-button {
+  margin-right: 0.5rem;
+}

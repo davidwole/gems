@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { registerParent, getBranchById } from "../../services/api";
 import "../../styles/applicantRegistration.css";
 import "../../styles/forms.css"; // Import the forms.css styles
+import { AuthContext } from "../../context/AuthContext";
 
 const ParentRegistration = () => {
+  const { user, logout } = useContext(AuthContext);
   const { branchId } = useParams();
   const navigate = useNavigate();
   const [branchName, setBranchName] = useState("");
@@ -28,14 +30,18 @@ const ParentRegistration = () => {
         setBranchName(branch.name);
       } catch (error) {
         console.error("Failed to fetch branch information:", error);
-        setBranchName("Unknown Branch");
+        navigate("/");
       }
     };
 
     if (branchId) {
       fetchBranchName();
     }
-  }, [branchId]);
+
+    if (user) {
+      logout();
+    }
+  }, [branchId, user]);
 
   // Validate password strength
   const validatePassword = (password) => {

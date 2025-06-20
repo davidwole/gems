@@ -4,6 +4,26 @@
   margin: auto;
 }
 
+.feeding_plan_container .button {
+  padding: 1rem 3rem;
+  color: white;
+  background-color: black;
+  border: none;
+  margin-block: 1rem;
+}
+
+.feeding_plan_container .mg_blk {
+  margin-block: 0.5rem;
+}
+
+.feeding_plan_container label {
+  font-size: 1rem !important;
+}
+
+.feeding_plan_container .answers label {
+  display: flex;
+}
+
 .feeding_header {
   text-align: center;
   margin-block: 2rem;
@@ -61,7 +81,11 @@ input[type="number"]::-webkit-inner-spin-button {
 .checkbox-row {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-block: 0.5rem;
+}
+
+.initials label {
+  margin-inline: 0.5rem;
 }
 
 .checkbox-item {

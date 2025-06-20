@@ -106,6 +106,25 @@ export const getUsers = async (token) => {
   }
 };
 
+export const getUser = async (id, token) => {
+  try {
+    const response = await fetch(`${API_URL}/users/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch users");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return null;
+  }
+};
+
 export const createUser = async (userData, token) => {
   try {
     const response = await fetch(`${API_URL}/users`, {
@@ -388,6 +407,37 @@ export const signEnrollmentForm = async (signature, id) => {
   }
 };
 
+export const submitIESForm = async (formData) => {
+  try {
+    // Configure request options
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming you store JWT in localStorage
+      },
+      body: JSON.stringify(formData),
+    };
+
+    // Make the API call
+    const response = await fetch(`${API_URL}/ies-forms`, options);
+
+    // Parse JSON response
+    const data = await response.json();
+
+    // Check if request was successful
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to submit enrollment form");
+    }
+
+    // Return the data
+    return data;
+  } catch (error) {
+    console.error("Error submitting enrollment form:", error);
+    throw error; // Rethrow to allow calling code to handle the error
+  }
+};
+
 export const getJobApplicationsByBranch = async (branchId, token) => {
   try {
     const response = await fetch(
@@ -524,7 +574,9 @@ export const upgradeToL6 = async (userId, token) => {
       },
     });
 
-    return await response.json();
+    if (response.ok) {
+      window.alert("User has been upgraded to L5");
+    }
   } catch (error) {
     console.error("Error upgrading user:", error);
     return { error: "Failed to connect to server" };
@@ -936,5 +988,169 @@ export const checkUserHasReviewed = async (token, user) => {
   } catch (error) {
     console.error("Error fetching infant feeding plan:", error);
     throw error;
+  }
+};
+
+export const updateJobApplication = async (
+  applicationId,
+  updateData,
+  token
+) => {
+  try {
+    const response = await fetch(
+      `${API_URL}/job-applications/${applicationId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updateData),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to update job application");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating job application:", error);
+    throw error;
+  }
+};
+
+export const createInfantFeedingPlan = async (planData) => {
+  try {
+    // Configure request options
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(planData),
+    };
+
+    // Make the API call
+    const response = await fetch(`${API_URL}/infant-feeding-plans`, options);
+
+    // Parse JSON response
+    const data = await response.json();
+
+    console.log("hello");
+
+    // Check if request was successful
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to submit infant feeding plan");
+    }
+
+    // Return the data
+    return data;
+  } catch (error) {
+    console.error("Error submitting infant feeding plan:", error);
+    throw error; // Rethrow to allow calling code to handle the error
+  }
+};
+
+export const createInfantAffidavit = async (planData) => {
+  try {
+    // Configure request options
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(planData),
+    };
+
+    // Make the API call
+    const response = await fetch(`${API_URL}/infant-affidavits`, options);
+
+    // Parse JSON response
+    const data = await response.json();
+
+    // Check if request was successful
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to submit infant feeding plan");
+    }
+
+    // Return the data
+    return data;
+  } catch (error) {
+    console.error("Error submitting infant feeding plan:", error);
+    throw error; // Rethrow to allow calling code to handle the error
+  }
+};
+
+export const createSafeSleep = async (planData) => {
+  try {
+    // Configure request options
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(planData),
+    };
+
+    // Make the API call
+    const response = await fetch(`${API_URL}/safe-sleep`, options);
+
+    // Parse JSON response
+    const data = await response.json();
+
+    // Check if request was successful
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to submit infant feeding plan");
+    }
+
+    // Return the data
+    return data;
+  } catch (error) {
+    console.error("Error submitting infant feeding plan:", error);
+    throw error; // Rethrow to allow calling code to handle the error
+  }
+};
+
+const checkIESForm = async (user) => {
+  try {
+    const response = await fetch(`${API_URL}/ies-forms/${user}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const checkInfantFeedingPlan = async (user) => {
+  try {
+    const response = await fetch(`${API_URL}/infant-feeding-plans/${user}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+const checkSafeSleep = async (user) => {
+  try {
+    const response = await fetch(`${API_URL}/safe-sleep/${user}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+const checkInfantAffidavit = async (user) => {
+  try {
+    const response = await fetch(`${API_URL}/infant-affidavits/${user}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log(error.message);
   }
 };

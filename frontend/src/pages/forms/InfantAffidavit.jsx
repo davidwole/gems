@@ -1,7 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import "../../styles/infantaffidavit.css";
+import Signature from "../../components/Signature";
+import { createInfantAffidavit } from "../../services/api";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function InfantAffidavit() {
+  const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
   // Define state for the form
   const [formData, setFormData] = useState({
     sponsorName: "",
@@ -55,12 +63,41 @@ export default function InfantAffidavit() {
     });
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
-    // You can add API calls or other submission logic here
+  const handleSignature = (dataUrl) => {
+    setFormData({
+      ...formData,
+      signature: dataUrl,
+    });
   };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const response = await createInfantAffidavit(formData);
+      if (response.success) {
+        setTimeout(() => {
+          setLoading(false);
+          navigate("/dashboard");
+        }, 2000);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        ...formData,
+        user: user.id,
+      });
+    }
+  }, [user]);
+
+  useEffect(() => {}, []);
 
   return (
     <div className="infant_affidavit_container">
@@ -180,11 +217,12 @@ export default function InfantAffidavit() {
         <div>
           <input
             type="radio"
+            className="meal_option"
             id="providerOption"
             name="mealOption"
             value="provider"
             checked={formData.mealOption === "provider"}
-            // onChange={() => handleMealOptionChange("provider")}
+            onChange={() => handleMealOptionChange("provider")}
           />
           <label htmlFor="providerOption">
             I would like the provider/center to provide ALL meal components to
@@ -196,11 +234,12 @@ export default function InfantAffidavit() {
         <div>
           <input
             type="radio"
+            className="meal_option"
             id="parentOption"
             name="mealOption"
             value="parent"
             checked={formData.mealOption === "parent"}
-            // onChange={() => handleMealOptionChange("parent")}
+            onChange={() => handleMealOptionChange("parent")}
           />
           <label htmlFor="parentOption">
             I will provide the following meal component to my infant and the
@@ -298,13 +337,7 @@ export default function InfantAffidavit() {
 
         <div>
           <div>
-            <input
-              type="text"
-              id="signature"
-              name="signature"
-              value={formData.signature}
-              onChange={handleInputChange}
-            />
+            <Signature onSave={(dataUrl) => handleSignature(dataUrl)} />
             <label htmlFor="signature">Signature</label>
           </div>
 
@@ -333,6 +366,13 @@ export default function InfantAffidavit() {
           claim reimbursement for no more than breakfast, lunch or supper, and a
           snack.
         </p>
+
+        <button
+          className="form_button"
+          disabled={!formData.signature || loading}
+        >
+          {loading ? "Loading" : "Submit"}
+        </button>
       </form>
     </div>
   );

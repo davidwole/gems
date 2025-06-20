@@ -4,6 +4,52 @@ import "../styles/enrollment-list.css";
 import { API_URL } from "../services/api";
 import { Link, useParams } from "react-router-dom";
 
+// Form checking functions
+const checkIESForm = async (user) => {
+  try {
+    const response = await fetch(`${API_URL}/ies-forms/${user}`);
+    const data = await response.json();
+    return data.length > 0;
+  } catch (error) {
+    console.log(error.message);
+    return null;
+  }
+};
+
+const checkInfantFeedingPlan = async (user) => {
+  try {
+    const response = await fetch(`${API_URL}/infant-feeding-plans/${user}`);
+    const data = await response.json();
+    return data.length > 0;
+  } catch (error) {
+    console.log(error.message);
+    return null;
+  }
+};
+
+const checkSafeSleep = async (user) => {
+  try {
+    const response = await fetch(`${API_URL}/safe-sleep/${user}`);
+    const data = await response.json();
+
+    return data.length > 0;
+  } catch (error) {
+    console.log(error.message);
+    return null;
+  }
+};
+
+const checkInfantAffidavit = async (user) => {
+  try {
+    const response = await fetch(`${API_URL}/infant-affidavits/${user}`);
+    const data = await response.json();
+    return data.length > 0;
+  } catch (error) {
+    console.log(error.message);
+    return null;
+  }
+};
+
 export default function EnrollmentList({ branchId }) {
   const { id } = useParams();
   const { token, user } = useContext(AuthContext);
@@ -14,6 +60,7 @@ export default function EnrollmentList({ branchId }) {
   const [filterStatus, setFilterStatus] = useState("all");
   const [sortBy, setSortBy] = useState("date");
   const [sortOrder, setSortOrder] = useState("desc");
+  const [formStatuses, setFormStatuses] = useState({});
 
   useEffect(() => {
     if (!token || !branchId) return;
@@ -37,7 +84,9 @@ export default function EnrollmentList({ branchId }) {
 
         const data = await response.json();
         setEnrollments(data.data);
-        console.log(data.data);
+
+        // Check form statuses for all enrollments
+        checkAllFormStatuses(data.data);
       } catch (error) {
         console.error("Failed to fetch enrollments:", error);
       } finally {
@@ -47,6 +96,44 @@ export default function EnrollmentList({ branchId }) {
 
     fetchEnrollments();
   }, [branchId, token, id]);
+
+  const checkAllFormStatuses = async (enrollmentData) => {
+    const statuses = {};
+
+    for (const enrollment of enrollmentData) {
+      const userId = enrollment.user || enrollment._id;
+
+      try {
+        const [iesForm, infantFeedingPlan, safeSleep, infantAffidavit] =
+          await Promise.all([
+            checkIESForm(userId),
+            checkInfantFeedingPlan(userId),
+            checkSafeSleep(userId),
+            checkInfantAffidavit(userId),
+          ]);
+
+        statuses[userId] = {
+          hasIESForm: iesForm && iesForm.success !== false,
+          hasInfantFeedingPlan:
+            infantFeedingPlan && infantFeedingPlan.success !== false,
+          hasSafeSleep: safeSleep && safeSleep.success !== false,
+          hasInfantAffidavit:
+            infantAffidavit && infantAffidavit.success !== false,
+        };
+      } catch (error) {
+        console.error(`Error checking forms for user ${userId}:`, error);
+        statuses[userId] = {
+          hasIESForm: false,
+          hasInfantFeedingPlan: false,
+          hasSafeSleep: false,
+          hasInfantAffidavit: false,
+        };
+      }
+    }
+
+    setFormStatuses(statuses);
+    console.log(statuses);
+  };
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
@@ -112,150 +199,182 @@ export default function EnrollmentList({ branchId }) {
       </div>
 
       <div className="enrollment-list">
-        {sortedEnrollments.map((enrollment) => (
-          <div
-            key={enrollment._id}
-            className={`enrollment-card ${
-              expandedId === enrollment._id ? "expanded" : ""
-            }`}
-          >
+        {sortedEnrollments.map((enrollment) => {
+          const userId = enrollment.user || enrollment._id;
+          const userFormStatus = formStatuses[userId] || {};
+
+          return (
             <div
-              className="enrollment-header"
-              onClick={() => toggleExpand(enrollment._id)}
+              key={enrollment._id}
+              className={`enrollment-card ${
+                expandedId === enrollment._id ? "expanded" : ""
+              }`}
             >
-              <div className="enrollment-summary">
-                <h3>{enrollment.childName || "Unnamed Child"}</h3>
-                <div className="enrollment-meta">
-                  <span>
-                    Submitted:{" "}
-                    {formatDate(
-                      enrollment.createdAt ||
-                        enrollment.dateEnrolled ||
-                        enrollment.date
-                    )}
-                  </span>
+              <div
+                className="enrollment-header"
+                onClick={() => toggleExpand(enrollment._id)}
+              >
+                <div className="enrollment-summary">
+                  <h3>{enrollment.childName || "Unnamed Child"}</h3>
+                  <div className="enrollment-meta">
+                    <span>
+                      Submitted:{" "}
+                      {formatDate(
+                        enrollment.createdAt ||
+                          enrollment.dateEnrolled ||
+                          enrollment.date
+                      )}
+                    </span>
+                  </div>
+                </div>
+                <div className="enrollment-status-section">
+                  <button className="expand-button">
+                    {expandedId === enrollment._id ? "▲" : "▼"}
+                  </button>
                 </div>
               </div>
-              <div className="enrollment-status-section">
-                {/* <div
-                  className={`status-badge ${
-                    enrollment.directorSignature ? "approved" : "pending"
-                  }`}
-                >
-                  {enrollment.directorSignature
-                    ? "Signed"
-                    : "Pending Signature"}
-                </div> */}
-                <button className="expand-button">
-                  {expandedId === enrollment._id ? "▲" : "▼"}
-                </button>
-              </div>
-            </div>
 
-            {expandedId === enrollment._id && (
-              <div className="enrollment-details">
-                <div className="enrollment-detail-section">
-                  <h4>Child Information</h4>
-                  <div className="detail-row">
-                    <span>Name:</span> {enrollment.childName || "N/A"}
-                  </div>
-                  <div className="detail-row">
-                    <span>Date of Birth:</span>{" "}
-                    {formatDate(enrollment.dateOfBirth)}
-                  </div>
-                  <div className="detail-row">
-                    <span>Gender:</span> {enrollment.gender || "N/A"}
-                  </div>
-                  <div className="detail-row">
-                    <span>Age:</span> {enrollment.age || "N/A"}
-                  </div>
-                </div>
-
-                <div className="enrollment-detail-section">
-                  <h4>Sponsor Information</h4>
-                  <div className="detail-row">
-                    <span>Name:</span> {enrollment.sponsorName || "N/A"}
-                  </div>
-                  <div className="detail-row">
-                    <span>Address:</span>{" "}
-                    {enrollment.sponsorAddress?.street
-                      ? `${enrollment.sponsorAddress.street}, ${
-                          enrollment.sponsorAddress.city || ""
-                        }, ${enrollment.sponsorAddress.state || ""} ${
-                          enrollment.sponsorAddress.zipCode || ""
-                        }`
-                      : "N/A"}
-                  </div>
-                  <div className="detail-row">
-                    <span>Cell Phone:</span>{" "}
-                    {enrollment.sponsorCellPhone || "N/A"}
-                  </div>
-                  <div className="detail-row">
-                    <span>Work Phone:</span>{" "}
-                    {enrollment.sponsorWorkPhone || "N/A"}
-                  </div>
-                  <div className="detail-row">
-                    <span>Email:</span> {enrollment.sponsorEmail || "N/A"}
-                  </div>
-                </div>
-
-                {enrollment.coSponsorName && (
+              {expandedId === enrollment._id && (
+                <div className="enrollment-details">
                   <div className="enrollment-detail-section">
-                    <h4>Co-Sponsor Information</h4>
+                    <h4>Child Information</h4>
                     <div className="detail-row">
-                      <span>Name:</span> {enrollment.coSponsorName}
+                      <span>Name:</span> {enrollment.childName || "N/A"}
+                    </div>
+                    <div className="detail-row">
+                      <span>Date of Birth:</span>{" "}
+                      {formatDate(enrollment.dateOfBirth)}
+                    </div>
+                    <div className="detail-row">
+                      <span>Gender:</span> {enrollment.gender || "N/A"}
+                    </div>
+                    <div className="detail-row">
+                      <span>Age:</span> {enrollment.age || "N/A"}
+                    </div>
+                  </div>
+
+                  <div className="enrollment-detail-section">
+                    <h4>Sponsor Information</h4>
+                    <div className="detail-row">
+                      <span>Name:</span> {enrollment.sponsorName || "N/A"}
                     </div>
                     <div className="detail-row">
                       <span>Address:</span>{" "}
-                      {enrollment.coSponsorAddress?.street
-                        ? `${enrollment.coSponsorAddress.street}, ${
-                            enrollment.coSponsorAddress.city || ""
-                          }, ${enrollment.coSponsorAddress.state || ""} ${
-                            enrollment.coSponsorAddress.zipCode || ""
+                      {enrollment.sponsorAddress?.street
+                        ? `${enrollment.sponsorAddress.street}, ${
+                            enrollment.sponsorAddress.city || ""
+                          }, ${enrollment.sponsorAddress.state || ""} ${
+                            enrollment.sponsorAddress.zipCode || ""
                           }`
                         : "N/A"}
                     </div>
                     <div className="detail-row">
                       <span>Cell Phone:</span>{" "}
-                      {enrollment.coSponsorCellPhone || "N/A"}
+                      {enrollment.sponsorCellPhone || "N/A"}
                     </div>
                     <div className="detail-row">
                       <span>Work Phone:</span>{" "}
-                      {enrollment.coSponsorWorkPhone || "N/A"}
+                      {enrollment.sponsorWorkPhone || "N/A"}
                     </div>
                     <div className="detail-row">
-                      <span>Email:</span> {enrollment.coSponsorEmail || "N/A"}
+                      <span>Email:</span> {enrollment.sponsorEmail || "N/A"}
                     </div>
                   </div>
-                )}
 
-                <div className="enrollment-detail-section">
-                  <h4>Enrollment Details</h4>
-                  <div className="detail-row">
-                    <span>Date Enrolled:</span>{" "}
-                    {formatDate(enrollment.dateEnrolled)}
+                  {enrollment.coSponsorName && (
+                    <div className="enrollment-detail-section">
+                      <h4>Co-Sponsor Information</h4>
+                      <div className="detail-row">
+                        <span>Name:</span> {enrollment.coSponsorName}
+                      </div>
+                      <div className="detail-row">
+                        <span>Address:</span>{" "}
+                        {enrollment.coSponsorAddress?.street
+                          ? `${enrollment.coSponsorAddress.street}, ${
+                              enrollment.coSponsorAddress.city || ""
+                            }, ${enrollment.coSponsorAddress.state || ""} ${
+                              enrollment.coSponsorAddress.zipCode || ""
+                            }`
+                          : "N/A"}
+                      </div>
+                      <div className="detail-row">
+                        <span>Cell Phone:</span>{" "}
+                        {enrollment.coSponsorCellPhone || "N/A"}
+                      </div>
+                      <div className="detail-row">
+                        <span>Work Phone:</span>{" "}
+                        {enrollment.coSponsorWorkPhone || "N/A"}
+                      </div>
+                      <div className="detail-row">
+                        <span>Email:</span> {enrollment.coSponsorEmail || "N/A"}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="enrollment-detail-section">
+                    <h4>Enrollment Details</h4>
+                    <div className="detail-row">
+                      <span>Date Enrolled:</span>{" "}
+                      {formatDate(enrollment.dateEnrolled)}
+                    </div>
+                    <div className="detail-row">
+                      <span>Date Completed:</span>{" "}
+                      {formatDate(enrollment.dateCompleted) || "Not completed"}
+                    </div>
+                    <div className="detail-row">
+                      <span>Director:</span>{" "}
+                      {enrollment.directorName || "Not assigned"}
+                    </div>
+
+                    <div className="enrollment-actions">
+                      <Link to={`/filled-form/${enrollment._id}`}>
+                        <button className="approve-button">View Form</button>
+                      </Link>
+
+                      {userFormStatus.hasInfantFeedingPlan && (
+                        <Link to={`/infant-feeding-plan-filled/${userId}`}>
+                          <button className="approve-button secondary">
+                            Infant Feeding Plan Form
+                          </button>
+                        </Link>
+                      )}
+
+                      {userFormStatus.hasSafeSleep && (
+                        <Link to={`/safesleepfilled/${userId}`}>
+                          <button className="approve-button secondary">
+                            Safe Sleep Form
+                          </button>
+                        </Link>
+                      )}
+
+                      {userFormStatus.hasInfantAffidavit && (
+                        <Link to={`/infantaffidavitfilled/${userId}`}>
+                          <button className="approve-button secondary">
+                            Infant Affidavit Form
+                          </button>
+                        </Link>
+                      )}
+
+                      {/* <Link to={`/documents-submitted/${userId}`}>
+                        <button className="approve-button secondary">
+                          Documents Submitted
+                        </button>
+                      </Link> */}
+
+                      {userFormStatus.hasIESForm && (
+                        <Link to={`/iesfilled/${userId}`}>
+                          <button className="approve-button secondary">
+                            IES Form
+                          </button>
+                        </Link>
+                      )}
+                    </div>
                   </div>
-                  <div className="detail-row">
-                    <span>Date Completed:</span>{" "}
-                    {formatDate(enrollment.dateCompleted) || "Not completed"}
-                  </div>
-                  <div className="detail-row">
-                    <span>Director:</span>{" "}
-                    {enrollment.directorName || "Not assigned"}
-                  </div>
-                  {/* {!enrollment.directorSignature && (
-                    <Link to={`/signing/${enrollment._id}`}>
-                      <button className="approve-button">Sign</button>
-                    </Link>
-                  )} */}
-                  <Link to={`/filled-form/${enrollment._id}`}>
-                    <button className="approve-button">View Form</button>
-                  </Link>
                 </div>
-              </div>
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

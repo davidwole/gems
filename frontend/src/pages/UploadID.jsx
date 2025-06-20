@@ -1,6 +1,6 @@
 import "../styles/UploadID.css";
 import { Upload, FileText } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function UploadID() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -32,8 +32,7 @@ export default function UploadID() {
     event.preventDefault();
     if (selectedFile && idType) {
       // TODO: Implement file upload logic
-      console.log("Uploading file:", selectedFile);
-      console.log("ID Type:", idType);
+      console.log(selectedFile);
     }
   };
 

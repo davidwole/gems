@@ -79,3 +79,20 @@ input[type="number"] {
 .fixed-header {
   position: fixed;
 }
+
+.form_button {
+  padding: 1rem 3rem;
+  color: white;
+  background-color: black;
+  border: none;
+  margin-block: 1rem;
+}
+
+.form_button:disabled {
+  background-color: rgb(126, 126, 126);
+  cursor: not-allowed;
+}
+
+fieldset {
+  border: none;
+}

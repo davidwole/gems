@@ -5,7 +5,6 @@ import { getJobApplicationsByBranch } from "../services/api";
 import "../styles/applicant-list.css";
 
 export default function ApplicantList({ branchId }) {
-  console.log(branchId);
   const { token } = useContext(AuthContext);
   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +12,6 @@ export default function ApplicantList({ branchId }) {
   const navigate = useNavigate();
 
   const fetchApplicants = async () => {
-    console.log(branchId);
     setLoading(true);
     try {
       const response = await getJobApplicationsByBranch(branchId, token);
@@ -90,7 +88,7 @@ export default function ApplicantList({ branchId }) {
                   Applied: {formatDate(applicant.createdAt)}
                 </p>
               </div>
-              <div className="applicant-status-section">
+              {/* <div className="applicant-status-section">
                 <span
                   className={`applicant-status ${getStatusClass(
                     applicant.status
@@ -104,7 +102,7 @@ export default function ApplicantList({ branchId }) {
                     Interview: {formatDate(applicant.interviewDate)}
                   </p>
                 )}
-              </div>
+              </div> */}
               <div className="applicant-actions">
                 <button
                   className="view-button"

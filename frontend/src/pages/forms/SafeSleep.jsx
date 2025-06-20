@@ -1,9 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import "../../styles/safesleep.css";
+import Signature from "../../components/Signature";
+import { AuthContext } from "../../context/AuthContext";
+import { createSafeSleep } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 export default function SafeSleep() {
+  const { user, token } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   // Define state for all form inputs
   const [formData, setFormData] = useState({
+    user: "",
     childName: "",
     dateOfBirth: "",
     parentName: "",
@@ -21,12 +29,40 @@ export default function SafeSleep() {
     });
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form data submitted:", formData);
-    // Here you can add functionality to save or process the form data
+  const handleSignature = (dataUrl) => {
+    setFormData({
+      ...formData,
+      signature: dataUrl,
+    });
   };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await createSafeSleep(formData);
+      if (response.success) {
+        setTimeout(() => {
+          setLoading(false);
+          navigate("/dashboard");
+        }, 2000);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        ...formData,
+        user: user.id,
+      });
+    }
+  }, [user]);
+
+  useEffect(() => {}, []);
 
   return (
     <div className="safe_sleep">
@@ -127,12 +163,7 @@ export default function SafeSleep() {
         </p>
         <div>
           <label>Signature</label>
-          <input
-            type="text"
-            name="signature"
-            value={formData.signature}
-            onChange={handleChange}
-          />
+          <Signature onSave={(dataUrl) => handleSignature(dataUrl)} />
           <label>Date</label>
           <input
             type="date"
@@ -141,6 +172,12 @@ export default function SafeSleep() {
             onChange={handleChange}
           />
         </div>
+        <button
+          className="form_button"
+          disabled={!formData.signature || loading}
+        >
+          {loading ? "Loading" : "Submit"}
+        </button>
       </form>
     </div>
   );

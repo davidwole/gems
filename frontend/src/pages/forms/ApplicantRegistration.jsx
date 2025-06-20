@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { API_URL } from "../../services/api";
 import "../../styles/applicantRegistration.css";
 import "../../styles/forms.css"; // Import the forms.css styles
+import { AuthContext } from "../../context/AuthContext";
 
 const ApplicantRegistration = () => {
+  const { user, logout } = useContext(AuthContext);
   const { branchId } = useParams();
   const navigate = useNavigate();
   const [formData, setState] = useState({
@@ -35,13 +37,19 @@ const ApplicantRegistration = () => {
           ...prev,
           general: "Branch information not found. Please try again.",
         }));
+
+        navigate("/dashboard");
       }
     };
 
     if (branchId) {
       fetchBranchInfo();
     }
-  }, [branchId]);
+
+    if (user) {
+      logout();
+    }
+  }, [branchId, user]);
 
   // Validate password strength
   const validatePassword = (password) => {
@@ -210,7 +218,7 @@ const ApplicantRegistration = () => {
 
       // Store token and navigate to dashboard instead of showing I9Form
       localStorage.setItem("token", data.token);
-      window.location.assign("/dashboard");
+      window.location.assign("/");
       setIsLoading(false);
     } catch (error) {
       setErrors({ general: "Network error occurred. Please try again later." });

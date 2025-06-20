@@ -11,7 +11,7 @@ import { useParams } from "react-router-dom";
 
 export default function IESFormSigning() {
   const { user, token } = useContext(AuthContext);
-  const { id } = useParams();
+  const { userId } = useParams();
 
   const [formData, setFormdata] = useState(false);
   const [signatures, setSignatures] = useState({
@@ -24,7 +24,7 @@ export default function IESFormSigning() {
   });
 
   const fetchForm = async () => {
-    const response = await fetch(`${API_URL}/enrollment-forms/${id}`, {
+    const response = await fetch(`${API_URL}/ies-forms/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -32,7 +32,7 @@ export default function IESFormSigning() {
     const data = await response.json();
 
     console.log(data);
-    setFormdata(data.data);
+    setFormdata(data[0]);
   };
 
   const handleSignatureSave = (dataUrl, name) => {
