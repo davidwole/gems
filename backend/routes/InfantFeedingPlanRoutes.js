@@ -1,64 +1,38 @@
+// routes/infantFeedingPlanRoutes.js
 const express = require("express");
-const authMiddleware = require("../middleware/authMiddleware");
-const roleMiddleware = require("../middleware/roleMiddleware");
 const {
   createInfantFeedingPlan,
-  getAllInfantFeedingPlans,
-  getInfantFeedingPlansByBranch,
-  getInfantFeedingPlansByUser,
-  getInfantFeedingPlanById,
+  getInfantFeedingPlans,
+  getInfantFeedingPlanByUser,
   updateInfantFeedingPlan,
-  updatePlanStatus,
   deleteInfantFeedingPlan,
 } = require("../controllers/InfantFeedingPlanController");
 
 const router = express.Router();
 
-// Create an infant feeding plan - any authenticated user can create
-router.post("/", authMiddleware, createInfantFeedingPlan);
+// @route   POST /api/infant-feeding-plans
+// @desc    Create a new infant feeding plan
+// @access  Private
+router.post("/", createInfantFeedingPlan);
 
-// Get all infant feeding plans - admin only
-router.get(
-  "/",
-  authMiddleware,
-  roleMiddleware(["L1", "L2", "L3", "L4"]),
-  getAllInfantFeedingPlans
-);
+// @route   GET /api/infant-feeding-plans
+// @desc    Get all infant feeding plans for a user
+// @access  Private
+// router.get("/", getInfantFeedingPlans);
 
-// Get infant feeding plans by branch - admin and branch managers
-router.get(
-  "/branch/:branchId",
-  authMiddleware,
-  roleMiddleware(["L1", "L2", "L3"]),
-  getInfantFeedingPlansByBranch
-);
+// @route   GET /api/infant-feeding-plans/:id
+// @desc    Get a single infant feeding plan by ID
+// @access  Private
+router.get("/:id", getInfantFeedingPlanByUser);
 
-// Get current user's infant feeding plans
-router.get("/me", authMiddleware, getInfantFeedingPlansByUser);
+// @route   PUT /api/infant-feeding-plans/:id
+// @desc    Update an infant feeding plan
+// @access  Private
+router.put("/:id", updateInfantFeedingPlan);
 
-// Get specific user's infant feeding plans - admin only
-router.get(
-  "/user/:userId",
-  authMiddleware,
-  roleMiddleware(["L1", "L2", "L3", "L4"]),
-  getInfantFeedingPlansByUser
-);
-
-// Get a single infant feeding plan by ID
-router.get("/:id", authMiddleware, getInfantFeedingPlanById);
-
-// Update an infant feeding plan - owner or admin
-router.put("/:id", authMiddleware, updateInfantFeedingPlan);
-
-// Update infant feeding plan status - admin only
-router.patch(
-  "/:id",
-  authMiddleware,
-  roleMiddleware(["L1", "L2", "L3", "L4"]),
-  updatePlanStatus
-);
-
-// Delete an infant feeding plan - owner or admin
-router.delete("/:id", authMiddleware, deleteInfantFeedingPlan);
+// @route   DELETE /api/infant-feeding-plans/:id
+// @desc    Delete an infant feeding plan
+// @access  Private
+router.delete("/:id", deleteInfantFeedingPlan);
 
 module.exports = router;

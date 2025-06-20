@@ -189,6 +189,70 @@ exports.getUserDocuments = async (req, res) => {
   }
 };
 
+// Add this function to your parentController.js
+
+// Serve/download a document file
+exports.getDocumentFile = async (req, res) => {
+  try {
+    const documentId = req.params.documentId;
+    const { action } = req.query; // 'view' or 'download'
+
+    // Find the document
+    const document = await Document.findById(documentId);
+
+    if (!document) {
+      return res.status(404).json({
+        success: false,
+        message: "Document not found",
+      });
+    }
+
+    // Check if user is authorized to view this document
+    if (document.user.toString() !== req.user.id && req.user.role !== "L1") {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to view this document",
+      });
+    }
+
+    // Check if file exists on disk
+    if (!fs.existsSync(document.path)) {
+      return res.status(404).json({
+        success: false,
+        message: "File not found on server",
+      });
+    }
+
+    // Set appropriate headers based on action
+    if (action === "download") {
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${document.filename}"`
+      );
+    } else {
+      // For viewing in browser
+      res.setHeader(
+        "Content-Disposition",
+        `inline; filename="${document.filename}"`
+      );
+    }
+
+    res.setHeader("Content-Type", document.mimetype);
+    res.setHeader("Content-Length", document.size);
+
+    // Stream the file
+    const fileStream = fs.createReadStream(document.path);
+    fileStream.pipe(res);
+  } catch (error) {
+    console.error("Error serving document:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while serving document",
+      error: error.message,
+    });
+  }
+};
+
 // Delete a document
 exports.deleteDocument = async (req, res) => {
   try {

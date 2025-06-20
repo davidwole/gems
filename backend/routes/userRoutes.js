@@ -7,11 +7,18 @@ const {
   getAllUsers,
   toggleUserSuspension,
   upgradeToL5,
+  getUserById,
 } = require("../controllers/userController");
 
 const router = express.Router();
 
 router.get("/", authMiddleware, roleMiddleware(["L1"]), getAllUsers);
+router.get(
+  "/:id",
+  authMiddleware,
+  roleMiddleware(["L1", "L2", "L3"]),
+  getUserById
+);
 router.post(
   "/",
   // authMiddleware, roleMiddleware(["L1"]),

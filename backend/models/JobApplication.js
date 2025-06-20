@@ -179,6 +179,10 @@ const JobApplicationSchema = new mongoose.Schema(
         uploadedAt: Date,
       },
     ],
+    interviewNotes: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );

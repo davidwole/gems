@@ -33,6 +33,19 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+// Get All User (L1 Superuser only)
+exports.getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 // Delete User (L1 Superuser only)
 exports.deleteUser = async (req, res) => {
   const { id } = req.params;

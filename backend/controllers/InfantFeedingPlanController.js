@@ -1,125 +1,92 @@
+// controllers/infantFeedingPlanController.js
 const InfantFeedingPlan = require("../models/InfantFeedingPlan");
-const User = require("../models/User");
 
-// Create an infant feeding plan
-exports.createInfantFeedingPlan = async (req, res) => {
+// @desc    Create a new infant feeding plan
+// @route   POST /api/infant-feeding-plans
+// @access  Private
+const createInfantFeedingPlan = async (req, res) => {
   try {
-    // Create a new plan with the request body
-    const newPlan = new InfantFeedingPlan(req.body);
+    const infantFeedingPlan = new InfantFeedingPlan(req.body);
 
-    // Save the plan to the database
-    const savedPlan = await newPlan.save();
-
+    const savedPlan = await infantFeedingPlan.save();
     res.status(201).json({
       success: true,
-      message: "Infant feeding plan submitted successfully",
       data: savedPlan,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Error creating infant feeding plan:", error);
+    res.status(400).json({
       success: false,
-      message: error.message,
+      message: "Error creating infant feeding plan",
+      error: error.message,
     });
   }
 };
 
-// Get all infant feeding plans (admin access)
-exports.getAllInfantFeedingPlans = async (req, res) => {
+// @desc    Get all infant feeding plans for a user
+// @route   GET /api/infant-feeding-plans
+// @access  Private
+const getInfantFeedingPlans = async (req, res) => {
   try {
-    const plans = await InfantFeedingPlan.find()
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const plans = await InfantFeedingPlan.find({ user: req.user.id })
       .populate("user", "name email")
-      .populate("branch", "name");
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
-    res.status(200).json({
+    const total = await InfantFeedingPlan.countDocuments({ user: req.user.id });
+
+    res.json({
       success: true,
-      count: plans.length,
       data: plans,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
+    console.error("Error fetching infant feeding plans:", error);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Error fetching infant feeding plans",
+      error: error.message,
     });
   }
 };
 
-// Get infant feeding plans by branch
-exports.getInfantFeedingPlansByBranch = async (req, res) => {
-  const { branchId } = req.params;
-
+// @desc    Get a single infant feeding plan by ID
+// @route   GET /api/infant-feeding-plans/:id
+// @access  Private
+const getInfantFeedingPlanByUser = async (req, res) => {
   try {
-    const plans = await InfantFeedingPlan.find({ branch: branchId })
-      .populate("user", "name email")
-      .populate("branch", "name");
+    const plan = await InfantFeedingPlan.find({ user: req.params.id });
 
-    res.status(200).json({
-      success: true,
-      count: plans.length,
-      data: plans,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-// Get infant feeding plans by user
-exports.getInfantFeedingPlansByUser = async (req, res) => {
-  const userId = req.params.userId || req.user.id;
-
-  try {
-    const plans = await InfantFeedingPlan.find({ user: userId }).populate(
-      "branch",
-      "name"
-    );
-
-    res.status(200).json({
-      success: true,
-      count: plans.length,
-      data: plans,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-// Get a single infant feeding plan by ID
-exports.getInfantFeedingPlanById = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const plan = await InfantFeedingPlan.findById(id);
-
-    if (!plan) {
-      return res.status(404).json({
-        success: false,
-        message: "Infant feeding plan not found",
-      });
-    }
-
-    res.status(200).json({
+    res.json({
       success: true,
       data: plan,
     });
   } catch (error) {
+    console.error("Error fetching infant feeding plan:", error);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Error fetching infant feeding plan",
+      error: error.message,
     });
   }
 };
 
-// Update an infant feeding plan
-exports.updateInfantFeedingPlan = async (req, res) => {
-  const { id } = req.params;
-
+// @desc    Update an infant feeding plan
+// @route   PUT /api/infant-feeding-plans/:id
+// @access  Private
+const updateInfantFeedingPlan = async (req, res) => {
   try {
-    const plan = await InfantFeedingPlan.findById(id);
+    const plan = await InfantFeedingPlan.findById(req.params.id);
 
     if (!plan) {
       return res.status(404).json({
@@ -128,12 +95,8 @@ exports.updateInfantFeedingPlan = async (req, res) => {
       });
     }
 
-    // Check if the user is the owner of the plan or has admin privileges
-    if (
-      plan.user.toString() !== req.user.id &&
-      req.user.role !== "L1" &&
-      req.user.role !== "L2"
-    ) {
+    // Check if user owns this plan
+    if (plan.user.toString() !== req.user.id) {
       return res.status(403).json({
         success: false,
         message: "Not authorized to update this plan",
@@ -141,36 +104,34 @@ exports.updateInfantFeedingPlan = async (req, res) => {
     }
 
     const updatedPlan = await InfantFeedingPlan.findByIdAndUpdate(
-      id,
+      req.params.id,
       req.body,
       {
         new: true,
         runValidators: true,
       }
-    );
+    ).populate("user", "name email");
 
-    res.status(200).json({
+    res.json({
       success: true,
-      message: "Infant feeding plan updated successfully",
       data: updatedPlan,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Error updating infant feeding plan:", error);
+    res.status(400).json({
       success: false,
-      message: error.message,
+      message: "Error updating infant feeding plan",
+      error: error.message,
     });
   }
 };
 
-// Update infant feeding plan status (approve/reject)
-exports.updatePlanStatus = async (req, res) => {
-  const { id } = req.params;
-
+// @desc    Delete an infant feeding plan
+// @route   DELETE /api/infant-feeding-plans/:id
+// @access  Private
+const deleteInfantFeedingPlan = async (req, res) => {
   try {
-    const plan = await InfantFeedingPlan.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    const plan = await InfantFeedingPlan.findById(req.params.id);
 
     if (!plan) {
       return res.status(404).json({
@@ -179,51 +140,34 @@ exports.updatePlanStatus = async (req, res) => {
       });
     }
 
-    res.status(200).json({
-      success: true,
-      message: `Infant feeding plan status updated successfully`,
-      data: plan,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-// Delete an infant feeding plan
-exports.deleteInfantFeedingPlan = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const plan = await InfantFeedingPlan.findById(id);
-
-    if (!plan) {
-      return res.status(404).json({
-        success: false,
-        message: "Infant feeding plan not found",
-      });
-    }
-
-    // Check if the user is the owner of the plan or has admin privileges
-    if (plan.user.toString() !== req.user.id && req.user.role !== "L1") {
+    // Check if user owns this plan
+    if (plan.user.toString() !== req.user.id) {
       return res.status(403).json({
         success: false,
         message: "Not authorized to delete this plan",
       });
     }
 
-    await InfantFeedingPlan.findByIdAndDelete(id);
+    await InfantFeedingPlan.findByIdAndDelete(req.params.id);
 
-    res.status(200).json({
+    res.json({
       success: true,
       message: "Infant feeding plan deleted successfully",
     });
   } catch (error) {
+    console.error("Error deleting infant feeding plan:", error);
     res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Error deleting infant feeding plan",
+      error: error.message,
     });
   }
+};
+
+module.exports = {
+  createInfantFeedingPlan,
+  getInfantFeedingPlans,
+  getInfantFeedingPlanByUser,
+  updateInfantFeedingPlan,
+  deleteInfantFeedingPlan,
 };

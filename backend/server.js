@@ -17,13 +17,16 @@ app.use("/api/branches", require("./routes/branchRoutes"));
 app.use("/api/handbooks", require("./routes/handbookRoutes"));
 app.use("/api/parents", require("./routes/parentRoutes"));
 app.use("/api/enrollment-forms", require("./routes/enrollmentFormRoutes"));
+app.use("/api/ies-forms", require("./routes/IESRoutes"));
 app.use("/api/job-applications", require("./routes/jobApplicationRoutes"));
 app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/contact", require("./routes/contactRoutes"));
-// app.use(
-//   "/api/infant-feeding-plans",
-//   require("./routes/infantFeedingPlanRoutes")
-// );
+app.use(
+  "/api/infant-feeding-plans",
+  require("./routes/infantFeedingPlanRoutes")
+);
+app.use("/api/infant-affidavits", require("./routes/infantAffidavitRoutes"));
+app.use("/api/safe-sleep", require("./routes/safeSleepRoutes"));
 
 app.get("/api/connect", (req, res) => {
   res.json({
