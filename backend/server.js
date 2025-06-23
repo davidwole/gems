@@ -25,7 +25,7 @@ app.use("/api/contact", require("./routes/contactRoutes"));
 //   "/api/infant-feeding-plans",
 //   require("./routes/infantFeedingPlanRoutes")
 // );
-app.use("/api/infant-affidavits", require("./routes/infantAffidavitRoutes"));
+// app.use("/api/infant-affidavits", require("./routes/infantAffidavitRoutes"));
 app.use("/api/safe-sleep", require("./routes/safeSleepRoutes"));
 
 app.get("/api/connect", (req, res) => {
