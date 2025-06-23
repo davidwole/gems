@@ -36,6 +36,7 @@ import InfantFeedingPlanFilled from "./pages/forms/InfantFeedingPlanFilled";
 import SafeSleepFilled from "./pages/forms/SafeSleepFilled";
 import InfantAffidavitFilled from "./pages/forms/InfantAffidavitFilled";
 import Documents from "./pages/Documents";
+import ReviewChildData from "./pages/ReviewChildData";
 
 // Suspension Modal Component
 const SuspensionModal = ({ onClose }) => {
@@ -247,6 +248,15 @@ const AppContent = () => {
         element={
           <ProtectedRoute>
             <IESFormSigning />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/child-data"
+        element={
+          <ProtectedRoute>
+            <ReviewChildData />
           </ProtectedRoute>
         }
       />

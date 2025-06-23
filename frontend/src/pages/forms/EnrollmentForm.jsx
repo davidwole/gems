@@ -3,12 +3,14 @@ import { useState, useContext, useEffect, useRef } from "react";
 import SignaturePad from "../../components/SignaturePad";
 import { AuthContext } from "../../context/AuthContext";
 import { submitEnrollmentForm } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 export default function EnrollmentForm() {
   const { user } = useContext(AuthContext);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [error, setError] = useState(false);
   const errorRef = useRef(null);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     user: user?.id,
@@ -153,7 +155,7 @@ export default function EnrollmentForm() {
     doctorPhone: "",
     specialAccommodations: "",
     allergies: "",
-    takesRoutineMedication: "",
+    takesRoutineMedication: false,
     medicationExplanation: "",
 
     // Transportation agreement

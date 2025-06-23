@@ -14,6 +14,7 @@ const Dashboard = () => {
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [enrollmentForms, setEnrollmentForms] = useState([]);
+  const [isChildInfant, setIsChildInfant] = useState(false);
   const [review, setReview] = useState([]);
   const [loadingForms, setLoadingForms] = useState(false);
   const navigate = useNavigate();
@@ -34,6 +35,23 @@ const Dashboard = () => {
       return;
     }
 
+    const calculateAge = (birthdateString) => {
+      const today = new Date();
+      const birthdate = new Date(birthdateString);
+      let age = today.getFullYear() - birthdate.getFullYear();
+      const monthDiff = today.getMonth() - birthdate.getMonth();
+      const dayDiff = today.getDate() - birthdate.getDate();
+
+      // If birthday hasn't occurred yet this year, subtract 1
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+      }
+
+      if (age < 1) {
+        setIsChildInfant(true);
+      }
+    };
+
     const fetchData = async () => {
       setLoading(true);
       if (
@@ -53,6 +71,9 @@ const Dashboard = () => {
         try {
           const forms = await getEnrollmentFormsByUser(token);
           setEnrollmentForms(forms?.data || []);
+          if (forms.data.length > 0) {
+            calculateAge(forms?.data[0].dateOfBirth);
+          }
         } catch (error) {
           console.error("Error fetching enrollment forms:", error);
         }
@@ -122,6 +143,11 @@ const Dashboard = () => {
   const handleUploadID = () => {
     // This will be implemented later
     navigate(`/uploadid`);
+  };
+
+  const handleReviewChildData = () => {
+    // This will be implemented later
+    navigate(`/child-data`);
   };
 
   const handleUploadDocuments = () => {
@@ -287,6 +313,7 @@ const Dashboard = () => {
             fillEmploymentApplication: handleFillEmploymentApplication,
             fillParentEnrollment: handleParentEnrollment,
             uploadID: handleUploadID,
+            reviewChildData: handleReviewChildData,
             uploadDocuments: handleUploadDocuments,
             signAcknowledgements: handleSignAcknowledgements,
             parentSignAcknowledgements: handleParentSignAcknowledgements,
@@ -298,14 +325,22 @@ const Dashboard = () => {
             postReview: handlePostReview,
             iesForm: handleIESForm,
           },
-          review
+          review,
+          enrollmentForms,
+          isChildInfant
         )}
       </div>
     </div>
   );
 };
 
-const renderRoleSpecificContent = (role, actions, review) => {
+const renderRoleSpecificContent = (
+  role,
+  actions,
+  review,
+  enrollmentForms,
+  isChildInfant
+) => {
   switch (role) {
     case "L1":
       return (
@@ -422,25 +457,12 @@ const renderRoleSpecificContent = (role, actions, review) => {
         <div className="general-section">
           <h3>Quick Actions</h3>
           <div className="action-buttons">
-            <button className="action-button" onClick={actions.iesForm}>
-              Eligibility Statement
+            <button className="action-button" onClick={actions.reviewChildData}>
+              Review Child Data
             </button>
-            <button className="action-button">Review Child Data</button>
             <button className="action-button" onClick={actions.uploadDocuments}>
               Upload Documents
             </button>
-            <button
-              className="action-button"
-              onClick={actions.parentSignAcknowledgements}
-            >
-              Sign Consent Forms
-            </button>
-
-            {!review && (
-              <button className="action-button" onClick={actions.postReview}>
-                Post Review
-              </button>
-            )}
           </div>
         </div>
       );
@@ -464,35 +486,49 @@ const renderRoleSpecificContent = (role, actions, review) => {
                   : "Fill Enrollment Application"}
               </button>
             )}
-            <button className="action-button" onClick={actions.uploadDocuments}>
-              Upload Documents
-            </button>
-            <button
-              className="action-button"
-              onClick={actions.parentSignAcknowledgements}
-            >
-              Sign Acknowledgements
-            </button>
-            <button
-              className="action-button"
-              onClick={actions.infantFeedingPlan}
-            >
-              Infant Feeding Plan
-            </button>
-            <button className="action-button" onClick={actions.safeSleep}>
-              Safe Sleep Practices Policy
-            </button>
-            <button className="action-button" onClick={actions.infantAffidavit}>
-              Infant Affidavit
-            </button>
-            <button className="action-button" onClick={actions.iesForm}>
-              IES Form
-            </button>
 
-            {!review && (
-              <button className="action-button" onClick={actions.postReview}>
-                Post Review
-              </button>
+            {enrollmentForms?.length > 0 ? (
+              <>
+                <button
+                  className="action-button"
+                  onClick={actions.uploadDocuments}
+                >
+                  Upload Documents
+                </button>
+                <button
+                  className="action-button"
+                  onClick={actions.parentSignAcknowledgements}
+                >
+                  Sign Acknowledgements
+                </button>
+                {isChildInfant && (
+                  <>
+                    <button
+                      className="action-button"
+                      onClick={actions.infantFeedingPlan}
+                    >
+                      Infant Feeding Plan
+                    </button>
+                    <button
+                      className="action-button"
+                      onClick={actions.safeSleep}
+                    >
+                      Safe Sleep Practices Policy
+                    </button>
+                    <button
+                      className="action-button"
+                      onClick={actions.infantAffidavit}
+                    >
+                      Infant Affidavit
+                    </button>
+                  </>
+                )}
+                <button className="action-button" onClick={actions.iesForm}>
+                  IES Form
+                </button>
+              </>
+            ) : (
+              <></>
             )}
           </div>
         </div>
