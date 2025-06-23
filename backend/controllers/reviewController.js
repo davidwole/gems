@@ -7,7 +7,7 @@ const getReviews = async (req, res) => {
     res.status(200).json(reviews);
   } catch (error) {
     res.status(500).json({
-      error: error.message,
+      error: error.message, 
     });
   }
 };
