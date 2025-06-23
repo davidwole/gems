@@ -6,7 +6,7 @@ const {
   getInfantAffidavitByUser,
   updateInfantAffidavit,
   deleteInfantAffidavit,
-} = require("../controllers/InfantAffidavitController");
+} = require("../controllers/affidavitController");
 
 const router = express.Router();
 
