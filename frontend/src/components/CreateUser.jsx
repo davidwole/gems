@@ -275,7 +275,7 @@ const CreateUser = ({ onClose, onSuccess }) => {
       setTimeout(() => {
         onSuccess && onSuccess(data);
         onClose && onClose();
-      }, 2000);
+      }, 3000);
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -334,7 +334,10 @@ const CreateUser = ({ onClose, onSuccess }) => {
     <>
       <div className="form-container">
         <h2 className="form-title">Create New User</h2>
-
+        {error && <div className="error-message">{error}</div>}
+        {successMessage && (
+          <div className="success-message ">{successMessage}</div>
+        )}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="name">Full Name</label>
@@ -494,11 +497,6 @@ const CreateUser = ({ onClose, onSuccess }) => {
               {loading ? "Creating..." : "Create User"}
             </button>
           </div>
-
-          {error && <div className="error-message">{error}</div>}
-          {successMessage && (
-            <div className="success-message ">{successMessage}</div>
-          )}
         </form>
 
         {/* CSS for the password hint and additional styles */}

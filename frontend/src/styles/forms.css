@@ -13,7 +13,7 @@
 }
 .modal-content {
   background-color: white;
-  padding: 20px;
+  padding: 1rem 20px !important;
   border-radius: 0;
   width: 90%;
   max-width: 500px;
