@@ -5,9 +5,16 @@ const ReviewSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  rating: {
+    type: String,
+  },
   review: {
     type: String,
     required: true,
+  },
+  isApproved: {
+    type: Boolean,
+    default: false,
   },
 });
 

@@ -1,148 +1,131 @@
-import { useState, useContext, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-import "../styles/post-review.css";
+import "../styles/PostReview.css";
+import { Send, Star } from "lucide-react";
+import { useState } from "react";
 import { API_URL } from "../services/api";
 
-const PostReview = () => {
-  const { branchId } = useParams();
-  const { user, token } = useContext(AuthContext);
-  const navigate = useNavigate();
+export default function PostReview() {
+  const [name, setName] = useState("");
   const [review, setReview] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [branchName, setBranchName] = useState("");
+  const [rating, setRating] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    // Fetch branch details to display the name
-    const fetchBranchDetails = async () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (name && review && rating > 0) {
+      setIsSubmitting(true);
       try {
-        const response = await fetch(`${API_URL}/branches/${user.branch}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setBranchName(data.name);
-        }
+        await postReview();
+        // Reset form after successful submission
+        setName("");
+        setReview("");
+        setRating(0);
+        alert("Review posted successfully!");
       } catch (error) {
-        console.error("Error fetching branch details:", error);
+        console.error("Error posting review:", error);
+        alert("Failed to post review. Please try again.");
+      } finally {
+        setIsSubmitting(false);
       }
+    }
+  };
+
+  const postReview = async () => {
+    // TODO: Replace with your actual API endpoint
+    const reviewData = {
+      name,
+      review,
+      rating,
     };
 
-    if (user && token) {
-      fetchBranchDetails();
+    const response = await fetch(`${API_URL}/reviews`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reviewData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to post review");
     }
-  }, [user, token]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await fetch(`${API_URL}/reviews`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          user: user.id,
-          branch: user.branch,
-          review,
-        }),
-      });
-
-      if (response.ok) {
-        setSuccess(true);
-        setReview("");
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 2000);
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || "Failed to submit review");
-      }
-    } catch (error) {
-      console.error("Error submitting review:", error);
-      setError("An error occurred while submitting your review");
-    } finally {
-      setLoading(false);
-    }
+    return response.json();
   };
 
-  const handleCancel = () => {
-    navigate("/dashboard");
+  const handleRatingClick = (selectedRating) => {
+    setRating(selectedRating);
   };
-
-  if (!user) {
-    return <div className="loading">Loading user data...</div>;
-  }
 
   return (
-    <div className="post-review">
-      <header className="review-header">
-        <div className="review-title">
+    <div className="dashboard">
+      <div className="dashboard-header">
+        <div className="dashboard-title">
           <h1>Post Review</h1>
         </div>
-        <div className="user-info">
-          <span className="user-name">{user.name}</span>
-          <span className="user-role">{user.role}</span>
-        </div>
-      </header>
+      </div>
+      <div className="dashboard-content">
+        <form onSubmit={handleSubmit} className="review-form-section">
+          <div className="data-admin-section">
+            <h3>Share Your Experience</h3>
 
-      <div className="review-content">
-        <div className="review-form-container">
-          <h2>Share Your Experience</h2>
-          {branchName && <p className="branch-name">Branch: {branchName}</p>}
-
-          {success ? (
-            <div className="success-message">
-              <p>Thank you! Your review has been submitted successfully.</p>
-              <p>Redirecting to dashboard...</p>
+            <div className="form-group">
+              <label htmlFor="name">Name:</label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                className="form-input"
+                required
+              />
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="review-form">
-              <div className="form-group">
-                <label htmlFor="review">Your Review</label>
-                <textarea
-                  id="review"
-                  value={review}
-                  onChange={(e) => setReview(e.target.value)}
-                  placeholder="Please share your thoughts and experience with us..."
-                  required
-                  rows={8}
-                />
-              </div>
 
-              {error && <div className="error-message">{error}</div>}
-
-              <div className="form-actions">
-                <button
-                  type="button"
-                  className="cancel-button"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="submit-button"
-                  disabled={loading}
-                >
-                  {loading ? "Submitting..." : "Submit Review"}
-                </button>
+            <div className="form-group">
+              <label>Rating:</label>
+              <div className="rating-container">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    size={24}
+                    className={`star ${star <= rating ? "filled" : ""}`}
+                    onClick={() => handleRatingClick(star)}
+                  />
+                ))}
+                <span className="rating-text">
+                  {rating > 0
+                    ? `${rating} star${rating > 1 ? "s" : ""}`
+                    : "Select rating"}
+                </span>
               </div>
-            </form>
-          )}
-        </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="review">Review:</label>
+              <textarea
+                id="review"
+                value={review}
+                onChange={(e) => setReview(e.target.value)}
+                placeholder="Write your review here..."
+                className="form-textarea"
+                rows={6}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="submit-section">
+            <button
+              type="submit"
+              className={`action-button ${isSubmitting ? "submitting" : ""}`}
+              disabled={!name || !review || rating === 0 || isSubmitting}
+            >
+              <Send size={18} />
+              {isSubmitting ? "Posting..." : "Post Review"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
-};
-
-export default PostReview;
+}

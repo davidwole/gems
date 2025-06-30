@@ -139,7 +139,7 @@ const Dashboard = () => {
       }
 
       // Fetch enrollment forms for L8 users
-      if (user?.role === "L8") {
+      if (user?.role === "L8" || user?.role == "L7") {
         setLoadingForms(true);
         try {
           const forms = await getEnrollmentFormsByUser(token);
@@ -216,6 +216,10 @@ const Dashboard = () => {
     }
   };
 
+  const handleNavigate = (url) => {
+    navigate(url);
+  };
+
   const handleParentSignAcknowledgements = (formId = null) => {
     if (formId) {
       navigate(`/parenthandbook/${user.branch}?formId=${formId}`);
@@ -224,33 +228,33 @@ const Dashboard = () => {
     }
   };
 
-  const handleInfantFeedingPlan = (formId = null) => {
+  const handleInfantFeedingPlan = (formId = null, forL7 = false) => {
     if (formId) {
-      navigate(`/infantfeedingplan/${formId}`);
+      navigate(`/infantfeedingplan${forL7 ? "filled" : ""}/${formId}`);
     } else {
       navigate(`/infantfeedingplan/${user.branch}`);
     }
   };
 
-  const handleSafeSleep = (formId) => {
+  const handleSafeSleep = (formId, forL7 = false) => {
     if (formId) {
-      navigate(`/safesleep/${formId}`);
+      navigate(`/safesleep${forL7 ? "filled" : ""}/${formId}`);
     } else {
       navigate(`/safesleep/${user.branch}`);
     }
   };
 
-  const handleInfantAffidavit = (formId) => {
+  const handleInfantAffidavit = (formId, forL7 = false) => {
     if (formId) {
-      navigate(`/infantaffidavit/${formId}`);
+      navigate(`/infantaffidavit${forL7 ? "filled" : ""}/${formId}`);
     } else {
       navigate(`/infantaffidavit/${user.branch}`);
     }
   };
 
-  const handleIESForm = (formId) => {
+  const handleIESForm = (formId, forL7 = false) => {
     if (formId) {
-      navigate(`/iesform/${formId}`);
+      navigate(`/iesform${forL7 ? "filled" : ""}/${formId}`);
     } else {
       navigate(`/iesform/${user.branch}`);
     }
@@ -557,23 +561,41 @@ const Dashboard = () => {
 
         {/* Render other role-specific content */}
         {user.role !== "L8" &&
-          renderRoleSpecificContent(user.role, {
-            openCreateUser: () => setShowCreateUser(true),
-            openCreateBranch: () => setShowCreateBranch(true),
-            openManageUsers: () => setShowManageUsers(true),
-            fillEmploymentApplication: handleFillEmploymentApplication,
-            uploadID: handleUploadID,
-            reviewChildData: handleReviewChildData,
-            uploadDocuments: handleUploadDocuments,
-            signAcknowledgements: handleSignAcknowledgements,
-          })}
+          renderRoleSpecificContent(
+            user.role,
+            {
+              openCreateUser: () => setShowCreateUser(true),
+              openCreateBranch: () => setShowCreateBranch(true),
+              openManageUsers: () => setShowManageUsers(true),
+              fillEmploymentApplication: handleFillEmploymentApplication,
+              uploadID: handleUploadID,
+              reviewChildData: handleReviewChildData,
+              uploadDocuments: handleUploadDocuments,
+              signAcknowledgements: handleSignAcknowledgements,
+            },
+            enrollmentForms,
+            loadingForms,
+            getButtonStatus,
+            calculateAge,
+            isInfant,
+            handleNavigate
+          )}
       </div>
     </div>
   );
 };
 
 // Keep the existing renderRoleSpecificContent function for other roles
-const renderRoleSpecificContent = (role, actions) => {
+const renderRoleSpecificContent = (
+  role,
+  actions,
+  enrollmentForms,
+  loadingForms,
+  getButtonStatus,
+  calculateAge,
+  isInfant,
+  handleNavigate
+) => {
   switch (role) {
     case "L1":
       return (
@@ -686,15 +708,105 @@ const renderRoleSpecificContent = (role, actions) => {
     case "L7":
       return (
         <div className="general-section">
-          <h3>Quick Actions</h3>
+          <h3>Child/Children Data </h3>
           <div className="action-buttons">
-            <button className="action-button" onClick={actions.reviewChildData}>
+            {/* <button className="action-button" onClick={actions.reviewChildData}>
               Review Child Data
             </button>
             <button className="action-button" onClick={actions.uploadDocuments}>
               Upload Documents
-            </button>
+            </button> */}
           </div>
+
+          {enrollmentForms.length > 0 && (
+            <div className="children-sections">
+              {enrollmentForms.map((form, index) => {
+                const iesStatus = getButtonStatus(form._id, "ies-forms");
+                const safeSleepStatus = getButtonStatus(form._id, "safe-sleep");
+                const feedingPlanStatus = getButtonStatus(
+                  form._id,
+                  "infant-feeding-plans"
+                );
+                const affidavitStatus = getButtonStatus(
+                  form._id,
+                  "infant-affidavits"
+                );
+
+                return (
+                  <div key={form._id} className="child-section">
+                    <h3>{form.childName || `Child ${index + 1}`}</h3>
+                    <p className="child-info">
+                      Date of Birth: {form.dateOfBirth} | Age:{" "}
+                      {calculateAge(form.dateOfBirth)} years old
+                      {isInfant(form.dateOfBirth) && (
+                        <span className="infant-badge"> (Infant)</span>
+                      )}
+                    </p>
+
+                    <div className="action-buttons">
+                      {iesStatus.disabled && (
+                        <button
+                          className={`action-button ${iesStatus.className}`}
+                          onClick={() =>
+                            handleNavigate(`/iesfilledview/${form._id}`)
+                          }
+                        >
+                          IES Form
+                        </button>
+                      )}
+
+                      {/* Infant-specific buttons */}
+                      {isInfant(form.dateOfBirth) && (
+                        <>
+                          {feedingPlanStatus.disabled && (
+                            <button
+                              className={`action-button infant-button ${feedingPlanStatus.className}`}
+                              onClick={() =>
+                                handleNavigate(
+                                  `/infant-feeding-plan-filled/${form._id}`
+                                )
+                              }
+                            >
+                              Infant Feeding Plan{" "}
+                            </button>
+                          )}
+                          {safeSleepStatus.disabled && (
+                            <button
+                              className={`action-button infant-button ${safeSleepStatus.className}`}
+                              onClick={() =>
+                                handleNavigate(`/safesleepfilled/${form._id}`)
+                              }
+                            >
+                              Safe Sleep Practices Policy{" "}
+                            </button>
+                          )}
+                          {affidavitStatus.disabled && (
+                            <button
+                              className={`action-button infant-button ${affidavitStatus.className}`}
+                              onClick={() =>
+                                handleNavigate(
+                                  `/infantaffidavitfilled/${form._id}`
+                                )
+                              }
+                            >
+                              Infant Affidavit
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Show message if no forms exist */}
+          {!loadingForms && enrollmentForms.length === 0 && (
+            <div className="no-forms-message">
+              <p>No enrollment forms found.</p>
+            </div>
+          )}
         </div>
       );
     default:
