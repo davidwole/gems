@@ -6,6 +6,7 @@ const {
   getInfantAffidavitByUser,
   updateInfantAffidavit,
   deleteInfantAffidavit,
+  getInfantAffidavitByEnrollmentForm,
 } = require("../controllers/affidavitController");
 
 const router = express.Router();
@@ -23,7 +24,7 @@ router.post("/", createInfantAffidavit);
 // @route   GET /api/infant-affidavits/:id
 // @desc    Get a single infant affidavit by ID
 // @access  Private
-router.get("/:id", getInfantAffidavitByUser);
+router.get("/:id", getInfantAffidavitByEnrollmentForm);
 
 // @route   PUT /api/infant-affidavits/:id
 // @desc    Update an infant affidavit

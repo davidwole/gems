@@ -3,16 +3,18 @@ import "../../styles/feedingplan2.css";
 import { AuthContext } from "../../context/AuthContext";
 import Signature from "../../components/Signature";
 import { createInfantFeedingPlan } from "../../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function InfantFeedingPlan() {
   const { user, token } = useContext(AuthContext);
+  const { enrollmentformId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   // Create state for all form elements
   const [formAnswers, setFormAnswers] = useState({
     user: "",
+    enrollmentForm: enrollmentformId,
     // Basic info
     childFullName: "",
     date: "",

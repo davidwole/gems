@@ -6,6 +6,7 @@ const {
   getAllEnrollmentForms,
   getEnrollmentFormsByBranch,
   getEnrollmentFormsByUser,
+  getEnrollmentFormByEnrollmentForm,
   getEnrollmentFormById,
   updateEnrollmentForm,
   updateFormStatus,
@@ -41,7 +42,7 @@ router.get(
   "/:id",
   // authMiddleware,
   // roleMiddleware(["L1", "L2", "L3", "L4"]),
-  getEnrollmentFormsByUser
+  getEnrollmentFormByEnrollmentForm
 );
 
 // Get a single enrollment form by ID

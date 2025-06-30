@@ -9,6 +9,7 @@ import { API_URL } from "../../services/api";
 export default function SafeSleepFilled() {
   const { user, token } = useContext(AuthContext);
   const { userId } = useParams();
+  const { enrollmentformId } = useParams();
 
   const navigate = useNavigate();
   // Define state for all form inputs
@@ -56,7 +57,7 @@ export default function SafeSleepFilled() {
   };
 
   const getForm = async () => {
-    const response = await fetch(`${API_URL}/safe-sleep/${userId}`);
+    const response = await fetch(`${API_URL}/safe-sleep/${enrollmentformId}`);
     const json = await response.json();
 
     console.log(json);

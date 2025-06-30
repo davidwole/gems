@@ -79,6 +79,20 @@ exports.getEnrollmentFormsByUser = async (req, res) => {
   }
 };
 
+// Get enrollment forms by user
+exports.getEnrollmentFormByEnrollmentForm = async (req, res) => {
+  try {
+    const form = await IESForm.find({ enrollmentForm: req.params.id });
+
+    res.status(200).json(form);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // Get a single enrollment form by ID
 exports.getEnrollmentFormById = async (req, res) => {
   const { id } = req.params;

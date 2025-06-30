@@ -78,6 +78,26 @@ const getInfantAffidavitByUser = async (req, res) => {
   }
 };
 
+// @desc    Get a single infant affidavit by ID
+// @route   GET /api/infant-affidavits/:id
+// @access  Private
+const getInfantAffidavitByEnrollmentForm = async (req, res) => {
+  try {
+    const affidavit = await InfantAffidavit.find({
+      enrollmentForm: req.params.id,
+    });
+
+    res.json(affidavit);
+  } catch (error) {
+    console.error("Error fetching infant affidavit:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching infant affidavit",
+      error: error.message,
+    });
+  }
+};
+
 // @desc    Update an infant affidavit
 // @route   PUT /api/infant-affidavits/:id
 // @access  Private
@@ -165,6 +185,7 @@ module.exports = {
   createInfantAffidavit,
   getInfantAffidavits,
   getInfantAffidavitByUser,
+  getInfantAffidavitByEnrollmentForm,
   updateInfantAffidavit,
   deleteInfantAffidavit,
 };

@@ -1,4 +1,4 @@
-/* dashboard.css - Updated with manage button styling */
+/* dashboard.css - Updated with L8 parent sections styling */
 
 .dashboard {
   min-height: 100vh;
@@ -15,7 +15,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%; /* Full width header */
+  width: 100%;
   left: 0;
   right: 0;
 }
@@ -40,22 +40,22 @@
   background-color: #e8f4fd;
   color: #3498db;
   padding: 3px 8px;
-  border-radius: 0; /* Sharp edges */
+  border-radius: 0;
   font-size: 0.75rem;
   font-weight: 500;
 }
 
 .logout-button {
-  background-color: #000; /* Black primary button */
+  background-color: #000;
   color: white;
   border: none;
   padding: 6px 12px;
-  border-radius: 0; /* Sharp edges */
+  border-radius: 0;
   font-size: 0.85rem;
 }
 
 .logout-button:hover {
-  background-color: #3498db; /* Blue hover state */
+  background-color: #3498db;
 }
 
 .dashboard-content {
@@ -67,7 +67,7 @@
 .dashboard-welcome {
   background-color: white;
   padding: 20px;
-  border-radius: 0; /* Sharp edges */
+  border-radius: 0;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   margin-bottom: 25px;
   width: 100%;
@@ -81,7 +81,7 @@
 .branches-section {
   background-color: white;
   padding: 20px;
-  border-radius: 0; /* Sharp edges */
+  border-radius: 0;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   margin-bottom: 25px;
   width: 100%;
@@ -102,7 +102,7 @@
 
 .branch-card {
   background-color: #f8f9fa;
-  border-radius: 0; /* Sharp edges */
+  border-radius: 0;
   padding: 15px;
   border: 1px solid #eaeaea;
 }
@@ -120,7 +120,7 @@
 
 .branch-actions {
   display: flex;
-  gap: 8px; /* Space between edit and manage buttons */
+  gap: 8px;
   justify-content: flex-end;
 }
 
@@ -129,31 +129,110 @@
   color: white;
   border: none;
   padding: 5px 10px;
-  border-radius: 0; /* Sharp edges */
+  border-radius: 0;
   font-size: 0.8rem;
   cursor: pointer;
 }
 
 .edit-button {
-  background-color: #000; /* Black primary button */
+  background-color: #000;
 }
 
 .manage-button {
-  background-color: #000; /* Black primary button */
+  background-color: #000;
 }
 
 .edit-button:hover,
 .manage-button:hover {
-  background-color: #3498db; /* Blue hover state */
+  background-color: #3498db;
 }
 
+/* L8 Parent Sections - New Styling */
+.parent-sections {
+  width: 100%;
+}
+
+.new-enrollment-section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 25px;
+  width: 100%;
+  border-left: 4px solid #27ae60;
+}
+
+.new-enrollment-section h3 {
+  margin-bottom: 15px;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.children-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.child-section {
+  background-color: white;
+  padding: 25px;
+  border-radius: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  border-left: 4px solid #3498db;
+  position: relative;
+}
+
+.child-section h3 {
+  margin-bottom: 10px;
+  color: #2c3e50;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.child-info {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.infant-badge {
+  background-color: #f39c12;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.no-forms-message {
+  background-color: white;
+  padding: 30px;
+  border-radius: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  width: 100%;
+  border: 2px dashed #bdc3c7;
+}
+
+.no-forms-message p {
+  color: #7f8c8d;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Action buttons styling */
 .admin-actions,
 .data-admin-section,
 .director-section,
 .general-section {
   background-color: white;
   padding: 20px;
-  border-radius: 0; /* Sharp edges */
+  border-radius: 0;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   width: 100%;
 }
@@ -170,23 +249,50 @@
 .action-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
 }
 
 .action-button {
-  background-color: #000; /* Black primary button */
+  background-color: #000;
   color: white;
   border: none;
-  padding: 8px 15px;
-  border-radius: 0; /* Sharp edges */
+  padding: 10px 16px;
+  border-radius: 0;
   font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 40px;
 }
 
 .action-button:hover {
-  background-color: #3498db; /* Blue hover state */
+  background-color: #3498db;
+  transform: translateY(-1px);
 }
 
+.action-button.infant-button {
+  background-color: #f39c12;
+  border-left: 3px solid #e67e22;
+}
+
+.action-button.infant-button:hover {
+  background-color: #e67e22;
+}
+
+.action-button.disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.action-button.disabled:hover {
+  background-color: #cccccc;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
   .dashboard-header {
     flex-direction: column;
@@ -206,17 +312,40 @@
   .branches-grid {
     grid-template-columns: 1fr;
   }
+
+  .child-section {
+    padding: 20px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .child-info {
+    font-size: 0.85rem;
+  }
 }
 
-.action-button.disabled {
-  background-color: #cccccc;
-  color: #666666;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
+@media (max-width: 480px) {
+  .dashboard-content {
+    padding: 10px;
+  }
 
-.action-button.disabled:hover {
-  background-color: #cccccc;
-  transform: none;
-  box-shadow: none;
+  .child-section {
+    padding: 15px;
+  }
+
+  .child-section h3 {
+    font-size: 1.1rem;
+  }
+
+  .action-button {
+    padding: 12px 16px;
+    font-size: 0.85rem;
+  }
 }

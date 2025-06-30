@@ -77,6 +77,24 @@ const getSafeSleepByUser = async (req, res) => {
   }
 };
 
+// @desc    Get a single safe sleep form by ID
+// @route   GET /api/safe-sleep/:id
+// @access  Private
+const getSafeSleepByEnrollmentForm = async (req, res) => {
+  try {
+    const safeSleep = await SafeSleep.find({ enrollmentForm: req.params.id });
+
+    res.json(safeSleep);
+  } catch (error) {
+    console.error("Error fetching safe sleep form:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching safe sleep form",
+      error: error.message,
+    });
+  }
+};
+
 // @desc    Update a safe sleep form
 // @route   PUT /api/safe-sleep/:id
 // @access  Private
@@ -164,6 +182,7 @@ module.exports = {
   createSafeSleep,
   getSafeSleepForms,
   getSafeSleepByUser,
+  getSafeSleepByEnrollmentForm,
   updateSafeSleep,
   deleteSafeSleep,
 };

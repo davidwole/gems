@@ -6,6 +6,7 @@ const {
   getSafeSleepByUser,
   updateSafeSleep,
   deleteSafeSleep,
+  getSafeSleepByEnrollmentForm,
 } = require("../controllers/safeSleepController");
 const { protect } = require("../middleware/authMiddleware");
 
@@ -24,7 +25,7 @@ router.post("/", createSafeSleep);
 // @route   GET /api/safe-sleep/:id
 // @desc    Get a single safe sleep form by ID
 // @access  Private
-router.get("/:id", getSafeSleepByUser);
+router.get("/:id", getSafeSleepByEnrollmentForm);
 
 // @route   PUT /api/safe-sleep/:id
 // @desc    Update a safe sleep form

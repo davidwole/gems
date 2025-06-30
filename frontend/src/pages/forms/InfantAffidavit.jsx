@@ -3,15 +3,17 @@ import "../../styles/infantaffidavit.css";
 import Signature from "../../components/Signature";
 import { createInfantAffidavit } from "../../services/api";
 import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function InfantAffidavit() {
   const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { enrollmentformId } = useParams();
 
   // Define state for the form
   const [formData, setFormData] = useState({
+    enrollmentForm: enrollmentformId,
     sponsorName: "",
     providerName: "Gems Learning Academy", // Pre-filled value
     infantName: "",

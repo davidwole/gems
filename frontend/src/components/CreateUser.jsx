@@ -32,7 +32,6 @@ const CreateUser = ({ onClose, onSuccess }) => {
     L6: "Prospective Employee - Limited hiring access",
     L7: "Parent - Child management access",
     L8: "Prospective Parent - Enrollment process",
-    L10: "General Public - Basic access",
   };
 
   // Roles that don't require branch assignment

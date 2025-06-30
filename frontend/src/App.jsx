@@ -174,7 +174,7 @@ const AppContent = () => {
         }
       />
       <Route
-        path="/infantfeedingplan/:branchId"
+        path="/infantfeedingplan/:enrollmentformId"
         element={
           <ProtectedRoute>
             <InfantFeedingPlan />
@@ -182,7 +182,7 @@ const AppContent = () => {
         }
       />
       <Route
-        path="/infant-feeding-plan-filled/:userId"
+        path="/infant-feeding-plan-filled/:enrollmentformId"
         element={
           <ProtectedRoute>
             <InfantFeedingPlanFilled />
@@ -199,7 +199,7 @@ const AppContent = () => {
       />
 
       <Route
-        path="/safesleep/:branchId"
+        path="/safesleep/:enrollmentformId"
         element={
           <ProtectedRoute>
             <SafeSleep />
@@ -208,7 +208,7 @@ const AppContent = () => {
       />
 
       <Route
-        path="/safesleepfilled/:userId"
+        path="/safesleepfilled/:enrollmentformId"
         element={
           <ProtectedRoute>
             <SafeSleepFilled />
@@ -217,7 +217,7 @@ const AppContent = () => {
       />
 
       <Route
-        path="/infantaffidavit/:branchId"
+        path="/infantaffidavit/:enrollmentformId"
         element={
           <ProtectedRoute>
             <InfantAffidavit />
@@ -226,7 +226,7 @@ const AppContent = () => {
       />
 
       <Route
-        path="/infantaffidavitfilled/:userId"
+        path="/infantaffidavitfilled/:enrollmentformId"
         element={
           <ProtectedRoute>
             <InfantAffidavitFilled />
@@ -235,7 +235,7 @@ const AppContent = () => {
       />
 
       <Route
-        path="/documents-submitted/:userId"
+        path="/documents-submitted/:enrollmentformId"
         element={
           <ProtectedRoute>
             <Documents />
@@ -244,7 +244,7 @@ const AppContent = () => {
       />
 
       <Route
-        path="/iesfilled/:userId"
+        path="/iesfilled/:enrollmentformId"
         element={
           <ProtectedRoute>
             <IESFormSigning />
@@ -270,10 +270,13 @@ const AppContent = () => {
         path="/parent-registration/:branchId"
         element={<EnrollmentForm />}
       />
-      <Route path="/iesform/:branchId" element={<IESForm />} />
+      <Route path="/iesform/:enrollmentformId" element={<IESForm />} />
       <Route path="/viewform" element={<EnrollmentFormUnfilled />} />
       <Route path="/uploadid" element={<UploadID />} />
-      <Route path="/uploaddocuments" element={<UploadDocuments />} />
+      <Route
+        path="/uploaddocuments/:enrollmentformId"
+        element={<UploadDocuments />}
+      />
     </Routes>
   );
 };

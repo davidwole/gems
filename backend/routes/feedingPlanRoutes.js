@@ -6,6 +6,7 @@ const {
   getInfantFeedingPlanByUser,
   updateInfantFeedingPlan,
   deleteInfantFeedingPlan,
+  getInfantFeedingPlanByEnrollmentForm,
 } = require("../controllers/InfantFeedingPlanController");
 
 const router = express.Router();
@@ -23,7 +24,7 @@ router.post("/", createInfantFeedingPlan);
 // @route   GET /api/infant-feeding-plans/:id
 // @desc    Get a single infant feeding plan by ID
 // @access  Private
-router.get("/:id", getInfantFeedingPlanByUser);
+router.get("/:id", getInfantFeedingPlanByEnrollmentForm);
 
 // @route   PUT /api/infant-feeding-plans/:id
 // @desc    Update an infant feeding plan

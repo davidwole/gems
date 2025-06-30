@@ -11,7 +11,7 @@ import { useParams } from "react-router-dom";
 
 export default function IESFormSigning() {
   const { user, token } = useContext(AuthContext);
-  const { userId } = useParams();
+  const { userId, enrollmentformId } = useParams();
 
   const [formData, setFormdata] = useState(false);
   const [signatures, setSignatures] = useState({
@@ -24,7 +24,7 @@ export default function IESFormSigning() {
   });
 
   const fetchForm = async () => {
-    const response = await fetch(`${API_URL}/ies-forms/${userId}`, {
+    const response = await fetch(`${API_URL}/ies-forms/${enrollmentformId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

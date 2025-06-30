@@ -20,6 +20,11 @@ const infantFeedingPlanSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    enrollmentForm: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "EnrollmentForm",
+      required: true,
+    },
     // Basic info
     childFullName: {
       type: String,

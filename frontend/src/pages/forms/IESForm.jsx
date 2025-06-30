@@ -3,9 +3,10 @@ import "../../styles/IESForm.css";
 import { AuthContext } from "../../context/AuthContext";
 import { submitEnrollmentForm, submitIESForm } from "../../services/api";
 import Signature from "../../components/Signature";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function IESForm() {
+  const { enrollmentformId } = useParams();
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
@@ -14,6 +15,7 @@ export default function IESForm() {
   const [formData, setFormdata] = useState({
     user: "",
     branch: "",
+    enrollmentForm: enrollmentformId,
     enrolledChildOne: {
       name: "",
       caseNumber: "",

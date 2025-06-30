@@ -80,6 +80,28 @@ const getInfantFeedingPlanByUser = async (req, res) => {
     });
   }
 };
+// @desc    Get a single infant feeding plan by ID
+// @route   GET /api/infant-feeding-plans/:id
+// @access  Private
+const getInfantFeedingPlanByEnrollmentForm = async (req, res) => {
+  try {
+    const plan = await InfantFeedingPlan.find({
+      enrollmentForm: req.params.id,
+    });
+
+    res.json({
+      success: true,
+      data: plan,
+    });
+  } catch (error) {
+    console.error("Error fetching infant feeding plan:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching infant feeding plan",
+      error: error.message,
+    });
+  }
+};
 
 // @desc    Update an infant feeding plan
 // @route   PUT /api/infant-feeding-plans/:id
@@ -168,6 +190,7 @@ module.exports = {
   createInfantFeedingPlan,
   getInfantFeedingPlans,
   getInfantFeedingPlanByUser,
+  getInfantFeedingPlanByEnrollmentForm,
   updateInfantFeedingPlan,
   deleteInfantFeedingPlan,
 };

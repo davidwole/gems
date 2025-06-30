@@ -83,6 +83,11 @@ const IESForm = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    enrollmentForm: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "EnrollmentForm",
+      required: true,
+    },
     branch: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Branch",

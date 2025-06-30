@@ -10,7 +10,7 @@ export default function InfantAffidavitFilled() {
   const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { userId } = useParams();
+  const { userId, enrollmentformId } = useParams();
 
   // Define state for the form
   const [formData, setFormData] = useState({
@@ -91,7 +91,9 @@ export default function InfantAffidavitFilled() {
   };
 
   const getForm = async () => {
-    const response = await fetch(`${API_URL}/infant-affidavits/${userId}`);
+    const response = await fetch(
+      `${API_URL}/infant-affidavits/${enrollmentformId}`
+    );
     const json = await response.json();
 
     setFormData(json[0]);

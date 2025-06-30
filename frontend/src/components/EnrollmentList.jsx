@@ -5,9 +5,9 @@ import { API_URL } from "../services/api";
 import { Link, useParams } from "react-router-dom";
 
 // Form checking functions
-const checkIESForm = async (user) => {
+const checkIESForm = async (enrollmentId) => {
   try {
-    const response = await fetch(`${API_URL}/ies-forms/${user}`);
+    const response = await fetch(`${API_URL}/ies-forms/${enrollmentId}`);
     const data = await response.json();
     return data.length > 0;
   } catch (error) {
@@ -16,9 +16,11 @@ const checkIESForm = async (user) => {
   }
 };
 
-const checkInfantFeedingPlan = async (user) => {
+const checkInfantFeedingPlan = async (enrollmentId) => {
   try {
-    const response = await fetch(`${API_URL}/infant-feeding-plans/${user}`);
+    const response = await fetch(
+      `${API_URL}/infant-feeding-plans/${enrollmentId}`
+    );
     const data = await response.json();
     return data.length > 0;
   } catch (error) {
@@ -27,9 +29,9 @@ const checkInfantFeedingPlan = async (user) => {
   }
 };
 
-const checkSafeSleep = async (user) => {
+const checkSafeSleep = async (enrollmentId) => {
   try {
-    const response = await fetch(`${API_URL}/safe-sleep/${user}`);
+    const response = await fetch(`${API_URL}/safe-sleep/${enrollmentId}`);
     const data = await response.json();
 
     return data.length > 0;
@@ -39,9 +41,11 @@ const checkSafeSleep = async (user) => {
   }
 };
 
-const checkInfantAffidavit = async (user) => {
+const checkInfantAffidavit = async (enrollmentId) => {
   try {
-    const response = await fetch(`${API_URL}/infant-affidavits/${user}`);
+    const response = await fetch(
+      `${API_URL}/infant-affidavits/${enrollmentId}`
+    );
     const data = await response.json();
     return data.length > 0;
   } catch (error) {
@@ -101,18 +105,18 @@ export default function EnrollmentList({ branchId }) {
     const statuses = {};
 
     for (const enrollment of enrollmentData) {
-      const userId = enrollment.user || enrollment._id;
+      const enrollmentId = enrollment._id;
 
       try {
         const [iesForm, infantFeedingPlan, safeSleep, infantAffidavit] =
           await Promise.all([
-            checkIESForm(userId),
-            checkInfantFeedingPlan(userId),
-            checkSafeSleep(userId),
-            checkInfantAffidavit(userId),
+            checkIESForm(enrollmentId),
+            checkInfantFeedingPlan(enrollmentId),
+            checkSafeSleep(enrollmentId),
+            checkInfantAffidavit(enrollmentId),
           ]);
 
-        statuses[userId] = {
+        statuses[enrollmentId] = {
           hasIESForm: iesForm && iesForm.success !== false,
           hasInfantFeedingPlan:
             infantFeedingPlan && infantFeedingPlan.success !== false,
@@ -121,8 +125,11 @@ export default function EnrollmentList({ branchId }) {
             infantAffidavit && infantAffidavit.success !== false,
         };
       } catch (error) {
-        console.error(`Error checking forms for user ${userId}:`, error);
-        statuses[userId] = {
+        console.error(
+          `Error checking forms for enrollment ${enrollmentId}:`,
+          error
+        );
+        statuses[enrollmentId] = {
           hasIESForm: false,
           hasInfantFeedingPlan: false,
           hasSafeSleep: false,
@@ -200,8 +207,8 @@ export default function EnrollmentList({ branchId }) {
 
       <div className="enrollment-list">
         {sortedEnrollments.map((enrollment) => {
-          const userId = enrollment.user || enrollment._id;
-          const userFormStatus = formStatuses[userId] || {};
+          const enrollmentId = enrollment._id;
+          const userFormStatus = formStatuses[enrollmentId] || {};
 
           return (
             <div
@@ -332,7 +339,9 @@ export default function EnrollmentList({ branchId }) {
                       </Link>
 
                       {userFormStatus.hasInfantFeedingPlan && (
-                        <Link to={`/infant-feeding-plan-filled/${userId}`}>
+                        <Link
+                          to={`/infant-feeding-plan-filled/${enrollment._id}`}
+                        >
                           <button className="approve-button secondary">
                             Infant Feeding Plan Form
                           </button>
@@ -340,7 +349,7 @@ export default function EnrollmentList({ branchId }) {
                       )}
 
                       {userFormStatus.hasSafeSleep && (
-                        <Link to={`/safesleepfilled/${userId}`}>
+                        <Link to={`/safesleepfilled/${enrollment._id}`}>
                           <button className="approve-button secondary">
                             Safe Sleep Form
                           </button>
@@ -348,21 +357,21 @@ export default function EnrollmentList({ branchId }) {
                       )}
 
                       {userFormStatus.hasInfantAffidavit && (
-                        <Link to={`/infantaffidavitfilled/${userId}`}>
+                        <Link to={`/infantaffidavitfilled/${enrollment._id}`}>
                           <button className="approve-button secondary">
                             Infant Affidavit Form
                           </button>
                         </Link>
                       )}
 
-                      {/* <Link to={`/documents-submitted/${userId}`}>
+                      {/* <Link to={`/documents-submitted/${enrollment._id}`}>
                         <button className="approve-button secondary">
                           Documents Submitted
                         </button>
                       </Link> */}
 
                       {userFormStatus.hasIESForm && (
-                        <Link to={`/iesfilled/${userId}`}>
+                        <Link to={`/iesfilled/${enrollment._id}`}>
                           <button className="approve-button secondary">
                             IES Form
                           </button>

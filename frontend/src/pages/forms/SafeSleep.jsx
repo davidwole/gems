@@ -3,15 +3,17 @@ import "../../styles/safesleep.css";
 import Signature from "../../components/Signature";
 import { AuthContext } from "../../context/AuthContext";
 import { createSafeSleep } from "../../services/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function SafeSleep() {
   const { user, token } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const { enrollmentformId } = useParams();
   const navigate = useNavigate();
   // Define state for all form inputs
   const [formData, setFormData] = useState({
     user: "",
+    enrollmentForm: enrollmentformId,
     childName: "",
     dateOfBirth: "",
     parentName: "",

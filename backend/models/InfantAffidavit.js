@@ -18,6 +18,11 @@ const infantAffidavitSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    enrollmentForm: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "EnrollmentForm",
+      required: true,
+    },
     sponsorName: {
       type: String,
       trim: true,

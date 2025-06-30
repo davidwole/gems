@@ -10,7 +10,7 @@ export default function InfantFeedingPlanFilled() {
   const { user, token } = useContext(AuthContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const { userId } = useParams();
+  const { userId, enrollmentformId } = useParams();
 
   // Create state for all form elements
   const [formAnswers, setFormAnswers] = useState({
@@ -132,7 +132,9 @@ export default function InfantFeedingPlanFilled() {
   };
 
   const getForm = async () => {
-    const response = await fetch(`${API_URL}/infant-feeding-plans/${userId}`);
+    const response = await fetch(
+      `${API_URL}/infant-feeding-plans/${enrollmentformId}`
+    );
     const json = await response.json();
 
     setFormAnswers(json.data[0]);
