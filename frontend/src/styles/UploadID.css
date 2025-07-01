@@ -39,7 +39,7 @@
 }
 
 .action-button.selected {
-  background-color: #3498db;
+  background-color: #3498db !important;
 }
 
 .submit-section {

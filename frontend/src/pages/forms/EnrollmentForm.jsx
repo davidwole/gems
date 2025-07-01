@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 export default function EnrollmentForm() {
   const { user } = useContext(AuthContext);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+
   const [error, setError] = useState(false);
   const errorRef = useRef(null);
   const navigate = useNavigate();
@@ -385,7 +386,6 @@ export default function EnrollmentForm() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const missingSignatures = [
         "parentSignature",

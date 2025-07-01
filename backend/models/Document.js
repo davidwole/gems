@@ -7,6 +7,15 @@ const DocumentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    enrollmentForm: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "EnrollmentForm",
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
     documentType: {
       type: String,
       required: true,
@@ -22,13 +31,16 @@ const DocumentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    path: {
-      type: String,
-      required: true,
-    },
     mimetype: {
       type: String,
       required: true,
+      validate: {
+        validator: function (v) {
+          // Only allow image mimetypes
+          return /^image\/(jpeg|jpg|png|gif|webp)$/i.test(v);
+        },
+        message: "Only image files are allowed",
+      },
     },
     size: {
       type: Number,

@@ -269,6 +269,7 @@ const CreateUser = ({ onClose, onSuccess }) => {
       setLoading(false);
       // Show success message
       setSuccessMessage(`User ${formData.name} created successfully!`);
+      alert(`User ${formData.name} created successfully!`);
 
       // Wait 2 seconds before closing the modal or calling onSuccess
       setTimeout(() => {

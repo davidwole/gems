@@ -1,5 +1,5 @@
 // API base URL
-// export const API_URL = "http://localhost:5000/api"; // Or your API URL
+//  export const API_URL = "http://localhost:5000/api"; // Or your API URL
 export const API_URL = "https://gems-0q55.onrender.com/api"; // Or your API URL
 
 export const connect = async () => {
@@ -586,32 +586,32 @@ export const upgradeToL6 = async (userId, token) => {
 // Add this to your existing api.js file
 
 // Upload child document
-export const uploadChildDocument = async (documentData, file, token) => {
-  try {
-    const formData = new FormData();
-    formData.append("userId", documentData.user);
-    formData.append("documentType", documentData.documentType);
-    formData.append("file", file);
+// export const uploadChildDocument = async (documentData, file, token) => {
+//   try {
+//     const formData = new FormData();
+//     formData.append("userId", documentData.user);
+//     formData.append("documentType", documentData.documentType);
+//     formData.append("file", file);
 
-    const response = await fetch(`${API_URL}/parents/upload_document`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
+//     const response = await fetch(`${API_URL}/parents/upload_document`, {
+//       method: "POST",
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//       body: formData,
+//     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to upload document");
-    }
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       throw new Error(errorData.message || "Failed to upload document");
+//     }
 
-    return await response.json();
-  } catch (error) {
-    console.error("Error uploading document:", error);
-    throw error;
-  }
-};
+//     return await response.json();
+//   } catch (error) {
+//     console.error("Error uploading document:", error);
+//     throw error;
+//   }
+// };
 
 // Get all documents for a user
 export const getUserDocuments = async (userId, token) => {
@@ -1152,5 +1152,29 @@ const checkInfantAffidavit = async (user) => {
     return data;
   } catch (error) {
     console.log(error.message);
+  }
+};
+
+export const uploadChildDocument = async (documentData, token) => {
+  try {
+    const response = await fetch(`${API_URL}/parents/upload_document`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(documentData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to upload document");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("API Error:", error);
+    throw error;
   }
 };

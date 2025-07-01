@@ -3,19 +3,51 @@ import { Upload, FileText } from "lucide-react";
 import { useState, useRef, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { uploadChildDocument } from "../services/api";
+import { useParams } from "react-router-dom";
 
 export default function UploadDocuments() {
+  const { enrollmentformId } = useParams();
   const { user, token } = useContext(AuthContext);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [previewSource, setPreviewSource] = useState(null);
   const [documentType, setDocumentType] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [documents, setDocuments] = useState([]);
+  const [renderUser, setRenderUser] = useState("");
   const fileInputRef = useRef(null);
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
-    setSelectedFile(file);
+    if (file && isValidImageFile(file)) {
+      setSelectedFile(file);
+      previewFile(file);
+      setMessage(null);
+    } else {
+      setMessage({
+        type: "error",
+        text: "Please select a valid image file (JPG, JPEG, PNG, GIF, WebP)",
+      });
+    }
+  };
+
+  const isValidImageFile = (file) => {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
+    return allowedTypes.includes(file.type);
+  };
+
+  const previewFile = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setPreviewSource(reader.result);
+    };
   };
 
   const handleDragOver = (event) => {
@@ -27,11 +59,38 @@ export default function UploadDocuments() {
     event.preventDefault();
     event.stopPropagation();
     const file = event.dataTransfer.files[0];
-    setSelectedFile(file);
+    if (file && isValidImageFile(file)) {
+      setSelectedFile(file);
+      previewFile(file);
+      setMessage(null);
+    } else {
+      setMessage({
+        type: "error",
+        text: "Please select a valid image file (JPG, JPEG, PNG, GIF, WebP)",
+      });
+    }
   };
 
   const triggerFileInput = () => {
     fileInputRef.current.click();
+  };
+
+  const uploadImage = async (base64EncodedImage) => {
+    try {
+      const response = await fetch(
+        `https://designsurvey.onrender.com/api/upload`,
+        {
+          method: "POST",
+          body: JSON.stringify({ data: base64EncodedImage }),
+          headers: { "Content-type": "application/json" },
+        }
+      );
+      const data = await response.json();
+      return data.url;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to upload image");
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -40,7 +99,15 @@ export default function UploadDocuments() {
     if (!selectedFile || !documentType) {
       setMessage({
         type: "error",
-        text: "Please select a document type and file",
+        text: "Please select a document type and image file",
+      });
+      return;
+    }
+
+    if (!previewSource || typeof previewSource !== "string") {
+      setMessage({
+        type: "error",
+        text: "Please wait for image to load",
       });
       return;
     }
@@ -49,32 +116,40 @@ export default function UploadDocuments() {
     setMessage(null);
 
     try {
+      // Upload image and get URL
+      const imageUrl = await uploadImage(previewSource);
+
+      // Prepare document data
       const documentData = {
-        user: user.id,
+        user: renderUser?.id,
+        enrollmentForm: enrollmentformId,
+        url: imageUrl,
         documentType: documentType,
+        filename: selectedFile.name,
+        mimetype: selectedFile.type,
+        size: selectedFile.size,
       };
 
-      const response = await uploadChildDocument(
-        documentData,
-        selectedFile,
-        token
-      );
+      const response = await uploadChildDocument(documentData, token);
 
       // If upload was successful, add the new document to the list
       if (response.success) {
         setDocuments([...documents, response.document]);
-        setMessage({
-          type: "success",
-          text: "Document uploaded successfully",
-        });
+        // setMessage({
+        //   type: "success",
+        //   text: "Document uploaded successfully",
+        // });
+        alert("Document uploaded successfully");
         // Reset form
         setSelectedFile(null);
+        setPreviewSource(null);
         setDocumentType("");
       } else {
         setMessage({
           type: "error",
           text: response.message || "Failed to upload document",
         });
+        alert(setMessage.text);
       }
     } catch (error) {
       console.error("Error uploading document:", error);
@@ -86,6 +161,12 @@ export default function UploadDocuments() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      setRenderUser(user);
+    }
+  });
 
   return (
     <div className="dashboard">
@@ -135,20 +216,35 @@ export default function UploadDocuments() {
               ref={fileInputRef}
               onChange={handleFileSelect}
               style={{ display: "none" }}
-              accept=".pdf,.jpg,.jpeg,.png"
+              accept="image/*"
             />
             <div className="file-upload-content">
               <Upload size={48} className="upload-icon" />
-              <p>Drag and drop your child's document here</p>
+              <p>Drag and drop your child's document image here</p>
               <p>or</p>
               <button type="button" className="action-button">
-                Select File
+                Select Image
               </button>
+              <small>Accepted formats: JPG, JPEG, PNG, GIF, WebP</small>
             </div>
             {selectedFile && (
               <div className="selected-file">
                 <FileText size={24} />
                 <span>{selectedFile.name}</span>
+                {previewSource && (
+                  <div className="image-preview">
+                    <img
+                      src={previewSource}
+                      alt="Preview"
+                      style={{
+                        maxWidth: "200px",
+                        maxHeight: "200px",
+                        marginTop: "10px",
+                        border: "1px solid #ddd",
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -157,7 +253,9 @@ export default function UploadDocuments() {
             <button
               type="submit"
               className="action-button"
-              disabled={!selectedFile || !documentType || loading}
+              disabled={
+                !selectedFile || !documentType || loading || !previewSource
+              }
             >
               {loading ? "Uploading..." : "Upload Document"}
             </button>
