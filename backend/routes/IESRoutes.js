@@ -35,7 +35,7 @@ router.get(
 );
 
 // Get current user's enrollment forms
-router.get("/me", authMiddleware, getEnrollmentFormsByUser);
+router.get("/user/:id", authMiddleware, getEnrollmentFormsByUser);
 
 // Get specific user's enrollment forms - admin only
 router.get(

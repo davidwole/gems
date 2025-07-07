@@ -6,12 +6,13 @@ const InfantFeedingPlan = require("../models/InfantFeedingPlan");
 // @access  Private
 const createInfantFeedingPlan = async (req, res) => {
   try {
-    const infantFeedingPlan = new InfantFeedingPlan(req.body);
+    const infantFeedingPlan = await InfantFeedingPlan.create(req.body);
 
-    const savedPlan = await infantFeedingPlan.save();
+    console.log(infantFeedingPlan);
+
     res.status(201).json({
       success: true,
-      data: savedPlan,
+      data: infantFeedingPlan,
     });
   } catch (error) {
     console.error("Error creating infant feeding plan:", error);

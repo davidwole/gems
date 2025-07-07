@@ -1,5 +1,5 @@
 // API base URL
-//  export const API_URL = "http://localhost:5000/api"; // Or your API URL
+// export const API_URL = "http://localhost:5000/api"; // Or your API URL
 export const API_URL = "https://gems-0q55.onrender.com/api"; // Or your API URL
 
 export const connect = async () => {

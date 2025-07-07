@@ -273,7 +273,7 @@ const AppContent = () => {
         path="/parent-registration/:branchId"
         element={<EnrollmentForm />}
       />
-      <Route path="/iesform/:enrollmentformId" element={<IESForm />} />
+      <Route path="/iesform/:user" element={<IESForm />} />
       <Route path="/viewform" element={<EnrollmentFormUnfilled />} />
       <Route path="/uploadid" element={<UploadID />} />
       <Route

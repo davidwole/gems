@@ -26,6 +26,7 @@ const Dashboard = () => {
   // New state for tracking form completion status
   const [formStatuses, setFormStatuses] = useState({});
   const [loadingStatuses, setLoadingStatuses] = useState(false);
+  const [iesFormStatus, setIesFormStatus] = useState(false);
 
   const navigate = useNavigate();
   const [selectedBranch, setSelectedBranch] = useState(null);
@@ -37,6 +38,7 @@ const Dashboard = () => {
   const [showManageUsers, setShowManageUsers] = useState(false);
 
   const [hasMounted, setHasMounted] = useState(false);
+  const [userId, setUserId] = useState("");
 
   const fetchHandbook = async () => {
     try {
@@ -77,6 +79,28 @@ const Dashboard = () => {
       if (response.ok) {
         const data = await response.json();
         return data && data.length > 0;
+        console.log(data);
+      }
+      return false;
+    } catch (error) {
+      console.error(`Error checking ${formType} form:`, error);
+      return false;
+    }
+  };
+
+  const checkIESExists = async () => {
+    try {
+      const response = await fetch(`${API_URL}/ies-forms/user/${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setIesFormStatus(data && data.length > 0);
+        console.log(data && data.length > 0);
       }
       return false;
     } catch (error) {
@@ -125,6 +149,9 @@ const Dashboard = () => {
       return;
     }
 
+    setUserId(user.id);
+    checkIESExists();
+
     const fetchData = async () => {
       setLoading(true);
       if (
@@ -134,7 +161,7 @@ const Dashboard = () => {
         user?.role === "L4"
       ) {
         const branchData = await getBranches(token);
-        console.log(branchData);
+
         setBranches(branchData || []);
       }
 
@@ -157,16 +184,6 @@ const Dashboard = () => {
         setLoadingForms(false);
       }
 
-      const fetchUserReviews = async () => {
-        try {
-          const result = await checkUserHasReviewed(token, user.id);
-          setReview(result[0]);
-        } catch (error) {
-          console.error("Failed to get user reviews:", error);
-        }
-      };
-
-      fetchUserReviews();
       setLoading(false);
     };
 
@@ -256,7 +273,7 @@ const Dashboard = () => {
     if (formId) {
       navigate(`/iesform${forL7 ? "filled" : ""}/${formId}`);
     } else {
-      navigate(`/iesform/${user.branch}`);
+      navigate(`/iesform/${user._id}`);
     }
   };
 
@@ -443,16 +460,26 @@ const Dashboard = () => {
             <div className="new-enrollment-section">
               <h3>Add New Child</h3>
               <div className="action-buttons">
-                {loadingForms ? (
+                {/* {loadingForms ? (
                   <button className="action-button disabled">Loading...</button>
-                ) : (
+                ) : ( */}
+                <>
                   <button
                     className="action-button"
                     onClick={handleFillParentEnrollment}
                   >
                     Fill New Enrollment Application
                   </button>
-                )}
+
+                  <button
+                    className="action-button"
+                    onClick={() => navigate(`/iesform/${user.id}`)}
+                    disabled={iesFormStatus}
+                  >
+                    {iesFormStatus ? "Completed ✓" : "IES Form"}
+                  </button>
+                </>
+                {/* )} */}
               </div>
             </div>
 
@@ -501,14 +528,14 @@ const Dashboard = () => {
                             Sign Acknowledgements
                           </button>
                         )}
-                        <button
+                        {/* <button
                           className={`action-button ${iesStatus.className}`}
                           onClick={() => handleIESForm(form._id)}
                           disabled={iesStatus.disabled}
                         >
                           {iesStatus.text || "IES Form"}
                           {iesStatus.text === "Completed" && " ✓"}
-                        </button>
+                        </button> */}
 
                         {/* Infant-specific buttons */}
                         {isInfant(form.dateOfBirth) && (
@@ -744,7 +771,7 @@ const renderRoleSpecificContent = (
                     </p>
 
                     <div className="action-buttons">
-                      {iesStatus.disabled && (
+                      {/* {iesStatus.disabled && (
                         <button
                           className={`action-button ${iesStatus.className}`}
                           onClick={() =>
@@ -753,7 +780,7 @@ const renderRoleSpecificContent = (
                         >
                           IES Form
                         </button>
-                      )}
+                      )} */}
 
                       {/* Infant-specific buttons */}
                       {isInfant(form.dateOfBirth) && (

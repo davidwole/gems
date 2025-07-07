@@ -108,9 +108,10 @@
 }
 
 .edited_forms th,
-td {
+.edited_form td {
   padding: 0.5rem 2rem;
   margin: auto;
+  border: 1px solid black;
 }
 
 .edited_forms input {

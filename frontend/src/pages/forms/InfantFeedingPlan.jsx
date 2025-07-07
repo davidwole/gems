@@ -743,11 +743,8 @@ export default function InfantFeedingPlan() {
           />
         </div>
 
-        <button
-          className="form_button"
-          disabled={!formAnswers.signature || loading}
-        >
-          {loading ? "Loading" : "Submit"}
+        <button className="form_button" disabled={!formAnswers.signature}>
+          Submit
         </button>
       </div>
     </form>
