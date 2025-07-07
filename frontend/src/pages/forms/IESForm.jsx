@@ -201,6 +201,12 @@ export default function IESForm() {
     e.preventDefault();
     setSubmitting(true);
 
+    if (!formData.signature) {
+      alert("Signature required");
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const result = await submitIESForm(formData);
       console.log(result);
@@ -239,12 +245,6 @@ export default function IESForm() {
           <h2>Form Submitted Successfully!</h2>
           <p>Thank you for submitting your enrollment form.</p>
           <p>You will be redirected to the dashboard in a moment...</p>
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="success-button"
-          >
-            Return to Dashboard Now
-          </button>
         </div>
       </div>
     );

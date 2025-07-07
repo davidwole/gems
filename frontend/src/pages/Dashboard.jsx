@@ -12,7 +12,6 @@ import CreateBranch from "../components/CreateBranch";
 import EditBranch from "../components/EditBranch";
 import ManageUsers from "../components/ManageUsers";
 import "../styles/dashboard.css";
-import { checkUserHasReviewed } from "../services/api";
 
 const Dashboard = () => {
   const { user, logout, token } = useContext(AuthContext);
@@ -27,6 +26,7 @@ const Dashboard = () => {
   const [formStatuses, setFormStatuses] = useState({});
   const [loadingStatuses, setLoadingStatuses] = useState(false);
   const [iesFormStatus, setIesFormStatus] = useState(false);
+  const [iesFormStatusLoading, setIesFormStatusLoading] = useState(false);
 
   const navigate = useNavigate();
   const [selectedBranch, setSelectedBranch] = useState(null);
@@ -79,7 +79,6 @@ const Dashboard = () => {
       if (response.ok) {
         const data = await response.json();
         return data && data.length > 0;
-        console.log(data);
       }
       return false;
     } catch (error) {
@@ -89,6 +88,7 @@ const Dashboard = () => {
   };
 
   const checkIESExists = async () => {
+    setIesFormStatusLoading(true);
     try {
       const response = await fetch(`${API_URL}/ies-forms/user/${user.id}`, {
         headers: {
@@ -100,12 +100,13 @@ const Dashboard = () => {
       if (response.ok) {
         const data = await response.json();
         setIesFormStatus(data && data.length > 0);
-        console.log(data && data.length > 0);
       }
       return false;
     } catch (error) {
       console.error(`Error checking ${formType} form:`, error);
       return false;
+    } finally {
+      setIesFormStatusLoading(false);
     }
   };
 
@@ -471,13 +472,19 @@ const Dashboard = () => {
                     Fill New Enrollment Application
                   </button>
 
-                  <button
-                    className="action-button"
-                    onClick={() => navigate(`/iesform/${user.id}`)}
-                    disabled={iesFormStatus}
-                  >
-                    {iesFormStatus ? "Completed ✓" : "IES Form"}
-                  </button>
+                  {iesFormStatusLoading ? (
+                    <button className="action-button" disabled={true}>
+                      Loading...
+                    </button>
+                  ) : (
+                    <button
+                      className="action-button"
+                      onClick={() => navigate(`/iesform/${user.id}`)}
+                      disabled={iesFormStatus}
+                    >
+                      {iesFormStatus ? "Completed ✓" : "IES Form"}
+                    </button>
+                  )}
                 </>
                 {/* )} */}
               </div>
@@ -528,16 +535,7 @@ const Dashboard = () => {
                             Sign Acknowledgements
                           </button>
                         )}
-                        {/* <button
-                          className={`action-button ${iesStatus.className}`}
-                          onClick={() => handleIESForm(form._id)}
-                          disabled={iesStatus.disabled}
-                        >
-                          {iesStatus.text || "IES Form"}
-                          {iesStatus.text === "Completed" && " ✓"}
-                        </button> */}
 
-                        {/* Infant-specific buttons */}
                         {isInfant(form.dateOfBirth) && (
                           <>
                             <button
@@ -771,17 +769,6 @@ const renderRoleSpecificContent = (
                     </p>
 
                     <div className="action-buttons">
-                      {/* {iesStatus.disabled && (
-                        <button
-                          className={`action-button ${iesStatus.className}`}
-                          onClick={() =>
-                            handleNavigate(`/iesfilledview/${form._id}`)
-                          }
-                        >
-                          IES Form
-                        </button>
-                      )} */}
-
                       {/* Infant-specific buttons */}
                       {isInfant(form.dateOfBirth) && (
                         <>
