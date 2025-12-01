@@ -1,15 +1,56 @@
 import "../styles/UploadID.css";
 import { Upload, FileText } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import { uploadChildDocument } from "../services/api";
 
 export default function UploadID() {
+  const navigate = useNavigate();
+  const { user, token } = useContext(AuthContext);
+
+  const { applicant } = useParams();
   const [selectedFile, setSelectedFile] = useState(null);
-  const [idType, setIdType] = useState("");
+  const [documentType, setDocumentType] = useState("");
+  const [previewSource, setPreviewSource] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [documents, setDocuments] = useState([]);
+  const [renderUser, setRenderUser] = useState("");
+
   const fileInputRef = useRef(null);
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
-    setSelectedFile(file);
+    if (file && isValidImageFile(file)) {
+      setSelectedFile(file);
+      previewFile(file);
+      setMessage(null);
+    } else {
+      setMessage({
+        type: "error",
+        text: "Please select a valid image file (JPG, JPEG, PNG, GIF, WebP)",
+      });
+    }
+  };
+
+  const isValidImageFile = (file) => {
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
+    return allowedTypes.includes(file.type);
+  };
+
+  const previewFile = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setPreviewSource(reader.result);
+    };
   };
 
   const handleDragOver = (event) => {
@@ -28,13 +69,102 @@ export default function UploadID() {
     fileInputRef.current.click();
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (selectedFile && idType) {
-      // TODO: Implement file upload logic
-      console.log(selectedFile);
+  const uploadImage = async (base64EncodedImage) => {
+    try {
+      const response = await fetch(
+        `https://designsurvey.onrender.com/api/upload`,
+        {
+          method: "POST",
+          body: JSON.stringify({ data: base64EncodedImage }),
+          headers: { "Content-type": "application/json" },
+        }
+      );
+      const data = await response.json();
+      return data.url;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Failed to upload image");
     }
   };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+
+    if (!selectedFile || !documentType) {
+      setMessage({
+        type: "error",
+        text: "Please select a document type and image file",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (!previewSource || typeof previewSource !== "string") {
+      setMessage({
+        type: "error",
+        text: "Please wait for image to load",
+      });
+      setLoading(false);
+
+      return;
+    }
+
+    setMessage(null);
+
+    try {
+      // Upload image and get URL
+      const imageUrl = await uploadImage(previewSource);
+
+      // Prepare document data
+      const documentData = {
+        user: renderUser?.id,
+        enrollmentForm: applicant,
+        url: imageUrl,
+        documentType: documentType,
+        filename: selectedFile.name,
+        mimetype: selectedFile.type,
+        size: selectedFile.size,
+      };
+
+      const response = await uploadChildDocument(documentData, token);
+
+      // If upload was successful, add the new document to the list
+      if (response.success) {
+        setDocuments([...documents, response.document]);
+        // setMessage({
+        //   type: "success",
+        //   text: "Document uploaded successfully",
+        // });
+        alert(`${documentData.documentType} uploaded successfully`);
+        navigate("/");
+        // Reset form
+        setSelectedFile(null);
+        setPreviewSource(null);
+        setDocumentType("");
+      } else {
+        setMessage({
+          type: "error",
+          text: response.message || "Failed to upload document",
+        });
+        alert(setMessage.text);
+      }
+    } catch (error) {
+      console.error("Error uploading document:", error);
+      setMessage({
+        type: "error",
+        text: error.message || "An error occurred while uploading the document",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      setRenderUser(user);
+    }
+  });
 
   return (
     <div className="dashboard">
@@ -54,9 +184,9 @@ export default function UploadID() {
                     key={type}
                     type="button"
                     className={`action-button ${
-                      idType === type ? "selected" : ""
+                      documentType === type ? "selected" : ""
                     }`}
-                    onClick={() => setIdType(type)}
+                    onClick={() => setDocumentType(type)}
                   >
                     {type}
                   </button>
@@ -98,9 +228,9 @@ export default function UploadID() {
             <button
               type="submit"
               className="action-button"
-              disabled={!selectedFile || !idType}
+              disabled={!selectedFile || !documentType || loading}
             >
-              Upload Document
+              {loading ? "Loading" : "Upload Document"}
             </button>
           </div>
         </form>

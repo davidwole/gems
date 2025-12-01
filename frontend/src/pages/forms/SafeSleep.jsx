@@ -178,7 +178,7 @@ export default function SafeSleep() {
           className="form_button"
           disabled={!formData.signature || loading}
         >
-          {loading ? "Loading" : "Submit"}
+          {loading ? "Loading..." : "Submit"}
         </button>
       </form>
     </div>

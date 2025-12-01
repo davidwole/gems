@@ -9,6 +9,7 @@ import {
   submitJobApplication,
   updateJobApplication,
   upgradeToL6,
+  getDocument,
 } from "../../services/api";
 import { useNavigate, useParams } from "react-router-dom";
 import InterviewNotesPopup from "../../components/InterviewNotesPopup";
@@ -17,6 +18,7 @@ export default function ApplicationViewForm() {
   const { id } = useParams();
   const [token, setToken] = useState(localStorage.getItem("token"));
   const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
   // Initialize all form fields in a single state object
   const [formData, setFormData] = useState(false);
   const [userRole, setUserRole] = useState(false);
@@ -24,6 +26,7 @@ export default function ApplicationViewForm() {
 
   const [showInterviewNotes, setShowInterviewNotes] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedId, setUploadedId] = useState(false);
 
   const fetchForm = async () => {
     const data = await getApplication(id, token);
@@ -33,7 +36,14 @@ export default function ApplicationViewForm() {
   const fetchUserStatus = async () => {
     const data = await getUser(formData?.user._id, token);
     setUserRole(data.role);
-    console.log(data.role);
+  };
+
+  const checkUploadedDocument = async () => {
+    const data = await getDocument(formData?.user._id, token);
+
+    if (data.documents.length > 0) {
+      setUploadedId(true);
+    }
   };
 
   // Universal handler function for all form inputs
@@ -100,7 +110,14 @@ export default function ApplicationViewForm() {
   };
 
   const upgrade = async () => {
+    setLoading(true);
     const response = await upgradeToL6(formData.user._id, token);
+
+    if (response) {
+      navigate(`/application/${user.branch}`);
+    }
+
+    setLoading(false);
   };
 
   const handleSaveInterviewNotes = async (notes) => {
@@ -137,6 +154,7 @@ export default function ApplicationViewForm() {
   useEffect(() => {
     if (formData) {
       fetchUserStatus();
+      checkUploadedDocument();
     }
   }, [formData]);
 
@@ -161,7 +179,7 @@ export default function ApplicationViewForm() {
         <button
           className="approve-button"
           onClick={upgrade}
-          disabled={userRole == "L5"}
+          disabled={userRole == "L5" || loading}
         >
           {userRole == "L5" ? "User Upgraded to L5" : "Upgrade to L5"}
         </button>
@@ -172,6 +190,15 @@ export default function ApplicationViewForm() {
         >
           Interview Notes
         </button>
+
+        {uploadedId && (
+          <button
+            className="approve-button"
+            onClick={() => navigate(`/documents/${formData?.user._id}`)}
+          >
+            Submitted Documents
+          </button>
+        )}
 
         <InterviewNotesPopup
           isOpen={showInterviewNotes}

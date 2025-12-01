@@ -24,14 +24,16 @@ export default function IESFormSigning() {
   });
 
   const fetchForm = async () => {
-    const response = await fetch(`${API_URL}/ies-forms/${enrollmentformId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetch(
+      `${API_URL}/ies-forms/user/${enrollmentformId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     const data = await response.json();
 
-    console.log(data);
     setFormdata(data[0]);
   };
 
@@ -55,7 +57,6 @@ export default function IESFormSigning() {
     e.preventDefault();
     try {
       const result = await signEnrollmentForm(signatures, id);
-      console.log(result);
     } catch (error) {
       console.error("Submission failed:", error);
     }
@@ -69,7 +70,6 @@ export default function IESFormSigning() {
     return <div>Loading....</div>;
   }
 
-  console.log(formData);
   return (
     <div className="ies">
       <h3 className="heading">

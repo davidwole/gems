@@ -38,6 +38,14 @@ const UserSchema = new mongoose.Schema(
         return this.role === "L6"; // Only required for applicants
       },
     },
+    parentHandbookSigned: {
+      type: Boolean,
+      default: false,
+    },
+    employeeHandbookSigned: {
+      type: Boolean,
+      default: false,
+    },
     tasks: {
       i9Completed: {
         type: Boolean,

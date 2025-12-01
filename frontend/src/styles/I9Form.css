@@ -108,7 +108,8 @@
 }
 
 .edited_forms th,
-.edited_form td {
+.edited_form td,
+.feeding_table td {
   padding: 0.5rem 2rem;
   margin: auto;
   border: 1px solid black;

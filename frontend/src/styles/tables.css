@@ -99,3 +99,12 @@
 .confirm-delete-button:hover {
   opacity: 0.9;
 }
+
+.enroll-button {
+  background-color: #2ecc71;
+  color: white;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 0;
+  font-size: 0.8rem;
+}

@@ -21,7 +21,7 @@ const upload = multer({
 });
 
 // Get handbook for a branch (public endpoint for viewing)
-router.get("/:branchId/:type", authMiddleware, handbookController.getHandbook);
+router.get("/:branchId/:type", handbookController.getHandbook);
 
 // Get handbook metadata (without file data)
 router.get(

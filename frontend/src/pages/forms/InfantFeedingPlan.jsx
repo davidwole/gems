@@ -124,10 +124,12 @@ export default function InfantFeedingPlan() {
         setTimeout(() => {
           setLoading(false);
           navigate("/dashboard");
-        }, 2000);
+        }, 300);
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -743,8 +745,11 @@ export default function InfantFeedingPlan() {
           />
         </div>
 
-        <button className="form_button" disabled={!formAnswers.signature}>
-          Submit
+        <button
+          className="form_button"
+          disabled={!formAnswers.signature || loading}
+        >
+          {loading ? "Loading..." : "Submit"}
         </button>
       </div>
     </form>

@@ -31,7 +31,6 @@ export default function IESFormFilled() {
     });
     const data = await response.json();
 
-    console.log(data);
     setFormdata(data[0]);
   };
 
@@ -55,7 +54,6 @@ export default function IESFormFilled() {
     e.preventDefault();
     try {
       const result = await signEnrollmentForm(signatures, id);
-      console.log(result);
     } catch (error) {
       console.error("Submission failed:", error);
     }
@@ -69,7 +67,6 @@ export default function IESFormFilled() {
     return <div>Loading....</div>;
   }
 
-  console.log(formData);
   return (
     <div className="ies">
       <h3 className="heading">

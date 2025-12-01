@@ -139,7 +139,7 @@ export default function UploadDocuments() {
         //   type: "success",
         //   text: "Document uploaded successfully",
         // });
-        alert("Document uploaded successfully");
+        alert(`${documentData.documentType} uploaded successfully`);
         // Reset form
         setSelectedFile(null);
         setPreviewSource(null);

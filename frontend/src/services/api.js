@@ -1,11 +1,10 @@
 // API base URL
-// export const API_URL = "http://localhost:5000/api"; // Or your API URL
-export const API_URL = "https://gems-0q55.onrender.com/api"; // Or your API URL
+export const API_URL = "http://localhost:8000/api"; // Or your API URL
+// export const API_URL = "https://gems-0q55.onrender.com/api";
 
 export const connect = async () => {
   const response = await fetch(`${API_URL}/connect`);
   const data = await response.json();
-  console.log(data.message);
 };
 
 // Login user
@@ -574,9 +573,7 @@ export const upgradeToL6 = async (userId, token) => {
       },
     });
 
-    if (response.ok) {
-      window.alert("User has been upgraded to L5");
-    }
+    return true;
   } catch (error) {
     console.error("Error upgrading user:", error);
     return { error: "Failed to connect to server" };
@@ -1176,5 +1173,121 @@ export const uploadChildDocument = async (documentData, token) => {
   } catch (error) {
     console.error("API Error:", error);
     throw error;
+  }
+};
+
+// Update infant feeding plan status (for admin)
+export const parentHandbookSign = async (userId, token) => {
+  try {
+    // Configure request options
+    const options = {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ signed: true }),
+    };
+
+    // Make the API call
+    const response = await fetch(
+      `${API_URL}/users/${userId}/parenthandbooksign`,
+      options
+    );
+
+    // Parse JSON response
+    const data = await response.json();
+
+    // Check if request was successful
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to update parent handbook sign");
+    }
+
+    // Return the data
+    return data;
+  } catch (error) {
+    console.error("Failed to update parent handbook sign Error:", error);
+    throw error;
+  }
+};
+export const employeeHandbookSign = async (userId, token) => {
+  try {
+    // Configure request options
+    const options = {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ signed: true }),
+    };
+
+    // Make the API call
+    const response = await fetch(
+      `${API_URL}/users/${userId}/employeehandbooksign`,
+      options
+    );
+
+    // Parse JSON response
+    const data = await response.json();
+
+    // Check if request was successful
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Failed to update employee handbook sign"
+      );
+    }
+
+    // Return the data
+    return data;
+  } catch (error) {
+    console.error("Failed to update parent handbook sign Error:", error);
+    throw error;
+  }
+};
+
+export const checkIDUploaded = async (user, token) => {
+  try {
+    const response = await fetch(`${API_URL}/parents/documents/${user}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null; // No handbook found, which is a valid state
+      }
+      throw new Error("Failed to fetch handbook info");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching handbook info:", error);
+    return null;
+  }
+};
+
+export const getDocument = async (user, token) => {
+  try {
+    const response = await fetch(`${API_URL}/parents/documents/${user}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null; // No handbook found, which is a valid state
+      }
+      throw new Error("Failed to fetch handbook info");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching handbook info:", error);
+    return null;
   }
 };

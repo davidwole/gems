@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 //  import "../../styles/I9Form.module.css";
 import "../../styles/I9Form.css";
 import Signature from "../../components/Signature";
@@ -8,6 +9,8 @@ import { submitJobApplication } from "../../services/api";
 export default function I9Form() {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // Initialize all form fields in a single state object
   const [formData, setFormData] = useState({
     user: "",
@@ -285,17 +288,27 @@ export default function I9Form() {
   // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     try {
       const response = await submitJobApplication(formData, token);
 
+      if (response.success) {
+        alert("Application logged successfully");
+        setTimeout(() => {
+          navigate("/");
+        }, 300);
+        console.log(success);
+      }
+
       if (!response.ok) {
         console.log(response);
       }
-
-      console.log("Success");
     } catch (error) {
+      alert(error.message);
       console.log(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -617,7 +630,7 @@ export default function I9Form() {
           <div className="flex align_center">
             <div className="flex align_center">
               <label>Hours sought:</label>
-              <div className="flex">
+              <div className="flex align_center">
                 <label>Full Time</label>
                 <input
                   type="checkbox"
@@ -2208,7 +2221,13 @@ export default function I9Form() {
               />
             </div>
           </div>
-          <button id="i9_button">Submit</button>
+          <button
+            id="i9_button"
+            type="submit"
+            disabled={isSubmitting || !formData.signature}
+          >
+            {isSubmitting ? "Loading..." : "Submit"}
+          </button>
         </form>
       </div>
     </div>

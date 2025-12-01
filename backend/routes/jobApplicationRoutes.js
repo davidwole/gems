@@ -35,15 +35,7 @@ router.get(
 );
 
 // Get current user's job applications
-router.get("/me", authMiddleware, getJobApplicationsByUser);
-
-// Get specific user's job applications - admin only
-router.get(
-  "/user/:userId",
-  authMiddleware,
-  roleMiddleware(["L1", "L2", "L3"]),
-  getJobApplicationsByUser
-);
+router.get("/application/:id", authMiddleware, getJobApplicationsByUser);
 
 // Get a single job application by ID
 router.get("/:id", authMiddleware, getJobApplicationById);

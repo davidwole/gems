@@ -133,11 +133,18 @@ export default function InfantFeedingPlanFilled() {
 
   const getForm = async () => {
     const response = await fetch(
-      `${API_URL}/infant-feeding-plans/${enrollmentformId}`
+      `${API_URL}/infant-feeding-plans/${enrollmentformId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     const json = await response.json();
 
-    setFormAnswers(json.data[0]);
+    if (response.ok) {
+      setFormAnswers(json[0]);
+    }
   };
 
   useEffect(() => {

@@ -77,11 +77,22 @@ a:hover {
 }
 
 .sign {
-  flex-direction: column-reverse;
+  display: block;
 }
 
 .sign button {
   border: none;
   padding: 1rem 4rem !important;
   margin-block: 0.25rem !important;
+  margin-inline: 0.25rem;
+  transition: all 300ms ease-in-out;
+}
+
+.sign button:hover {
+  background: #3498db;
+}
+
+.signature_canvas {
+  padding-inline: 2rem;
+  margin-bottom: 2rem;
 }

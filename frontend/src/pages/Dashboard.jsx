@@ -1,10 +1,10 @@
-// Updated Dashboard.jsx - L8 Section with Form Status Checks
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import {
   API_URL,
   getBranches,
   getEnrollmentFormsByUser,
+  checkIDUploaded,
 } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import CreateUser from "../components/CreateUser";
@@ -21,6 +21,16 @@ const Dashboard = () => {
   const [review, setReview] = useState([]);
   const [loadingForms, setLoadingForms] = useState(false);
   const [isHandbookAvailable, setIsHandbookAvailable] = useState(false);
+  const [hasSignedHandbook, setHasSignedHandbook] = useState(false);
+
+  const [applicantExists, setApplicantExists] = useState(false);
+
+  const [isEmployeeHandbookAvailable, setIsEmployeeHandbookAvailable] =
+    useState(false);
+  const [hasEmployeeSignedHandbook, setHasEmployeeSignedHandbook] =
+    useState(false);
+
+  const [idUploaded, setIDUploaded] = useState(false);
 
   // New state for tracking form completion status
   const [formStatuses, setFormStatuses] = useState({});
@@ -40,9 +50,15 @@ const Dashboard = () => {
   const [hasMounted, setHasMounted] = useState(false);
   const [userId, setUserId] = useState("");
 
+  const [applicantFormStatus, setApplicantFormStatus] = useState(false);
+
   const fetchHandbook = async () => {
     try {
       setLoading(true);
+
+      if (user.branch === null || user.role != "L8") {
+        return;
+      }
 
       // Fetch the handbook PDF
       const response = await fetch(
@@ -60,6 +76,36 @@ const Dashboard = () => {
       }
 
       setIsHandbookAvailable(true);
+    } catch (err) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchEmployeeHandbook = async () => {
+    try {
+      setLoading(true);
+
+      if (user.branch === null || user.role != "L6") {
+        return;
+      }
+
+      // Fetch the handbook PDF
+      const response = await fetch(
+        `${API_URL}/handbooks/${user.branch}/employee`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        setIsEmployeeHandbookAvailable(false);
+        return;
+      }
+
+      setIsEmployeeHandbookAvailable(true);
     } catch (err) {
     } finally {
       setLoading(false);
@@ -84,6 +130,107 @@ const Dashboard = () => {
     } catch (error) {
       console.error(`Error checking ${formType} form:`, error);
       return false;
+    }
+  };
+
+  // Function to check if a form exists for a given enrollment form ID
+  const checkApplicantExits = async () => {
+    try {
+      if (user.role !== "L6") {
+        return;
+      }
+      const response = await fetch(
+        `${API_URL}/job-applications/application/${user.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+
+        if (data.application.length > 0) {
+          setApplicantExists(true);
+        }
+      }
+    } catch (error) {
+      console.error(`Error checking ${formType} form:`, error);
+      return false;
+    }
+  };
+  const checkIDPosted = async () => {
+    try {
+      if (user.role !== "L6") {
+        return;
+      }
+      const data = await checkIDUploaded(user.id, token);
+      if (data.documents.length > 0) {
+        setIDUploaded(true);
+      }
+    } catch (error) {
+      console.error(`Error checking ${formType} form:`, error);
+      return false;
+    }
+  };
+
+  const checkParentHandbookSigned = async () => {
+    try {
+      if (user.role !== "L8") {
+        return;
+      }
+      const response = await fetch(`${API_URL}/users/${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setHasSignedHandbook(data.parentHandbookSigned);
+      }
+      return false;
+    } catch (error) {
+      console.error(`Error checking ${formType} form:`, error);
+      return false;
+    }
+  };
+
+  const checkEmployeeHandbookSigned = async () => {
+    try {
+      if (user.role !== "L6") {
+        return;
+      }
+      const response = await fetch(`${API_URL}/users/${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setHasEmployeeSignedHandbook(data.employeeHandbookSigned);
+      }
+      return false;
+    } catch (error) {
+      console.error(`Error checking ${formType} form:`, error);
+      return false;
+    }
+  };
+
+  const handleIESView = () => {
+    if (user) {
+      navigate(`/iesfilledview/${user.id}`);
+    }
+  };
+
+  const handleEnrollment = () => {
+    if (user) {
+      navigate(`/filled-form/${user.id}`);
     }
   };
 
@@ -152,6 +299,10 @@ const Dashboard = () => {
 
     setUserId(user.id);
     checkIESExists();
+    checkApplicantExits();
+    checkParentHandbookSigned();
+    checkEmployeeHandbookSigned();
+    checkIDPosted();
 
     const fetchData = async () => {
       setLoading(true);
@@ -191,6 +342,7 @@ const Dashboard = () => {
     fetchData();
 
     fetchHandbook();
+    fetchEmployeeHandbook();
   }, [user, token]);
 
   const handleLogout = () => {
@@ -198,9 +350,7 @@ const Dashboard = () => {
     navigate("/login");
   };
 
-  const handleUserCreated = () => {
-    console.log("User created successfully");
-  };
+  const handleUserCreated = () => {};
 
   const handleBranchCreated = async () => {
     const branchData = await getBranches(token);
@@ -239,11 +389,12 @@ const Dashboard = () => {
   };
 
   const handleParentSignAcknowledgements = (formId = null) => {
-    if (formId) {
-      navigate(`/parenthandbook/${user.branch}?formId=${formId}`);
-    } else {
-      navigate(`/parenthandbook/${user.branch}`);
-    }
+    navigate(`/parenthandbook/${user.branch}`);
+    // if (formId) {
+    //   navigate(`/parenthandbook/${user.branch}?formId=${formId}`);
+    // } else {
+    //   navigate(`/parenthandbook/${user.branch}`);
+    // }
   };
 
   const handleInfantFeedingPlan = (formId = null, forL7 = false) => {
@@ -278,11 +429,10 @@ const Dashboard = () => {
     }
   };
 
-  // Helper function to get button status
   const getButtonStatus = (formId, formType) => {
-    // Don't show loading on initial render
+    // Show loading state before statuses are loaded
     if (!hasMounted || loadingStatuses) {
-      return { disabled: false, text: null, className: "" };
+      return { disabled: true, text: "Loading...", className: "" };
     }
 
     const isCompleted = formStatuses[formId]?.[formType];
@@ -319,7 +469,7 @@ const Dashboard = () => {
   };
 
   const handleUploadID = () => {
-    navigate(`/uploadid`);
+    navigate(`/uploadid/${user.id}`);
   };
 
   const handleReviewChildData = () => {
@@ -403,9 +553,9 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <div className="dashboard-welcome">
           <h2>Welcome, {user.name}</h2>
-          <p>
+          {/* <p>
             You are logged in as: <strong>{user.role}</strong>
-          </p>
+          </p> */}
         </div>
 
         {/* Branches section for admin roles */}
@@ -485,6 +635,21 @@ const Dashboard = () => {
                       {iesFormStatus ? "Completed ✓" : "IES Form"}
                     </button>
                   )}
+
+                  {isHandbookAvailable && (
+                    <button
+                      className={`action-button ${
+                        hasSignedHandbook ? "infant-affivadits" : ""
+                      }`}
+                      // onClick={() => handleParentSignAcknowledgements(form._id)}
+                      onClick={() => handleParentSignAcknowledgements()}
+                      disabled={hasSignedHandbook}
+                    >
+                      {hasSignedHandbook
+                        ? "Handbook Signed ✓"
+                        : " Sign Parent Handbook"}
+                    </button>
+                  )}
                 </>
                 {/* )} */}
               </div>
@@ -494,7 +659,6 @@ const Dashboard = () => {
             {enrollmentForms.length > 0 && (
               <div className="children-sections">
                 {enrollmentForms.map((form, index) => {
-                  const iesStatus = getButtonStatus(form._id, "ies-forms");
                   const safeSleepStatus = getButtonStatus(
                     form._id,
                     "safe-sleep"
@@ -525,16 +689,6 @@ const Dashboard = () => {
                         >
                           Upload Documents
                         </button>
-                        {isHandbookAvailable && (
-                          <button
-                            className="action-button"
-                            onClick={() =>
-                              handleParentSignAcknowledgements(form._id)
-                            }
-                          >
-                            Sign Acknowledgements
-                          </button>
-                        )}
 
                         {isInfant(form.dateOfBirth) && (
                           <>
@@ -603,7 +757,13 @@ const Dashboard = () => {
             getButtonStatus,
             calculateAge,
             isInfant,
-            handleNavigate
+            handleNavigate,
+            handleIESView,
+            handleEnrollment,
+            applicantExists,
+            isEmployeeHandbookAvailable,
+            hasEmployeeSignedHandbook,
+            idUploaded
           )}
       </div>
     </div>
@@ -619,7 +779,13 @@ const renderRoleSpecificContent = (
   getButtonStatus,
   calculateAge,
   isInfant,
-  handleNavigate
+  handleNavigate,
+  handleIESView,
+  handleEnrollment,
+  applicantExists,
+  isEmployeeHandbookAvailable,
+  hasEmployeeSignedHandbook,
+  idUploaded
 ) => {
   switch (role) {
     case "L1":
@@ -715,18 +881,47 @@ const renderRoleSpecificContent = (
             <button
               className="action-button"
               onClick={actions.fillEmploymentApplication}
+              disabled={applicantExists}
             >
-              Fill Employment Application
+              {applicantExists
+                ? "Application Submitted ✓"
+                : "Fill Employment Application"}
             </button>
-            <button className="action-button" onClick={actions.uploadID}>
-              Upload ID
-            </button>
-            <button
-              className="action-button"
-              onClick={actions.signAcknowledgements}
-            >
-              Sign Acknowledgements
-            </button>
+            {applicantExists && (
+              <button
+                className="action-button"
+                onClick={actions.uploadID}
+                disabled={idUploaded}
+              >
+                {idUploaded ? "ID Uploaded✓" : "Upload ID"}
+              </button>
+            )}
+            {isEmployeeHandbookAvailable && (
+              <button
+                className="action-button"
+                onClick={actions.signAcknowledgements}
+                disabled={hasEmployeeSignedHandbook}
+              >
+                {hasEmployeeSignedHandbook
+                  ? "Handbook Signed  ✓"
+                  : "Sign Employee Handbook"}
+              </button>
+            )}
+
+            {/* {isHandbookAvailable && (
+              <button
+                className={`action-button ${
+                  hasSignedHandbook ? "infant-affivadits" : ""
+                }`}
+                // onClick={() => handleParentSignAcknowledgements(form._id)}
+                onClick={() => handleParentSignAcknowledgements()}
+                disabled={hasSignedHandbook}
+              >
+                {hasSignedHandbook
+                  ? "Handbook Signed ✓"
+                  : " Sign Parent Handbook"}
+              </button>
+            )} */}
           </div>
         </div>
       );
@@ -735,6 +930,18 @@ const renderRoleSpecificContent = (
         <div className="general-section">
           <h3>Child/Children Data </h3>
           <div className="action-buttons">
+            {/* <button
+              className="action-button ies_form_button"
+              onClick={handleEnrollment}
+            >
+              Enrollment Form
+            </button> */}
+            <button
+              className="action-button ies_form_button"
+              onClick={handleIESView}
+            >
+              IES Form
+            </button>
             {/* <button className="action-button" onClick={actions.reviewChildData}>
               Review Child Data
             </button>
@@ -746,7 +953,6 @@ const renderRoleSpecificContent = (
           {enrollmentForms.length > 0 && (
             <div className="children-sections">
               {enrollmentForms.map((form, index) => {
-                const iesStatus = getButtonStatus(form._id, "ies-forms");
                 const safeSleepStatus = getButtonStatus(form._id, "safe-sleep");
                 const feedingPlanStatus = getButtonStatus(
                   form._id,

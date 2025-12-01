@@ -5,9 +5,14 @@ import { API_URL } from "../services/api";
 import { Link, useParams } from "react-router-dom";
 
 // Form checking functions
-const checkIESForm = async (enrollmentId) => {
+const checkIESForm = async (enrollmentId, token) => {
   try {
-    const response = await fetch(`${API_URL}/ies-forms/${enrollmentId}`);
+    const response = await fetch(`${API_URL}/ies-forms/user/${enrollmentId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const data = await response.json();
     return data.length > 0;
   } catch (error) {
@@ -16,12 +21,19 @@ const checkIESForm = async (enrollmentId) => {
   }
 };
 
-const checkInfantFeedingPlan = async (enrollmentId) => {
+const checkInfantFeedingPlan = async (enrollmentId, token) => {
   try {
     const response = await fetch(
-      `${API_URL}/infant-feeding-plans/${enrollmentId}`
+      `${API_URL}/infant-feeding-plans/${enrollmentId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     const data = await response.json();
+
     return data.length > 0;
   } catch (error) {
     console.log(error.message);
@@ -110,8 +122,8 @@ export default function EnrollmentList({ branchId }) {
       try {
         const [iesForm, infantFeedingPlan, safeSleep, infantAffidavit] =
           await Promise.all([
-            checkIESForm(enrollmentId),
-            checkInfantFeedingPlan(enrollmentId),
+            checkIESForm(enrollment.user, token),
+            checkInfantFeedingPlan(enrollmentId, token),
             checkSafeSleep(enrollmentId),
             checkInfantAffidavit(enrollmentId),
           ]);
@@ -139,7 +151,6 @@ export default function EnrollmentList({ branchId }) {
     }
 
     setFormStatuses(statuses);
-    console.log(statuses);
   };
 
   const toggleExpand = (id) => {
@@ -371,7 +382,7 @@ export default function EnrollmentList({ branchId }) {
                       </Link> */}
 
                       {userFormStatus.hasIESForm && (
-                        <Link to={`/iesfilled/${enrollment._id}`}>
+                        <Link to={`/iesfilled/${enrollment.user}`}>
                           <button className="approve-button secondary">
                             IES Form
                           </button>

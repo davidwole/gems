@@ -350,3 +350,7 @@
     font-size: 0.85rem;
   }
 }
+
+.ies_form_button {
+  margin-block: 2rem;
+}

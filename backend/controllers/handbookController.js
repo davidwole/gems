@@ -18,7 +18,7 @@ exports.getHandbook = async (req, res) => {
 
     return res.send(handbook.fileData);
   } catch (error) {
-    console.error("Error fetching handbook:", error);
+    console.error("Error fetching handbook:", error.message);
     res.status(500).json({
       message: error.message,
     });

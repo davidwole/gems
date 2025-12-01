@@ -2620,7 +2620,7 @@ export default function EnrollmentFormFilled() {
                   type="text"
                   name="healthcarePractitionerName"
                   value={formData.healthcarePractitionerName}
-                  onChange={handleChange}
+                  onChange={handleChange} 
                 />
                 <label>(Print Name)</label>
               </div>

@@ -591,7 +591,7 @@ export default function EnrollmentFormUnfilled() {
                 Male
                 <input
                   type="checkbox"
-                  checked={gender === "male"}
+                  // checked={gender === "male"}
                   onChange={() => handleCheckboxChange("male")}
                 />
               </label>
@@ -600,7 +600,7 @@ export default function EnrollmentFormUnfilled() {
                 Female
                 <input
                   type="checkbox"
-                  checked={gender === "female"}
+                  // checked={gender === "female"}
                   onChange={() => handleCheckboxChange("female")}
                 />
               </label>

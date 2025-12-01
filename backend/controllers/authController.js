@@ -52,6 +52,7 @@ exports.loginUser = async (req, res) => {
         role: user.role,
         isSuspended: user.isSuspended,
         branch: user.branch,
+        parentHandbookSigned: user.parentHandbookSigned,
       },
       process.env.JWT_SECRET,
       { expiresIn: "3d" }
@@ -62,6 +63,7 @@ exports.loginUser = async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      parentHandbookSigned: user.parentHandbookSigned,
       token,
     });
   } catch (error) {

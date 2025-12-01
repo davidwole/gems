@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { API_URL, getHandbook } from "../services/api";
+import { API_URL, getHandbook, parentHandbookSign } from "../services/api";
 import "../styles/employeeHandbookSign.css";
 import Signature from "../components/Signature";
 
 export default function ParentHandbookSign() {
   const { user, token } = useContext(AuthContext);
-  const { branchId, type } = useParams();
+  const { branchId } = useParams();
   const navigate = useNavigate();
 
   const [pdfUrl, setPdfUrl] = useState(null);
@@ -16,7 +16,7 @@ export default function ParentHandbookSign() {
 
   useEffect(() => {
     // Check user role - only L6 users can access
-    if (!user || user.role !== "L8") {
+    if (!user || user.role !== "L8" || user.parentHandbookSigned) {
       navigate("/dashboard");
       return;
     }
@@ -59,10 +59,18 @@ export default function ParentHandbookSign() {
         URL.revokeObjectURL(pdfUrl);
       }
     };
-  }, [branchId, type, user, token, navigate]);
+  }, [branchId, user, token, navigate]);
 
   const handleClose = () => {
     navigate("/dashboard");
+  };
+
+  const handleSign = async () => {
+    const response = await parentHandbookSign(user.id, token);
+
+    if (response.ok) {
+      navigate("/dashboard");
+    }
   };
 
   if (loading) {
@@ -105,7 +113,7 @@ export default function ParentHandbookSign() {
             />
           </div>
           <div>
-            <Signature />
+            <Signature onSave={handleSign} className="signature_canvas" />
           </div>
         </>
       ) : (

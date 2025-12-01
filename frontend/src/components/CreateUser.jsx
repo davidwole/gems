@@ -275,7 +275,7 @@ const CreateUser = ({ onClose, onSuccess }) => {
       setTimeout(() => {
         onSuccess && onSuccess(data);
         onClose && onClose();
-      }, 3000);
+      }, 1800);
     } catch (err) {
       setError(err.message);
       setLoading(false);

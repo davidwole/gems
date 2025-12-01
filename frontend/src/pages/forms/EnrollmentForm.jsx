@@ -385,6 +385,7 @@ export default function EnrollmentForm() {
 
   // Handle form submission
   const handleSubmit = async (e) => {
+    setSubmitSuccess(true);
     e.preventDefault();
     try {
       const missingSignatures = [
@@ -398,7 +399,7 @@ export default function EnrollmentForm() {
       ].filter((sig) => !formData[sig]);
 
       if (missingSignatures.length > 0) {
-        errorHandler("All signatures required!");
+        errorHandler("All signatures required");
 
         // Scroll to the error message
         if (errorRef.current) {
@@ -408,6 +409,8 @@ export default function EnrollmentForm() {
           });
         }
 
+        setSubmitSuccess(false);
+
         return;
       }
 
@@ -415,15 +418,16 @@ export default function EnrollmentForm() {
       if (result.success) {
         setSubmitSuccess(true);
         // Redirect to dashboard after 3 seconds
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 3000);
+        alert("Form submitted successfully");
+        navigate("/dashboard");
       }
       // Process form submission
+      setSubmitSuccess(false);
       console.log("Form submitted with data:", formData);
       // Here you would typically send the data to your server
     } catch (error) {
       errorHandler(error.message);
+      setSubmitSuccess(false);
     }
   };
 
@@ -482,7 +486,7 @@ export default function EnrollmentForm() {
         </div>
       )}
       <div className="enrollment_form">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={(e) => e.preventDefault()}>
           <div className="flex spacer_lg">
             <label>Child's Name:</label>
             <input
@@ -659,7 +663,7 @@ export default function EnrollmentForm() {
                 type="date"
                 name="dateOfBirth"
                 value={formData.dateOfBirth}
-                onChange={handleChange}
+                // onChange={handleChange}
               />
             </div>
             <div className="flex input_spacer_med">
@@ -2685,7 +2689,14 @@ export default function EnrollmentForm() {
               <label>Date</label>
             </div>
           </div>
-          <button className="submit">Submit</button>
+          <button
+            className="submit"
+            disabled={submitSuccess}
+            onClick={handleSubmit}
+            type="button"
+          >
+            {submitSuccess ? "Loading..." : "Submit"}
+          </button>
         </form>
       </div>
     </>

@@ -10,7 +10,10 @@ const DocumentSchema = new mongoose.Schema(
     enrollmentForm: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "EnrollmentForm",
-      required: true,
+    },
+    applicationForm: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "JobApplication",
     },
     url: {
       type: String,
@@ -24,6 +27,10 @@ const DocumentSchema = new mongoose.Schema(
         "Medical Records",
         "School Records",
         "Immunization Records",
+        "Other",
+        "Passport",
+        "Driver's License",
+        "National ID",
         "Other",
       ],
     },

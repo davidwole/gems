@@ -123,3 +123,71 @@ exports.upgradeToL5 = async (req, res) => {
     });
   }
 };
+
+exports.upgradeToL7 = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ msg: "User not found" });
+    if (user.role !== "L8")
+      return res.status(401).json({ msg: "User is not an L8 Account" });
+
+    user.role = "L7";
+    await user.save();
+
+    res.json({
+      msg: `User upgraded successfully`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.signParentHandbook = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ msg: "User not found" });
+    if (user.role !== "L8")
+      return res.status(401).json({ msg: "User is not an L8 Account" });
+
+    user.parentHandbookSigned = true;
+    await user.save();
+
+    res.json({
+      sucess: true,
+      msg: `Parent Handbook Signed successfully`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.signEmployeeHandbook = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ msg: "User not found" });
+    if (user.role !== "L6")
+      return res.status(401).json({ msg: "User is not an L6 Account" });
+
+    user.employeeHandbookSigned = true;
+    await user.save();
+
+    res.json({
+      sucess: true,
+      msg: `Employee Handbook Signed successfully`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

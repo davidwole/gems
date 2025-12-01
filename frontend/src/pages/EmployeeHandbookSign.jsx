@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { API_URL, getHandbook } from "../services/api";
+import { API_URL, getHandbook, employeeHandbookSign } from "../services/api";
 import "../styles/employeeHandbookSign.css";
 import Signature from "../components/Signature";
 
@@ -65,6 +65,14 @@ export default function EmployeeHandbookSign() {
     navigate("/dashboard");
   };
 
+  const handleSign = async () => {
+    const response = await employeeHandbookSign(user.id, token);
+
+    if (response.ok) {
+      navigate("/dashboard");
+    }
+  };
+
   if (loading) {
     return (
       <div className="handbook-preview-container">
@@ -105,7 +113,7 @@ export default function EmployeeHandbookSign() {
             />
           </div>
           <div>
-            <Signature />
+            <Signature onSave={handleSign} />
           </div>
         </>
       ) : (

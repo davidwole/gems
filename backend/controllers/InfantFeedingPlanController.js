@@ -90,10 +90,7 @@ const getInfantFeedingPlanByEnrollmentForm = async (req, res) => {
       enrollmentForm: req.params.id,
     });
 
-    res.json({
-      success: true,
-      data: plan,
-    });
+    res.json(plan);
   } catch (error) {
     console.error("Error fetching infant feeding plan:", error);
     res.status(500).json({

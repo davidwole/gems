@@ -215,7 +215,7 @@ export default function IESForm() {
         // Redirect to dashboard after 3 seconds
         setTimeout(() => {
           navigate("/dashboard");
-        }, 3000);
+        }, 1800);
       }
     } catch (error) {
       console.error("Submission failed:", error);

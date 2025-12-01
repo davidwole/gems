@@ -83,35 +83,11 @@ exports.getJobApplicationsByUser = async (req, res) => {
   const userId = req.params.userId || req.user.id;
 
   try {
-    // Check if user exists
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
+    const application = await JobApplication.find({ user: userId });
 
-    // Only allow users to see their own applications, or admins to see any
-    if (userId !== req.user.id && !["L1", "L2", "L3"].includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: "Not authorized to view these applications",
-      });
-    }
-
-    const applications = await JobApplication.find({ user: userId })
-      .populate("branch", "name location")
-      .sort({ createdAt: -1 });
-
-    res.status(200).json({
-      success: true,
-      count: applications.length,
-      data: applications,
-    });
+    res.status(200).json({ success: true, application });
   } catch (error) {
     res.status(500).json({
-      success: false,
       message: error.message,
     });
   }

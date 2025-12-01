@@ -34,7 +34,6 @@ const BranchUsers = () => {
 
       setBranchUsers(data);
       setLoading(false);
-      console.log(data.filter((user) => user.role == "L6"));
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -100,6 +99,23 @@ const BranchUsers = () => {
     }
   };
 
+  const handleEnrollUser = async (userId) => {
+    try {
+      const response = await fetch(`${API_URL}/users/${userId}/enroll`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        fetchBranchUsers();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   if (loading) {
     return <div className="loading">Loading branch users...</div>;
   }
@@ -141,6 +157,15 @@ const BranchUsers = () => {
                   <td>{branchUser.isSuspended ? "Suspended" : "Active"}</td>
                   {isL1User && (
                     <td className="actions-cell">
+                      {branchUser.role === "L8" && (
+                        <button
+                          className="enroll-button"
+                          onClick={() => handleEnrollUser(branchUser._id)}
+                        >
+                          Enroll
+                        </button>
+                      )}
+
                       <button
                         className={
                           branchUser.isSuspended

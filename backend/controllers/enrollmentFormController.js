@@ -70,10 +70,7 @@ exports.getEnrollmentFormsByUser = async (req, res) => {
   const userId = req.params.userId || req.user.id;
 
   try {
-    const forms = await EnrollmentForm.find({ user: userId }).populate(
-      "branch",
-      "name"
-    );
+    const forms = await EnrollmentForm.find({ user: userId });
 
     res.status(200).json({
       success: true,

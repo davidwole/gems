@@ -219,7 +219,7 @@ const Signature = ({
   };
 
   return (
-    <div className={`flex flex-col ${className}`}>
+    <div className={`${className}`}>
       {showPreview ? (
         <>
           <div
@@ -248,25 +248,26 @@ const Signature = ({
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           />
-          <div className="sign flex mt-2 space-x-4">
-            <button
-              type="button"
-              onClick={clear}
-              className="px-3 py-1 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-100"
-            >
-              Clear
-            </button>
+          <div className="sign">
             <button
               type="button"
               onClick={save}
               disabled={isEmpty}
-              className={`px-3 py-1 text-sm border rounded ${
+              className={`form_button ${
                 isEmpty
                   ? "text-gray-400 border-gray-200"
                   : "text-blue-600 border-blue-300 hover:bg-blue-50"
               }`}
             >
               Save
+            </button>
+            <button
+              type="button"
+              onClick={clear}
+              className="form_button"
+              // className="px-3 py-1 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-100"
+            >
+              Clear
             </button>
           </div>
         </>
