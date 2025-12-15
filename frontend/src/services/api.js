@@ -1,6 +1,6 @@
 // API base URL
-export const API_URL = "http://localhost:8000/api"; // Or your API URL
-// export const API_URL = "https://gems-0q55.onrender.com/api";
+// export const API_URL = "http://localhost:8000/api"; // Or your API URL
+export const API_URL = "https://gems-0q55.onrender.com/api";
 
 export const connect = async () => {
   const response = await fetch(`${API_URL}/connect`);
