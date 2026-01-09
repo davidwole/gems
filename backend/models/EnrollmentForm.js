@@ -172,7 +172,7 @@ const EnrollmentFormSchema = new mongoose.Schema(
     },
     authorizedReceiver: String,
     alternatePickupProcedures: String,
-    distanceInMiles: Number,
+    distanceInMiles: String,
     transportParentSignature: String,
     transportSignatureDate: String,
 

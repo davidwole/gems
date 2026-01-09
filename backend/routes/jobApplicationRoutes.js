@@ -22,7 +22,7 @@ router.post("/", authMiddleware, createJobApplication);
 router.get(
   "/",
   authMiddleware,
-  roleMiddleware(["L1", "L2", "L3"]),
+  // roleMiddleware(["L1", "L2", "L3"]),
   getAllJobApplications
 );
 
