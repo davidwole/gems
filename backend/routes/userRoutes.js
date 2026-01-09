@@ -17,11 +17,7 @@ const router = express.Router();
 
 router.get("/", authMiddleware, roleMiddleware(["L1"]), getAllUsers);
 router.get("/:id", authMiddleware, getUserById);
-router.post(
-  "/",
-  // authMiddleware, roleMiddleware(["L1"]),
-  createUser
-);
+router.post("/", authMiddleware, roleMiddleware(["L1"]), createUser);
 router.delete("/:id", authMiddleware, roleMiddleware(["L1"]), deleteUser);
 router.patch(
   "/:id/suspend",

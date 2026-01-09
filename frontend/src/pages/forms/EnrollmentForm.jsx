@@ -441,6 +441,31 @@ export default function EnrollmentForm() {
     }
   }, [user]);
 
+  const calculateAge = (dob) => {
+    if (!dob) return "";
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age.toString();
+  };
+
+  useEffect(() => {
+    if (formData.dateOfBirth) {
+      const age = calculateAge(formData.dateOfBirth);
+      setFormData((prevData) => ({
+        ...prevData,
+        age: age,
+      }));
+    }
+  }, [formData.dateOfBirth]);
+
   // This memoizes the signature handlers to prevent unnecessary re-renders
   useEffect(() => {
     // Nothing to do here, but the dependency array ensures the handlers are stable
@@ -655,7 +680,7 @@ export default function EnrollmentForm() {
                 style={{ width: "5rem" }}
                 name="age"
                 value={formData.age}
-                onChange={handleChange}
+                disabled
               />
 
               <label>Date of Birth:</label>
@@ -663,7 +688,7 @@ export default function EnrollmentForm() {
                 type="date"
                 name="dateOfBirth"
                 value={formData.dateOfBirth}
-                // onChange={handleChange}
+                onChange={handleChange}
               />
             </div>
             <div className="flex input_spacer_med">

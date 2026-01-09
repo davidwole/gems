@@ -3,9 +3,10 @@ import { Upload, FileText } from "lucide-react";
 import { useState, useRef, useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { uploadChildDocument } from "../services/api";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function UploadDocuments() {
+  const navigate = useNavigate();
   const { enrollmentformId } = useParams();
   const { user, token } = useContext(AuthContext);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -144,6 +145,7 @@ export default function UploadDocuments() {
         setSelectedFile(null);
         setPreviewSource(null);
         setDocumentType("");
+        navigate(`/dashboard`);
       } else {
         setMessage({
           type: "error",
