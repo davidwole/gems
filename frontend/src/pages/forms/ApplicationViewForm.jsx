@@ -112,10 +112,11 @@ export default function ApplicationViewForm() {
   const upgrade = async () => {
     setLoading(true);
     const response = await upgradeToL6(formData.user._id, token);
-    navigate(`/application/${user.branch}`);
+
+    console.log(response);
 
     if (response) {
-      navigate(`/application/${user.branch}`);
+      navigate(`/application/${id}`);
     }
 
     setLoading(false);

@@ -305,7 +305,7 @@ export default function I9Form() {
         console.log(response);
       }
     } catch (error) {
-      alert(error.message);
+      console.log(error.message);
       console.log(error);
     } finally {
       setIsSubmitting(false);
