@@ -10,6 +10,7 @@ const CreateUser = ({ onClose, onSuccess }) => {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     role: "L1", // Default set to L1
     branch: "",
   });
@@ -66,16 +67,29 @@ const CreateUser = ({ onClose, onSuccess }) => {
     fetchBranches();
   }, [token]);
 
-  // Handle role change - remove or add branch based on role
+  // Handle role change - add/remove branch and position based on role
   useEffect(() => {
-    if (globalRoles.includes(formData.role)) {
-      // Remove branch for global roles
-      const { branch, ...rest } = formData;
-      setFormData(rest);
-    } else if (!("branch" in formData)) {
-      // Add branch field for branch-specific roles
-      setFormData({ ...formData, branch: "" });
-    }
+    setFormData((prev) => {
+      const next = { ...prev };
+
+      // Manage branch field
+      if (globalRoles.includes(prev.role)) {
+        delete next.branch;
+      } else if (!("branch" in next)) {
+        next.branch = "";
+      }
+
+      // Manage position field for L6 role
+      if (prev.role === "L6") {
+        if (!("position" in next)) {
+          next.position = "";
+        }
+      } else {
+        delete next.position;
+      }
+
+      return next;
+    });
   }, [formData.role]);
 
   // Validate email format
@@ -115,7 +129,7 @@ const CreateUser = ({ onClose, onSuccess }) => {
   };
 
   // Validate input as user types - but not email (that's handled on blur)
-  const validateField = (name, value) => {
+  const validateField = (name, value, currentFormData = formData) => {
     let error = "";
 
     // Check for empty or whitespace-only content
@@ -129,12 +143,24 @@ const CreateUser = ({ onClose, onSuccess }) => {
     // Skip email validation during typing (will happen on blur)
     else if (name === "password") {
       error = validatePassword(value);
+    } else if (name === "confirmPassword") {
+      if (value !== currentFormData.password) {
+        error = "Passwords do not match";
+      }
     }
 
-    setFormErrors((prev) => ({
-      ...prev,
-      [name]: error,
-    }));
+    setFormErrors((prev) => {
+      const nextErrors = { ...prev, [name]: error };
+      // Also revalidate confirmPassword when password changes if confirmPassword has been entered
+      if (name === "password" && currentFormData.confirmPassword) {
+        if (currentFormData.confirmPassword !== value) {
+          nextErrors.confirmPassword = "Passwords do not match";
+        } else {
+          nextErrors.confirmPassword = "";
+        }
+      }
+      return nextErrors;
+    });
 
     return error === "";
   };
@@ -185,14 +211,16 @@ const CreateUser = ({ onClose, onSuccess }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setFormData({
+    const updatedFormData = {
       ...formData,
       [name]: value,
-    });
+    };
+
+    setFormData(updatedFormData);
 
     // Skip email validation during typing (will happen on blur)
     if (name !== "email") {
-      validateField(name, value);
+      validateField(name, value, updatedFormData);
     } else {
       // Clear previous email errors during typing
       // We'll validate properly on blur
@@ -206,9 +234,17 @@ const CreateUser = ({ onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
     // Create validation configuration
     const validationConfig = {
-      requiredFields: ["name", "email", "role", "password"],
+      requiredFields: [
+        "name",
+        "email",
+        "role",
+        "password",
+        "confirmPassword",
+        ...(formData.role === "L6" ? ["position"] : []),
+      ],
       customValidators: {
         email: (value) => {
           if (!validateEmail(value)) {
@@ -218,6 +254,21 @@ const CreateUser = ({ onClose, onSuccess }) => {
         },
         password: (value) => {
           return validatePassword(value);
+        },
+        confirmPassword: (value, data) => {
+          if (!value) {
+            return "Field cannot be empty or contain only spaces";
+          }
+          if (value !== data.password) {
+            return "Passwords do not match";
+          }
+          return "";
+        },
+        position: (value) => {
+          if (formData.role === "L6" && (!value || value.trim() === "")) {
+            return "Position is required for Prospective Employee role";
+          }
+          return "";
         },
         branch: (value) => {
           if (!globalRoles.includes(formData.role) && !value) {
@@ -248,8 +299,8 @@ const CreateUser = ({ onClose, onSuccess }) => {
     setSuccessMessage(""); // Clear any previous success message
 
     try {
-      // Prepare the data to send
-      const dataToSend = { ...formData };
+      // Prepare the data to send (exclude confirmPassword from payload)
+      const { confirmPassword, ...dataToSend } = formData;
 
       const response = await fetch(`${API_URL}/users`, {
         method: "POST",
@@ -291,7 +342,14 @@ const CreateUser = ({ onClose, onSuccess }) => {
 
     // Create validation configuration
     const validationConfig = {
-      requiredFields: ["name", "email", "role", "password"],
+      requiredFields: [
+        "name",
+        "email",
+        "role",
+        "password",
+        "confirmPassword",
+        ...(formData.role === "L6" ? ["position"] : []),
+      ],
       customValidators: {
         email: (value) => {
           if (!validateEmail(value)) {
@@ -301,6 +359,21 @@ const CreateUser = ({ onClose, onSuccess }) => {
         },
         password: (value) => {
           return validatePassword(value);
+        },
+        confirmPassword: (value, data) => {
+          if (!value) {
+            return "Field cannot be empty or contain only spaces";
+          }
+          if (value !== data.password) {
+            return "Passwords do not match";
+          }
+          return "";
+        },
+        position: (value) => {
+          if (formData.role === "L6" && (!value || value.trim() === "")) {
+            return "Position is required for Prospective Employee role";
+          }
+          return "";
         },
         branch: (value) => {
           if (!globalRoles.includes(formData.role) && !value) {
@@ -391,9 +464,8 @@ const CreateUser = ({ onClose, onSuccess }) => {
             )}
             {/* Password requirements hint */}
             <div
-              className={`password-hint ${
-                passwordFocused || formData.password ? "visible" : ""
-              }`}
+              className={`password-hint ${passwordFocused || formData.password ? "visible" : ""
+                }`}
             >
               <div className="hint-icon">i</div>
               <div className="hint-text">
@@ -434,6 +506,23 @@ const CreateUser = ({ onClose, onSuccess }) => {
           </div>
 
           <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword || ""}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              required
+              className={formErrors.confirmPassword ? "input-error" : ""}
+            />
+            {formErrors.confirmPassword && (
+              <div className="error-text">{formErrors.confirmPassword}</div>
+            )}
+          </div>
+
+          <div className="form-group">
             <label htmlFor="role">Role</label>
             <select
               id="role"
@@ -450,6 +539,27 @@ const CreateUser = ({ onClose, onSuccess }) => {
               ))}
             </select>
           </div>
+
+          {/* Show position field for L6 (Prospective Employee) */}
+          {formData.role === "L6" && (
+            <div className="form-group">
+              <label htmlFor="position">Position</label>
+              <input
+                type="text"
+                id="position"
+                name="position"
+                value={formData.position || ""}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                required
+                placeholder="e.g. Teacher, Lead Educator, Admin Assistant"
+                className={formErrors.position ? "input-error" : ""}
+              />
+              {formErrors.position && (
+                <div className="error-text">{formErrors.position}</div>
+              )}
+            </div>
+          )}
 
           {/* Show branch selection only for branch-specific roles */}
           {!globalRoles.includes(formData.role) && (

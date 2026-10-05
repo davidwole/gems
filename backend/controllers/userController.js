@@ -5,11 +5,13 @@ const generateToken = require("../utils/generateToken");
 exports.createUser = async (req, res) => {
   const { name, email, password, role, branch } = req.body;
 
+  console.log(req.body);
+
   try {
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ msg: "User already exists" });
 
-    user = new User({ name, email, password, role, branch });
+    user = new User(req.body);
     await user.save();
 
     res.status(201).json({ msg: "User created successfully", user });
@@ -91,9 +93,8 @@ exports.toggleUserSuspension = async (req, res) => {
     await user.save();
 
     res.json({
-      msg: `User ${
-        user.isSuspended ? "suspended" : "unsuspended"
-      } successfully`,
+      msg: `User ${user.isSuspended ? "suspended" : "unsuspended"
+        } successfully`,
     });
   } catch (error) {
     res.status(500).json({
