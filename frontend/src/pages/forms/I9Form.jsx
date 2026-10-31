@@ -759,7 +759,7 @@ export default function I9Form() {
           {formData.education.map((edu, index) => (
             <div key={`education-${index}`}>
               <div className="flex align_center">
-                <label>High School:</label>
+                <label>{index === 0 ? "High School:" : "School / College:"}</label>
                 <input
                   type="text"
                   name={`education.${index}.schoolName`}
