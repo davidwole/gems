@@ -85,11 +85,16 @@ exports.uploadChildDocuments = async (req, res) => {
     //   });
     // }
 
-    // Validate mimetype is an image
-    if (!mimetype || !/^image\/(jpeg|jpg|png|gif|webp)$/i.test(mimetype)) {
+    // Validate mimetype is an image or PDF
+    if (
+      !mimetype ||
+      !/^(image\/(jpeg|jpg|png|gif|webp|heic|heif|heic-sequence|heif-sequence)|application\/pdf)$/i.test(
+        mimetype
+      )
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Only image files are allowed",
+        message: "Only image files (JPG, PNG, GIF, WebP, HEIC) and PDF documents are allowed",
       });
     }
 

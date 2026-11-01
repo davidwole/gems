@@ -43,10 +43,12 @@ const DocumentSchema = new mongoose.Schema(
       required: true,
       validate: {
         validator: function (v) {
-          // Only allow image mimetypes
-          return /^image\/(jpeg|jpg|png|gif|webp)$/i.test(v);
+          // Allow image mimetypes (including HEIC/HEIF) and PDF
+          return /^(image\/(jpeg|jpg|png|gif|webp|heic|heif|heic-sequence|heif-sequence)|application\/pdf)$/i.test(
+            v
+          );
         },
-        message: "Only image files are allowed",
+        message: "Only image files (JPG, PNG, GIF, WebP, HEIC) and PDF documents are allowed",
       },
     },
     size: {
