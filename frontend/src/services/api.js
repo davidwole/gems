@@ -344,6 +344,71 @@ export const submitJobApplication = async (applicationData, token) => {
   }
 };
 
+export const saveJobApplicationDraft = async (draftData, token) => {
+  try {
+    const response = await fetch(`${API_URL}/job-application-drafts`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(draftData),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to save job application draft");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error saving job application draft:", error);
+    throw error;
+  }
+};
+
+export const getJobApplicationDraft = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/job-application-drafts`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch job application draft");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching job application draft:", error);
+    throw error;
+  }
+};
+
+export const deleteJobApplicationDraft = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/job-application-drafts`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to delete job application draft");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error deleting job application draft:", error);
+    throw error;
+  }
+};
+
 export const submitEnrollmentForm = async (formData) => {
   try {
     // Configure request options

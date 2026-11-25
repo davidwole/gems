@@ -19,6 +19,10 @@ app.use("/api/parents", require("./routes/parentRoutes"));
 app.use("/api/enrollment-forms", require("./routes/enrollmentFormRoutes"));
 app.use("/api/ies-forms", require("./routes/IESRoutes"));
 app.use("/api/job-applications", require("./routes/jobApplicationRoutes"));
+app.use(
+  "/api/job-application-drafts",
+  require("./routes/jobApplicationDraftRoutes")
+);
 app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/contact", require("./routes/contactRoutes"));
 app.use("/api/infant-feeding-plans", require("./routes/feedingPlanRoutes"));

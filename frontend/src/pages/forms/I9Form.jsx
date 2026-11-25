@@ -4,13 +4,19 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/I9Form.css";
 import Signature from "../../components/Signature";
 import { AuthContext } from "../../context/AuthContext";
-import { submitJobApplication } from "../../services/api";
+import {
+  submitJobApplication,
+  saveJobApplicationDraft,
+  getJobApplicationDraft,
+  deleteJobApplicationDraft,
+} from "../../services/api";
 
 export default function I9Form() {
   const [token, setToken] = useState(localStorage.getItem("token"));
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [errors, setErrors] = useState({});
   const [validationMessage, setValidationMessage] = useState("");
   const topRef = useRef(null);
@@ -362,6 +368,29 @@ export default function I9Form() {
     return true;
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  const handleSaveDraft = async () => {
+    setIsSavingDraft(true);
+    try {
+      const response = await saveJobApplicationDraft(formData, token);
+      if (response.success) {
+        alert(
+          "Your progress has been saved. You can come back and finish later."
+        );
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Error saving draft:", error);
+      alert(error.message || "Failed to save progress. Please try again.");
+    } finally {
+      setIsSavingDraft(false);
+    }
+  };
+
   // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -374,6 +403,11 @@ export default function I9Form() {
       const response = await submitJobApplication(formData, token);
 
       if (response.success) {
+        try {
+          await deleteJobApplicationDraft(token);
+        } catch (draftError) {
+          console.error("Failed to clear draft after submission:", draftError);
+        }
         alert("Application logged successfully");
         setTimeout(() => {
           navigate("/");
@@ -402,8 +436,65 @@ export default function I9Form() {
     }
   }, [user]);
 
+  useEffect(() => {
+    const loadDraft = async () => {
+      if (!token) return;
+      try {
+        const response = await getJobApplicationDraft(token);
+        if (response?.success && response?.data?.formData) {
+          const saved = response.data.formData;
+          setFormData((prev) => ({
+            ...prev,
+            ...saved,
+            user: prev.user || saved.user || "",
+            branch: prev.branch || saved.branch || "",
+            questionnaire: {
+              ...prev.questionnaire,
+              ...(saved.questionnaire || {}),
+            },
+            militaryService: {
+              ...prev.militaryService,
+              ...(saved.militaryService || {}),
+            },
+            education:
+              Array.isArray(saved.education) && saved.education.length > 0
+                ? saved.education
+                : prev.education,
+            previousEmployment:
+              Array.isArray(saved.previousEmployment) &&
+                saved.previousEmployment.length > 0
+                ? saved.previousEmployment
+                : prev.previousEmployment,
+            references:
+              Array.isArray(saved.references) && saved.references.length > 0
+                ? saved.references
+                : prev.references,
+            disciplinaryExplanation:
+              Array.isArray(saved.disciplinaryExplanation) &&
+                saved.disciplinaryExplanation.length > 0
+                ? saved.disciplinaryExplanation
+                : prev.disciplinaryExplanation,
+          }));
+        }
+      } catch (error) {
+        console.error("Failed to load job application draft:", error);
+      }
+    };
+
+    loadDraft();
+  }, [token]);
+
   return (
     <div className="job_container" ref={topRef}>
+      <div className="i9_top_bar">
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="i9_logout_button"
+        >
+          Log Out
+        </button>
+      </div>
       <div className="job_form">
         <div className="header_container">
           <h1 className="job_form_header">
@@ -2333,13 +2424,23 @@ export default function I9Form() {
               />
             </div>
           </div>
-          <button
-            id="i9_button"
-            type="submit"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Loading..." : "Submit"}
-          </button>
+          <div className="i9_actions">
+            <button
+              id="i9_save_draft_button"
+              type="button"
+              onClick={handleSaveDraft}
+              disabled={isSavingDraft || isSubmitting}
+            >
+              {isSavingDraft ? "Saving..." : "Save & Come Back Later"}
+            </button>
+            <button
+              id="i9_button"
+              type="submit"
+              disabled={isSubmitting || isSavingDraft}
+            >
+              {isSubmitting ? "Loading..." : "Submit"}
+            </button>
+          </div>
         </form>
       </div>
     </div>
