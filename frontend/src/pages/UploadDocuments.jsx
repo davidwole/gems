@@ -94,6 +94,7 @@ export default function UploadDocuments() {
     }
   };
 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -196,9 +197,8 @@ export default function UploadDocuments() {
                 <button
                   key={type}
                   type="button"
-                  className={`action-button ${
-                    documentType === type ? "selected" : ""
-                  }`}
+                  className={`action-button ${documentType === type ? "selected" : ""
+                    }`}
                   onClick={() => setDocumentType(type)}
                 >
                   {type}

@@ -227,6 +227,7 @@ export default function UploadID() {
 
       const mimeType = getDocumentMimeType(selectedFile);
 
+
       // Prepare document data
       const documentData = {
         user: renderUser?.id,
@@ -237,6 +238,7 @@ export default function UploadID() {
         mimetype: mimeType,
         size: selectedFile.size,
       };
+
 
       const response = await uploadChildDocument(documentData, token);
 
@@ -324,9 +326,8 @@ export default function UploadID() {
                   <button
                     key={type}
                     type="button"
-                    className={`action-button ${
-                      documentType === type ? "selected" : ""
-                    }`}
+                    className={`action-button ${documentType === type ? "selected" : ""
+                      }`}
                     onClick={() => setDocumentType(type)}
                   >
                     {type}

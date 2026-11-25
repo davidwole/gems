@@ -149,6 +149,29 @@
   border: none;
 }
 
+.job_form input.i9-input-error,
+.job_form textarea.i9-input-error {
+  border: 2px solid #e74c3c !important;
+  background-color: #fff5f5 !important;
+}
+
+.i9-group-error {
+  border: 2px solid #e74c3c;
+  background-color: #fff5f5;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.i9-error-banner {
+  background-color: #fdeaea;
+  color: #c0392b;
+  border: 1px solid #e74c3c;
+  border-left: 4px solid #e74c3c;
+  padding: 12px 16px;
+  margin: 1rem 0;
+  font-weight: 500;
+}
+
 .job_form .approve-button {
   margin-right: 0.5rem;
 }

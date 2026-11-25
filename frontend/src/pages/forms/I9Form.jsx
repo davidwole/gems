@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 //  import "../../styles/I9Form.module.css";
 import "../../styles/I9Form.css";
@@ -11,6 +11,9 @@ export default function I9Form() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [validationMessage, setValidationMessage] = useState("");
+  const topRef = useRef(null);
   // Initialize all form fields in a single state object
   const [formData, setFormData] = useState({
     user: "",
@@ -208,9 +211,29 @@ export default function I9Form() {
     signatureDate: "",
   });
 
+  const clearFieldError = (field) => {
+    setErrors((prev) => {
+      if (!prev[field]) return prev;
+      const updated = { ...prev };
+      delete updated[field];
+      if (Object.keys(updated).length === 0) {
+        setValidationMessage("");
+      }
+      return updated;
+    });
+  };
+
   // Universal handler function for all form inputs
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+    clearFieldError(name);
+
+    if (name === "hasWorkedForCompany" && !checked) {
+      clearFieldError("previousEmploymentDate");
+    }
+    if (name === "hasBeenConvictedOfFelony" && !checked) {
+      clearFieldError("felonyExplanation");
+    }
 
     // Handle special cases with nested objects/arrays
     if (name.includes(".")) {
@@ -279,15 +302,72 @@ export default function I9Form() {
   };
 
   const handleSignatureSave = (dataUrl) => {
+    clearFieldError("signature");
     setFormData((prevState) => ({
       ...prevState,
       signature: dataUrl,
     }));
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    const requiredFields = [
+      ["lastName", formData.lastName],
+      ["firstName", formData.firstName],
+      ["date", formData.date],
+      ["streetAddress", formData.streetAddress],
+      ["city", formData.city],
+      ["state", formData.state],
+      ["zipCode", formData.zipCode],
+      ["phone", formData.phone],
+      ["email", formData.email],
+      ["dateAvailable", formData.dateAvailable],
+      ["desiredSalary", formData.desiredSalary],
+      ["position", formData.position],
+      ["hoursPreference", formData.hoursPreference],
+      ["education.0.schoolName", formData.education[0]?.schoolName],
+      ["references.0.fullName", formData.references[0]?.fullName],
+      ["references.0.phone", formData.references[0]?.phone],
+      ["signature", formData.signature],
+      ["signatureDate", formData.signatureDate],
+    ];
+
+    requiredFields.forEach(([key, val]) => {
+      if (!String(val || "").trim()) {
+        newErrors[key] = true;
+      }
+    });
+
+    if (formData.hasWorkedForCompany && !formData.previousEmploymentDate.trim()) {
+      newErrors.previousEmploymentDate = true;
+    }
+
+    if (formData.hasBeenConvictedOfFelony && !formData.felonyExplanation.trim()) {
+      newErrors.felonyExplanation = true;
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      setValidationMessage(
+        "Some required fields have not been filled out. Please complete all highlighted fields below."
+      );
+      topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.body.scrollTo?.({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return false;
+    }
+
+    setValidationMessage("");
+    return true;
+  };
+
   // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
     setIsSubmitting(true);
 
     try {
@@ -323,7 +403,7 @@ export default function I9Form() {
   }, [user]);
 
   return (
-    <div className="job_container">
+    <div className="job_container" ref={topRef}>
       <div className="job_form">
         <div className="header_container">
           <h1 className="job_form_header">
@@ -331,6 +411,12 @@ export default function I9Form() {
           </h1>
         </div>
         <h3>Employee Application</h3>
+
+        {validationMessage && (
+          <div className="i9-error-banner" role="alert">
+            {validationMessage}
+          </div>
+        )}
 
         <div className="section_header">
           <h4>Applicant Information</h4>
@@ -347,6 +433,7 @@ export default function I9Form() {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleInputChange}
+                  className={errors.lastName ? "i9-input-error" : ""}
                 />
                 <label>Last</label>
               </div>
@@ -356,6 +443,7 @@ export default function I9Form() {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleInputChange}
+                  className={errors.firstName ? "i9-input-error" : ""}
                 />
                 <label>First</label>
               </div>
@@ -376,6 +464,7 @@ export default function I9Form() {
                 name="date"
                 value={formData.date}
                 onChange={handleInputChange}
+                className={errors.date ? "i9-input-error" : ""}
               />
             </div>
           </div>
@@ -390,6 +479,7 @@ export default function I9Form() {
                   name="streetAddress"
                   value={formData.streetAddress}
                   onChange={handleInputChange}
+                  className={errors.streetAddress ? "i9-input-error" : ""}
                 />
                 <label>Street Address</label>
               </div>
@@ -415,6 +505,7 @@ export default function I9Form() {
                   name="city"
                   value={formData.city}
                   onChange={handleInputChange}
+                  className={errors.city ? "i9-input-error" : ""}
                 />
                 <label>City</label>
               </div>
@@ -424,6 +515,7 @@ export default function I9Form() {
                   name="state"
                   value={formData.state}
                   onChange={handleInputChange}
+                  className={errors.state ? "i9-input-error" : ""}
                 />
                 <label>State</label>
               </div>
@@ -433,6 +525,7 @@ export default function I9Form() {
                   name="zipCode"
                   value={formData.zipCode}
                   onChange={handleInputChange}
+                  className={errors.zipCode ? "i9-input-error" : ""}
                 />
                 <label>ZIP code</label>
               </div>
@@ -505,6 +598,7 @@ export default function I9Form() {
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
+              className={errors.phone ? "i9-input-error" : ""}
             />
 
             <label>Email:</label>
@@ -513,6 +607,7 @@ export default function I9Form() {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
+              className={errors.email ? "i9-input-error" : ""}
             />
           </div>
 
@@ -524,6 +619,7 @@ export default function I9Form() {
               name="dateAvailable"
               value={formData.dateAvailable}
               onChange={handleInputChange}
+              className={errors.dateAvailable ? "i9-input-error" : ""}
             />
 
             <label>Desired Salary:</label>
@@ -533,6 +629,7 @@ export default function I9Form() {
               name="desiredSalary"
               value={formData.desiredSalary}
               onChange={handleInputChange}
+              className={errors.desiredSalary ? "i9-input-error" : ""}
             />
           </div>
 
@@ -543,6 +640,7 @@ export default function I9Form() {
               name="position"
               value={formData.position}
               onChange={handleInputChange}
+              className={errors.position ? "i9-input-error" : ""}
             />
           </div>
 
@@ -623,21 +721,26 @@ export default function I9Form() {
               value={formData.previousEmploymentDate}
               onChange={handleInputChange}
               disabled={!formData.hasWorkedForCompany}
+              className={errors.previousEmploymentDate ? "i9-input-error" : ""}
             />
           </div>
 
           {/* Hours sought */}
           <div className="flex align_center">
-            <div className="flex align_center">
+            <div
+              className={`flex align_center ${errors.hoursPreference ? "i9-group-error" : ""
+                }`}
+            >
               <label>Hours sought:</label>
               <div className="flex align_center">
                 <label>Full Time</label>
                 <input
                   type="checkbox"
                   checked={formData.hoursPreference === "fullTime"}
-                  onChange={() =>
-                    setFormData({ ...formData, hoursPreference: "fullTime" })
-                  }
+                  onChange={() => {
+                    clearFieldError("hoursPreference");
+                    setFormData({ ...formData, hoursPreference: "fullTime" });
+                  }}
                 />
               </div>
               <div className="flex">
@@ -645,9 +748,10 @@ export default function I9Form() {
                 <input
                   type="checkbox"
                   checked={formData.hoursPreference === "partTime"}
-                  onChange={() =>
-                    setFormData({ ...formData, hoursPreference: "partTime" })
-                  }
+                  onChange={() => {
+                    clearFieldError("hoursPreference");
+                    setFormData({ ...formData, hoursPreference: "partTime" });
+                  }}
                 />
               </div>
               <div className="flex">
@@ -655,9 +759,10 @@ export default function I9Form() {
                 <input
                   type="checkbox"
                   checked={formData.hoursPreference === "anyHours"}
-                  onChange={() =>
-                    setFormData({ ...formData, hoursPreference: "anyHours" })
-                  }
+                  onChange={() => {
+                    clearFieldError("hoursPreference");
+                    setFormData({ ...formData, hoursPreference: "anyHours" });
+                  }}
                 />
               </div>
             </div>
@@ -748,6 +853,7 @@ export default function I9Form() {
             value={formData.felonyExplanation}
             onChange={handleInputChange}
             disabled={!formData.hasBeenConvictedOfFelony}
+            className={errors.felonyExplanation ? "i9-input-error" : ""}
           ></textarea>
 
           {/* Education Section - This would continue with more fields */}
@@ -765,6 +871,9 @@ export default function I9Form() {
                   name={`education.${index}.schoolName`}
                   value={edu.schoolName}
                   onChange={handleInputChange}
+                  className={
+                    errors[`education.${index}.schoolName`] ? "i9-input-error" : ""
+                  }
                 />
                 <label>Address:</label>
                 <input
@@ -2000,6 +2109,7 @@ export default function I9Form() {
               name="references.0.fullName"
               value={formData.references[0].fullName}
               onChange={handleInputChange}
+              className={errors["references.0.fullName"] ? "i9-input-error" : ""}
             />
             <label>Relationship:</label>
             <input
@@ -2023,6 +2133,7 @@ export default function I9Form() {
               name="references.0.phone"
               value={formData.references[0].phone}
               onChange={handleInputChange}
+              className={errors["references.0.phone"] ? "i9-input-error" : ""}
             />
           </div>
           <div className="flex align_center">
@@ -2207,7 +2318,7 @@ export default function I9Form() {
               value={formData.signature}
               onChange={handleInputChange}
             /> */}
-            <div>
+            <div className={errors.signature ? "i9-group-error" : ""}>
               <label>Signature:</label>
               <Signature onSave={handleSignatureSave} />
             </div>
@@ -2218,13 +2329,14 @@ export default function I9Form() {
                 name="signatureDate"
                 value={formData.signatureDate}
                 onChange={handleInputChange}
+                className={errors.signatureDate ? "i9-input-error" : ""}
               />
             </div>
           </div>
           <button
             id="i9_button"
             type="submit"
-            disabled={isSubmitting || !formData.signature}
+            disabled={isSubmitting}
           >
             {isSubmitting ? "Loading..." : "Submit"}
           </button>

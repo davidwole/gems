@@ -84,11 +84,12 @@ const ApplicantRegistration = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Clear the specific field error when user starts typing
-    if (errors[name]) {
+    // Clear the specific field error and general error when user starts typing
+    if (errors[name] || errors.general) {
       setErrors((prev) => {
         const updatedErrors = { ...prev };
         delete updatedErrors[name];
+        delete updatedErrors.general;
         return updatedErrors;
       });
     }
@@ -147,6 +148,16 @@ const ApplicantRegistration = () => {
     const newErrors = {};
 
     // Check for empty fields
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.position.trim() ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      newErrors.general = "Please fill in all fields";
+    }
+
     if (!formData.name.trim()) {
       newErrors.name = "Full name cannot be empty";
     } else if (formData.name.startsWith(" ")) {
@@ -157,6 +168,8 @@ const ApplicantRegistration = () => {
       newErrors.email = "Email cannot be empty";
     } else if (formData.email.startsWith(" ")) {
       newErrors.email = "Email cannot start with a space";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email.trim())) {
+      newErrors.email = "Email is invalid";
     }
 
     if (!formData.position.trim()) {
@@ -166,17 +179,32 @@ const ApplicantRegistration = () => {
     }
 
     // Password validation
-    const passwordError = validatePassword(formData.password);
-    if (passwordError) {
-      newErrors.password = passwordError;
+    if (!formData.password) {
+      newErrors.password = "Password cannot be empty";
+    } else {
+      const passwordError = validatePassword(formData.password);
+      if (passwordError) {
+        newErrors.password = passwordError;
+      }
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Confirm password cannot be empty";
+    } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
+    if (Object.keys(newErrors).length > 0) {
+      if (!newErrors.general) {
+        newErrors.general = Object.values(newErrors).join("\n");
+      }
+      setErrors(newErrors);
+      alert(newErrors.general);
+      return false;
+    }
+
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return true;
   };
 
   const handleSubmit = async (e) => {
@@ -229,8 +257,8 @@ const ApplicantRegistration = () => {
   return (
     <div className="auth-container">
       <h2>Apply to {branchName || "our Company"}</h2>
-      {errors.general && <div className="error-message">{errors.general}</div>}
-      <form onSubmit={handleSubmit} className="auth-form">
+      {/* {errors.general && <div className="error-message">{errors.general}</div>} */}
+      <form onSubmit={handleSubmit} className="auth-form" noValidate>
         <div className="form-group">
           <label>Full Name</label>
           <input
@@ -242,7 +270,6 @@ const ApplicantRegistration = () => {
             required
             className={errors.name ? "input-error" : ""}
           />
-          {errors.name && <div className="error-text">{errors.name}</div>}
         </div>
         <div className="form-group">
           <label>Email</label>
@@ -255,7 +282,6 @@ const ApplicantRegistration = () => {
             required
             className={errors.email ? "input-error" : ""}
           />
-          {errors.email && <div className="error-text">{errors.email}</div>}
         </div>
         <div className="form-group">
           <label>Position Applying For</label>
@@ -268,9 +294,6 @@ const ApplicantRegistration = () => {
             required
             className={errors.position ? "input-error" : ""}
           />
-          {errors.position && (
-            <div className="error-text">{errors.position}</div>
-          )}
         </div>
         <div className="form-group">
           <label>Password</label>
@@ -285,14 +308,10 @@ const ApplicantRegistration = () => {
             required
             className={errors.password ? "input-error" : ""}
           />
-          {errors.password && (
-            <div className="error-text">{errors.password}</div>
-          )}
           {/* Password requirements hint */}
           <div
-            className={`password-hint ${
-              passwordFocused || formData.password ? "visible" : ""
-            }`}
+            className={`password-hint ${passwordFocused || formData.password ? "visible" : ""
+              }`}
           >
             <div className="hint-icon">i</div>
             <div className="hint-text">
@@ -336,9 +355,6 @@ const ApplicantRegistration = () => {
             required
             className={errors.confirmPassword ? "input-error" : ""}
           />
-          {errors.confirmPassword && (
-            <div className="error-text">{errors.confirmPassword}</div>
-          )}
         </div>
         <button type="submit" className="submit-button" disabled={isLoading}>
           {isLoading ? "Submitting..." : "Submit Application"}

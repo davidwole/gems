@@ -639,14 +639,15 @@ const CreateUser = ({ onClose, onSuccess }) => {
 
           .password-hint {
             display: flex;
-            margin-top: 6px;
+            margin-top: 0;
             background-color: #f8f9fa;
-            border: 1px solid #e2e8f0;
+            border: 0 solid #e2e8f0;
             border-radius: 4px;
-            padding: 8px 12px;
+            padding: 0 12px;
             font-size: 0.85rem;
             color: #4a5568;
             opacity: 0;
+            visibility: hidden;
             max-height: 0;
             overflow: hidden;
             transition: all 0.3s ease;
@@ -654,8 +655,11 @@ const CreateUser = ({ onClose, onSuccess }) => {
 
           .password-hint.visible {
             opacity: 1;
+            visibility: visible;
             max-height: 200px;
             margin-top: 8px;
+            padding: 8px 12px;
+            border-width: 1px;
           }
 
           .hint-icon {
